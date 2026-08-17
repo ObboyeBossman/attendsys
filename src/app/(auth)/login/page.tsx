@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import styles from "../auth.module.css";
 
@@ -331,14 +332,7 @@ export default function LoginPage() {
         aria-label="Authentication successful, redirecting"
       >
         <div className={styles.transitionLogoRing}>
-          <Image
-            src="/atten_sys_icon_logo.svg"
-            alt=""
-            width={48}
-            height={48}
-            className={styles.transitionLogo}
-            aria-hidden="true"
-          />
+          <BrandLogo size="lg" />
         </div>
 
         <div className={styles.transitionCard}>
@@ -377,18 +371,11 @@ export default function LoginPage() {
 
         {/* Logo */}
         <div className={styles.logoBox}>
-          <Image
-            src="/atten_sys_icon_logo.svg"
-            alt="ATTEN SYS Logo"
-            width={64}
-            height={64}
-            className={styles.logoImg}
-            priority
-          />
+          <BrandLogo size={64} />
         </div>
 
         {/* Heading */}
-        <span className={styles.formHeadingEyebrow}>ATTEN SYS</span>
+        <span className={styles.formHeadingEyebrow}>AttendSys</span>
         <h1 className={styles.formHeadingTitle}>Institutional Portal</h1>
         <p className={styles.formHeadingSub}>Sign in with your institutional credentials</p>
 
