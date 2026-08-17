@@ -10,8 +10,8 @@ const jetbrains = { variable: "" };
 
 export const metadata: Metadata = {
   title: {
-    default: "Attendsys",
-    template: "%s | Attendsys",
+    default: "AttendSys",
+    template: "%s | AttendSys",
   },
   description:
     "University Attendance Management System — track, verify, and manage student attendance digitally.",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Attendsys",
+    title: "AttendSys",
   },
   formatDetection: {
     telephone: false,

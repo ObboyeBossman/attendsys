@@ -1,6 +1,6 @@
 {
-  "name": "Attendsys",
-  "short_name": "Attendsys",
+  "name": "AttendSys",
+  "short_name": "AttendSys",
   "description": "University Attendance Management System",
   "start_url": "/",
   "display": "standalone",

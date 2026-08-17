@@ -4,7 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import "@/app/portal-light-theme.css";
 
 export const metadata: Metadata = {
-  title: { default: "Student Portal", template: "%s | Student | Attendsys" },
+  title: { default: "Student Portal", template: "%s | Student | AttendSys" },
 };
 
 export default async function StudentLayout({ children }: { children: React.ReactNode }) {

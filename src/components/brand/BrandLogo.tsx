@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * BrandLogo — Central PNG brand component for Attendsys.
+ * BrandLogo — Central PNG brand component for AttendSys.
  *
  * Uses next/image to serve the real logo PNG with proper optimisation.
  * The source PNG (/icons/icon-512.png) is transparent and renders correctly
@@ -39,7 +39,7 @@ export interface BrandLogoProps {
   /** Extra className applied to the outermost element. */
   className?: string;
   /**
-   * Accessible alt text. Defaults to "Attendsys".
+   * Accessible alt text. Defaults to "AttendSys".
    * Pass an empty string "" to mark the image as decorative (aria-hidden).
    */
   label?: string;
@@ -49,7 +49,7 @@ export function BrandLogo({
   size = "md",
   withRing = false,
   className = "",
-  label = "Attendsys",
+  label = "AttendSys",
 }: BrandLogoProps) {
   const px = typeof size === "number" ? size : SIZE_MAP[size];
 

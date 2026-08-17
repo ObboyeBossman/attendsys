@@ -5,7 +5,7 @@ import { AdminContentWrapper } from "./AdminContentWrapper";
 import "./admin-light-theme.css";
 
 export const metadata: Metadata = {
-  title: { default: "Admin Portal", template: "%s | Admin | Attendsys" },
+  title: { default: "Admin Portal", template: "%s | Admin | AttendSys" },
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

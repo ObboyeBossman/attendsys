@@ -3,7 +3,7 @@ import { PortalLayout } from "@/components/layout/PortalLayout";
 import "@/app/portal-light-theme.css";
 
 export const metadata: Metadata = {
-  title: { default: "Rep Portal", template: "%s | Rep | Attendsys" },
+  title: { default: "Rep Portal", template: "%s | Rep | AttendSys" },
 };
 
 const REP_NAV = [

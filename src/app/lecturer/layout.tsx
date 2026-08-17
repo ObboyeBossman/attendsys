@@ -3,7 +3,7 @@ import { PortalLayout } from "@/components/layout/PortalLayout";
 import "@/app/portal-light-theme.css";
 
 export const metadata: Metadata = {
-  title: { default: "Lecturer Portal", template: "%s | Lecturer | Attendsys" },
+  title: { default: "Lecturer Portal", template: "%s | Lecturer | AttendSys" },
 };
 
 const LECTURER_NAV = [

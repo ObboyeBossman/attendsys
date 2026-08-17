@@ -127,7 +127,7 @@ function BrandMark({ roleLabel }: { roleLabel: string }) {
         <BrandLogo size="md" />
       </div>
       <div>
-        <div className={styles.brandName}>Attendsys</div>
+        <div className={styles.brandName}>AttendSys</div>
         <div className={styles.brandRole}>{roleLabel}</div>
       </div>
     </>
@@ -340,7 +340,7 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
         <div className={styles.mobileTopbarBrand}>
           <BrandLogo size="sm" />
           <div>
-            <div className={styles.mobileTopbarTitle}>Attendsys</div>
+            <div className={styles.mobileTopbarTitle}>AttendSys</div>
             <div className={styles.mobileTopbarRole}>{roleLabel}</div>
           </div>
         </div>
