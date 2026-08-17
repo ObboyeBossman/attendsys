@@ -1,4 +1,4 @@
-# ATTEN-SYS
+# ATTENDSYS
 
 University Attendance Management System — track, verify, and manage student attendance digitally.
 
