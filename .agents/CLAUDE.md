@@ -73,40 +73,30 @@ git push origin feat/<feature-name>
 - Each commit message must be meaningful and describe the exact change made to that file.
 - Push to the feature branch after every commit — no local-only commits during active development.
 
-### After the full feature or objective is complete:
+### Branching & Merge Policy:
 
-Only once **all files for the feature have been committed and pushed to the feature branch** do you:
+- **Do NOT merge to `main` unless explicitly requested by the user.** Keep active work on feature branches (`feat/<feature-name>`).
+- **Do NOT run `npm run build` automatically unless explicitly requested by the user.** This avoids long build wait times during development.
 
-1. Run the build:
+### When explicitly asked to merge or validate:
 
+1. Run the build (only when requested):
 ```bash
 npm run build
 ```
 
-2. Fix **every** build error that arises — committing and pushing each fix to the feature branch individually as you go.
+2. Fix any build errors, committing and pushing fixes to the feature branch.
 
-3. Run lint and type-check if available:
-
-```bash
-npm run lint       # if present
-npm run typecheck  # if present
-```
-
-4. Fix any errors, committing and pushing each fix.
-
-5. Only when all checks pass clean, merge into `main` and push:
-
+3. Merge into `main` (only when requested by user):
 ```bash
 git checkout main
 git merge feat/<feature-name>
 git push origin main
 ```
 
-6. Delete the feature branch locally and remotely:
-
+4. Delete local feature branch:
 ```bash
 git branch -d feat/<feature-name>
-git push origin --delete feat/<feature-name>
 ```
 
 ### Summary
@@ -114,8 +104,8 @@ git push origin --delete feat/<feature-name>
 | Phase | Action |
 |---|---|
 | Start of feature | Create feature branch |
-| Every file added or changed | Commit → Push to feature branch immediately |
-| Full feature complete | Run build → Fix errors (commit each fix) → Run lint/typecheck → Fix errors (commit each fix) → Merge to `main` → Push |
+| Every file added or changed | Commit & push to feature branch |
+| Task complete | Keep on feature branch. **Do NOT run build or merge to main unless user asks.** |
 
 ---
 
