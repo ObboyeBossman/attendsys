@@ -18,7 +18,8 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "black-translucent",
+    // "default" keeps a light status bar with dark icons — avoids any red/translucent flash
+    statusBarStyle: "default",
     title: "AttendSys",
   },
   formatDetection: {
@@ -27,7 +28,12 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#ffffff",
+  // Force white status-bar / OS chrome on every first paint (light + dark media)
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#ffffff" },
+  ],
+  colorScheme: "light",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -39,13 +45,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${hanken.variable} ${jetbrains.variable}`} data-scroll-behavior="smooth">
+    // Inline white background guarantees the browser never samples a red
+    // or dark color for the status bar before CSS arrives.
+    <html
+      lang="en"
+      className={`${hanken.variable} ${jetbrains.variable}`}
+      data-scroll-behavior="smooth"
+      style={{ backgroundColor: "#ffffff" }}
+    >
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
-      <body>
+      <body style={{ backgroundColor: "#ffffff" }}>
         <NavigationProgressProvider>
           <NavProgressBar />
           {children}
@@ -54,3 +67,4 @@ export default function RootLayout({
     </html>
   );
 }
+
