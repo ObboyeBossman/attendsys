@@ -7,46 +7,51 @@
 
 /* ── CSS Custom Properties ───────────────────────────────── */
 :root {
-  /* Colour palette */
-  --color-bg:           #0a0f1e;
-  --color-bg-secondary: #0d1426;
-  --color-surface:      #111827;
-  --color-surface-2:    #1a2235;
-  --color-surface-3:    #1f2d44;
-  --color-border:       rgba(255, 255, 255, 0.08);
-  --color-border-hover: rgba(255, 255, 255, 0.16);
+  /* Page canvas — warm off-white, not pure white */
+  --color-bg:           #F5F6FA;
+  --color-bg-secondary: #EEF0F6;
+
+  /* Surfaces: sidebar/cards are pure white; secondary panels step up slightly */
+  --color-surface:      #FFFFFF;
+  --color-surface-2:    #F0F2F8;
+  --color-surface-3:    #E4E6F0;
+
+  /* Borders: crisp hairlines */
+  --color-border:       #E5E7EB;
+  --color-border-hover: #CBD5E1;
 
   /* Brand red & blue */
   --color-primary:      #9d0a12;
+  --color-primary-rgb:  157, 10, 18;
   --color-primary-dark: #82080f;
-  --color-primary-glow: rgba(157, 10, 18, 0.25);
+  --color-primary-glow: rgba(157, 10, 18, 0.15);
   
   --color-secondary:    #3b82f6;
   --color-secondary-dark: #2563eb;
 
-  /* Accent colours */
-  --color-success:      #22c55e;
-  --color-success-bg:   rgba(34, 197, 94, 0.12);
-  --color-warning:      #f59e0b;
-  --color-warning-bg:   rgba(245, 158, 11, 0.12);
-  --color-danger:       #ef4444;
-  --color-danger-bg:    rgba(239, 68, 68, 0.12);
-  --color-info:         #06b6d4;
-  --color-info-bg:      rgba(6, 182, 212, 0.12);
+  /* Semantic colours */
+  --color-success:      #16a34a;
+  --color-success-bg:   rgba(22, 163, 74, 0.10);
+  --color-warning:      #d97706;
+  --color-warning-bg:   rgba(217, 119, 6, 0.10);
+  --color-danger:       #dc2626;
+  --color-danger-bg:    rgba(220, 38, 38, 0.08);
+  --color-info:         #0284c7;
+  --color-info-bg:      rgba(2, 132, 199, 0.10);
 
   /* Attendance status */
-  --color-present:      #22c55e;
-  --color-present-bg:   rgba(34, 197, 94, 0.12);
-  --color-late:         #f59e0b;
-  --color-late-bg:      rgba(245, 158, 11, 0.12);
-  --color-absent:       #ef4444;
-  --color-absent-bg:    rgba(239, 68, 68, 0.12);
+  --color-present:      #16a34a;
+  --color-present-bg:   rgba(22, 163, 74, 0.10);
+  --color-late:         #d97706;
+  --color-late-bg:      rgba(217, 119, 6, 0.10);
+  --color-absent:       #dc2626;
+  --color-absent-bg:    rgba(220, 38, 38, 0.08);
 
-  /* Text */
-  --color-text:         #f1f5f9;
-  --color-text-2:       #94a3b8;
-  --color-text-3:       #64748b;
-  --color-text-inverse: #0a0f1e;
+  /* Text — charcoal ramp */
+  --color-text:         #111827;
+  --color-text-2:       #374151;
+  --color-text-3:       #6B7280;
+  --color-text-inverse: #FFFFFF;
 
   /* Typography — fonts are self-hosted via next/font (see layout.tsx) */
   --font-sans:          var(--font-hanken), system-ui, -apple-system, sans-serif;
@@ -83,11 +88,11 @@
   --radius-2xl: 1.5rem;
   --radius-full: 9999px;
 
-  /* Shadows */
-  --shadow-sm:  0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
-  --shadow-md:  0 4px 6px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3);
-  --shadow-lg:  0 10px 15px rgba(0,0,0,0.5), 0 4px 6px rgba(0,0,0,0.4);
-  --shadow-xl:  0 20px 25px rgba(0,0,0,0.5), 0 10px 10px rgba(0,0,0,0.4);
+  /* Shadows — soft for light surfaces */
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md:  0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-lg:  0 10px 15px rgba(0,0,0,0.08), 0 4px 6px rgba(0,0,0,0.04);
+  --shadow-xl:  0 20px 25px rgba(0,0,0,0.10), 0 10px 10px rgba(0,0,0,0.04);
   --shadow-glow:0 0 20px var(--color-primary-glow);
 
   /* Transitions */
