@@ -171,6 +171,8 @@ export default async function StudentProfilePage() {
         }}>
           Password
         </h2>
+        <ChangePasswordForm portalPrefix="/student" />
+      </div>
     </div>
   );
 }
