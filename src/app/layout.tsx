@@ -42,7 +42,8 @@ export default function RootLayout({
     <html lang="en" className={`${hanken.variable} ${jetbrains.variable}`} data-scroll-behavior="smooth">
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+        <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body>
         <NavigationProgressProvider>
