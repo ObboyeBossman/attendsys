@@ -149,9 +149,9 @@ function ShimmerBlock({
  * Appears when navigating === true, fades out when the real page arrives.
  */
 export function PageShimmer() {
-  const { navigating } = useNavigation();
-  const [mounted, setMounted] = useState(false);
-  const [fading, setFading] = useState(false);
+  // TEST MODE: Forced mounted = true to allow visual inspection of PageShimmer
+  const mounted = true;
+  const fading = false;
   const fadeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
