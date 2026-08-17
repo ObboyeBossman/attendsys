@@ -32,15 +32,15 @@
   --color-gray-900:       #212121;
 
   /* --- APP SEMANTIC TOKENS --- */
-  --color-bg:           #F4F4F4;   /* app shell / screen bg */
-  --color-bg-secondary: #EEEEEE;
+  --color-bg:           #FAFAFA;   /* soft off-white canvas */
+  --color-bg-secondary: #F5F5F7;
 
-  --color-surface:      #FFFFFF;   /* cards, sheets, inputs */
-  --color-surface-2:    #F5F5F5;   /* subtle section fills */
-  --color-surface-3:    #EEEEEE;
+  --color-surface:      #FFFFFF;   /* pure white cards & sheets */
+  --color-surface-2:    #F5F5F7;   /* subtle section fills & shimmers */
+  --color-surface-3:    #EBECEF;
 
-  --color-border:       #E0E0E0;
-  --color-border-hover: #BDBDBD;
+  --color-border:       rgba(0, 0, 0, 0.05);
+  --color-border-hover: rgba(0, 0, 0, 0.1);
 
   /* Primary Brand Blue for CTAs / decision points */
   --color-primary:      #1A42C2;

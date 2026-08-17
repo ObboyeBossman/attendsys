@@ -134,7 +134,7 @@ function ShimmerBlock({
         width,
         borderRadius,
         background:
-          "linear-gradient(90deg, var(--color-surface-2) 0%, var(--color-surface-3) 50%, var(--color-surface-2) 100%)",
+          "linear-gradient(90deg, #F5F5F7 0%, #EBECEF 50%, #F5F5F7 100%)",
         backgroundSize: "200% 100%",
         animation: "shimmer 1.6s ease-in-out infinite",
         flexShrink: 0,
@@ -146,12 +146,12 @@ function ShimmerBlock({
 
 /**
  * PageShimmer — rendered inside the portal main content area.
- * Appears when navigating === true, fades out when the real page arrives.
+ * Hardcoded with subtle Grok/Linear refined aesthetic for visual testing.
  */
 export function PageShimmer() {
-  // TEST MODE: Forced mounted = true to allow visual inspection of PageShimmer
-  const mounted = true;
-  const fading = false;
+  const { navigating } = useNavigation();
+  const [mounted, setMounted] = useState(false);
+  const [fading, setFading] = useState(false);
   const fadeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -189,13 +189,13 @@ export function PageShimmer() {
         position: "absolute",
         inset: 0,
         zIndex: 50,
-        background: "var(--color-bg)",
+        background: "#FAFAFA",
         opacity: fading ? 0 : 1,
         transition: "opacity 260ms cubic-bezier(0.22, 1, 0.36, 1)",
-        padding: "var(--space-6) var(--space-8)",
+        padding: "24px 32px",
         display: "flex",
         flexDirection: "column",
-        gap: "var(--space-6)",
+        gap: "24px",
         overflowY: "hidden",
         pointerEvents: "none",
       }}
@@ -203,81 +203,84 @@ export function PageShimmer() {
       {/* Page header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          <ShimmerBlock height={28} width={200} borderRadius={6} />
-          <ShimmerBlock height={14} width={140} borderRadius={4} />
+          <ShimmerBlock height={26} width={180} borderRadius={8} />
+          <ShimmerBlock height={13} width={130} borderRadius={6} />
         </div>
-        <ShimmerBlock height={36} width={120} borderRadius={8} />
+        <ShimmerBlock height={36} width={120} borderRadius={9999} />
       </div>
 
       {/* Stat cards row */}
       <div
+        className="page-shimmer-stats"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-          gap: "var(--space-4)",
+          gap: "16px",
         }}
       >
         {[1, 2, 3, 4].map((i) => (
           <div
             key={i}
             style={{
-              background: "var(--color-surface)",
-              border: "1px solid var(--color-border)",
-              borderRadius: 12,
-              padding: "var(--space-5)",
+              background: "#FFFFFF",
+              border: "none",
+              borderRadius: 20,
+              padding: "20px",
               display: "flex",
               flexDirection: "column",
-              gap: 10,
+              gap: 12,
+              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02)",
               animationDelay: `${i * 60}ms`,
             }}
           >
-            <ShimmerBlock height={12} width={80} borderRadius={4} />
-            <ShimmerBlock height={32} width={100} borderRadius={6} />
-            <ShimmerBlock height={11} width={60} borderRadius={4} />
+            <ShimmerBlock height={12} width={70} borderRadius={6} />
+            <ShimmerBlock height={30} width={90} borderRadius={8} />
+            <ShimmerBlock height={11} width={50} borderRadius={6} />
           </div>
         ))}
       </div>
 
       {/* Main content area */}
       <div
+        className="page-shimmer-lower"
         style={{
           display: "grid",
           gridTemplateColumns: "1fr 280px",
-          gap: "var(--space-6)",
+          gap: "24px",
           flex: 1,
         }}
       >
         {/* Left column — list / table */}
         <div
           style={{
-            background: "var(--color-surface)",
-            border: "1px solid var(--color-border)",
-            borderRadius: 12,
-            padding: "var(--space-5)",
+            background: "#FFFFFF",
+            border: "none",
+            borderRadius: 20,
+            padding: "24px",
             display: "flex",
             flexDirection: "column",
-            gap: 14,
+            gap: 16,
+            boxShadow: "0 2px 12px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02)",
           }}
         >
-          <ShimmerBlock height={20} width={160} borderRadius={5} />
+          <ShimmerBlock height={20} width={150} borderRadius={6} />
           {[1, 2, 3, 4, 5].map((i) => (
             <div
               key={i}
               style={{
                 display: "flex",
-                gap: 12,
+                gap: 14,
                 alignItems: "center",
                 paddingBottom: 14,
-                borderBottom:
-                  i < 5 ? "1px solid var(--color-border)" : "none",
+                borderBottom: i < 5 ? "1px solid rgba(0, 0, 0, 0.04)" : "none",
               }}
             >
               <ShimmerBlock height={36} width={36} borderRadius="50%" style={{ flexShrink: 0 }} />
               <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 6 }}>
-                <ShimmerBlock height={14} width="70%" borderRadius={4} />
-                <ShimmerBlock height={11} width="45%" borderRadius={4} />
+                <ShimmerBlock height={14} width="65%" borderRadius={6} />
+                <ShimmerBlock height={11} width="40%" borderRadius={6} />
               </div>
-              <ShimmerBlock height={22} width={60} borderRadius={20} />
+              <ShimmerBlock height={24} width={70} borderRadius={9999} />
             </div>
           ))}
         </div>
@@ -285,23 +288,24 @@ export function PageShimmer() {
         {/* Right column — side card */}
         <div
           style={{
-            background: "var(--color-surface)",
-            border: "1px solid var(--color-border)",
-            borderRadius: 12,
-            padding: "var(--space-5)",
+            background: "#FFFFFF",
+            border: "none",
+            borderRadius: 20,
+            padding: "24px",
             display: "flex",
             flexDirection: "column",
-            gap: 14,
+            gap: 16,
+            boxShadow: "0 2px 12px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02)",
           }}
         >
-          <ShimmerBlock height={20} width={120} borderRadius={5} />
+          <ShimmerBlock height={18} width={110} borderRadius={6} />
           {[1, 2, 3].map((i) => (
             <div key={i} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <ShimmerBlock height={12} width="60%" borderRadius={4} />
-              <ShimmerBlock height={34} width="100%" borderRadius={8} />
+              <ShimmerBlock height={12} width="55%" borderRadius={6} />
+              <ShimmerBlock height={38} width="100%" borderRadius={12} />
             </div>
           ))}
-          <ShimmerBlock height={40} width="100%" borderRadius={8} style={{ marginTop: 8 }} />
+          <ShimmerBlock height={42} width="100%" borderRadius={9999} style={{ marginTop: 8 }} />
         </div>
       </div>
 
