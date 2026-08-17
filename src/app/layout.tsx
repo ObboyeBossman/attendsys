@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { NavigationProgressProvider } from "@/components/layout/NavigationProgress";
 import { NavProgressBar } from "@/components/layout/PageTransition";
-import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 // Google Fonts loaded via CSS @import in globals.css instead of next/font
 // to avoid build-time network fetches in restricted environments.
@@ -46,12 +45,10 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>
       <body>
-        <ThemeProvider>
-          <NavigationProgressProvider>
-            <NavProgressBar />
-            {children}
-          </NavigationProgressProvider>
-        </ThemeProvider>
+        <NavigationProgressProvider>
+          <NavProgressBar />
+          {children}
+        </NavigationProgressProvider>
       </body>
     </html>
   );
