@@ -9,6 +9,25 @@ import { PageShimmer } from "./PageTransition";
 import { NoticeBanner } from "./NoticeBanner";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 
+import {
+  LayoutDashboard,
+  Building2,
+  Calendar,
+  Users,
+  BookOpen,
+  FileCheck2,
+  Flag,
+  Settings,
+  Video,
+  Clock,
+  User,
+  CheckCircle2,
+  Bell,
+  Star,
+  History,
+  GraduationCap,
+} from "lucide-react";
+
 export type NavIcon =
   | "dashboard"
   | "institution"
@@ -17,12 +36,12 @@ export type NavIcon =
   | "groups"
   | "users"
   | "courses"
+  | "book"
   | "audit"
   | "feedback"
-  | "settings"
-  | "book"
-  | "video"
   | "flag"
+  | "settings"
+  | "video"
   | "clock"
   | "user"
   | "check"
@@ -32,46 +51,46 @@ export type NavIcon =
   | "history";
 
 function Icon({ name, size = 18 }: { name: NavIcon; size?: number }) {
-  const props = { width: size, height: size, viewBox: `0 0 ${size} ${size}`, fill: "none", stroke: "currentColor", strokeWidth: "1.75", strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+  const iconProps = { size, strokeWidth: 1.75 };
 
   switch (name) {
     case "dashboard":
-      return <svg {...props}><rect x="1" y="1" width="7" height="7" rx="1.5" /><rect x="10" y="1" width="7" height="7" rx="1.5" /><rect x="1" y="10" width="7" height="7" rx="1.5" /><rect x="10" y="10" width="7" height="7" rx="1.5" /></svg>;
+      return <LayoutDashboard {...iconProps} />;
     case "institution":
-      return <svg {...props}><path d="M1 17h16M3 17V7l6-5 6 5v10M7 17v-5h4v5" /></svg>;
+      return <Building2 {...iconProps} />;
     case "academic":
-      return <svg {...props}><rect x="1" y="3" width="16" height="14" rx="1.5" /><path d="M1 7h16M6 1v4M12 1v4" /></svg>;
+      return <GraduationCap {...iconProps} />;
     case "semesters":
-      return <svg {...props}><circle cx="9" cy="9" r="8" /><path d="M9 5v4l3 3" /></svg>;
+      return <Calendar {...iconProps} />;
     case "groups":
-      return <svg {...props}><circle cx="6" cy="6" r="3" /><circle cx="12" cy="6" r="3" /><path d="M1 16c0-2.76 2.24-5 5-5M12 11c2.76 0 5 2.24 5 5" /><path d="M9 11c1.65 0 3 1.35 3 3" /></svg>;
     case "users":
-      return <svg {...props}><circle cx="7" cy="6" r="3"/><circle cx="13" cy="6" r="3"/><path d="M1 18c0-3.31 2.69-6 6-6"/><path d="M13 12c3.31 0 6 2.69 6 6"/><path d="M10 12c1.66 0 3 1.34 3 3"/></svg>;
+      return <Users {...iconProps} />;
     case "courses":
     case "book":
-      return <svg {...props}><path d="M4 2h12a1 1 0 011 1v14a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z"/><path d="M7 7h6M7 10h6M7 13h4"/></svg>;
+      return <BookOpen {...iconProps} />;
     case "audit":
-      return <svg {...props}><path d="M3 1h12a1 1 0 011 1v14a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1z" /><path d="M6 6h6M6 9h6M6 12h4" /><circle cx="14" cy="14" r="3.5" fill="var(--color-bg)" stroke="currentColor" /><path d="M12.5 14h2M13.5 13v2" /></svg>;
+      return <FileCheck2 {...iconProps} />;
     case "feedback":
     case "flag":
-      return <svg {...props}><path d="M4 2v18M4 2h12l-3 5 3 5H4"/></svg>;
+      return <Flag {...iconProps} />;
     case "settings":
-      return <svg {...props}><circle cx="9" cy="9" r="3" /><path d="M9 1v2M9 15v2M1 9h2M15 9h2M3.22 3.22l1.42 1.42M13.36 13.36l1.42 1.42M3.22 14.78l1.42-1.42M13.36 4.64l1.42-1.42" /></svg>;
+      return <Settings {...iconProps} />;
     case "video":
-      return <svg {...props}><rect x="2" y="5" width="12" height="10" rx="1.5"/><path d="M14 8l5-3v9l-5-3"/></svg>;
+      return <Video {...iconProps} />;
     case "clock":
+      return <Clock {...iconProps} />;
     case "history":
-      return <svg {...props}><circle cx="10" cy="10" r="8"/><path d="M10 5v5l4 4"/></svg>;
+      return <History {...iconProps} />;
     case "user":
-      return <svg {...props}><circle cx="10" cy="6" r="4"/><path d="M2 19c0-4.42 3.58-8 8-8s8 3.58 8 8"/></svg>;
+      return <User {...iconProps} />;
     case "check":
-      return <svg {...props}><path d="M4 10l5 5L19 4"/><circle cx="10" cy="10" r="9"/></svg>;
+      return <CheckCircle2 {...iconProps} />;
     case "bell":
-      return <svg {...props}><path d="M10 2a6 6 0 00-6 6v3l-2 4h16l-2-4V8a6 6 0 00-6-6z"/><path d="M8 17a2 2 0 004 0"/></svg>;
+      return <Bell {...iconProps} />;
     case "calendar":
-      return <svg {...props}><rect x="2" y="4" width="16" height="15" rx="1.5"/><path d="M2 9h16M7 2v4M13 2v4"/></svg>;
+      return <Calendar {...iconProps} />;
     case "star":
-      return <svg {...props}><path d="M10 2l2.36 4.78 5.27.77-3.81 3.72.9 5.24L10 14.1l-4.72 2.41.9-5.24L2.37 7.55l5.27-.77L10 2z"/></svg>;
+      return <Star {...iconProps} />;
     default:
       return null;
   }
