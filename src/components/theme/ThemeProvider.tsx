@@ -12,7 +12,7 @@ import {
 export type ThemePreference = "system" | "light" | "dark";
 export type ResolvedTheme = "light" | "dark";
 
-const STORAGE_KEY = "atten-sys:theme";
+const STORAGE_KEY = "attendsys:theme";
 
 interface ThemeContextValue {
   preference: ThemePreference;
