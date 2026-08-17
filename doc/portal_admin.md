@@ -1,11 +1,11 @@
-# ATTEN-SYS — Super Admin Portal
+# ATTENDSYS — Super Admin Portal
 ## Coding Agent Prompt & Requirements Document
 
 ---
 
 ## Project Context
 
-You are building the **Super Admin Portal** for ATTEN-SYS, a university attendance management system. The full stack is **Next.js (App Router)** on the frontend and **Supabase** (PostgreSQL + Auth + Realtime) on the backend. The database schema, all RLS policies, trigger functions, and business logic functions are fully deployed. Do not modify the database in any way. Build only the UI and data layer on top of it.
+You are building the **Super Admin Portal** for ATTENDSYS, a university attendance management system. The full stack is **Next.js (App Router)** on the frontend and **Supabase** (PostgreSQL + Auth + Realtime) on the backend. The database schema, all RLS policies, trigger functions, and business logic functions are fully deployed. Do not modify the database in any way. Build only the UI and data layer on top of it.
 
 The super admin portal lives under the route group `/admin/...`. Middleware must verify `user_profiles.role = 'super_admin'` AND `user_profiles.is_active = true` for every request. Any other role must be redirected to their own portal or the login page.
 

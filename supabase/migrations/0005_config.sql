@@ -1,5 +1,5 @@
 -- =============================================================================
--- ATTEN-SYS — 0005_config.sql
+-- ATTENDSYS — 0005_config.sql
 -- System configuration: operational constants read by the app at runtime.
 -- Apply after 0004_rls.sql.
 --

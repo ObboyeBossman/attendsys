@@ -1,5 +1,5 @@
 -- =============================================================================
--- ATTEN-SYS — 0002_functions.sql
+-- ATTENDSYS — 0002_functions.sql
 -- All functions: utility, RLS helpers, business logic.
 -- Apply after 0001_schema.sql, before 0003_triggers.sql.
 --

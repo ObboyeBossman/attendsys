@@ -1,4 +1,4 @@
-# Claude Agent Rules — atten-sys
+# Claude Agent Rules — attendsys
 
 > These rules apply specifically to Claude (Anthropic) when operating as a development agent on this project.
 > They extend and are subordinate to the design and quality standards defined in `AGENTS.md`.
