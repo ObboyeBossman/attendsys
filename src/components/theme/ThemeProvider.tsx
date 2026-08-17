@@ -42,24 +42,21 @@ function resolve(preference: ThemePreference): ResolvedTheme {
   return preference;
 }
 
+function getSavedPreference(): ThemePreference {
+  if (typeof window === "undefined") return "system";
+  const stored = localStorage.getItem(STORAGE_KEY) as ThemePreference | null;
+  return stored === "light" || stored === "dark" || stored === "system"
+    ? stored
+    : "system";
+}
+
 interface ThemeProviderProps {
   children: ReactNode;
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  const [preference, setPreferenceState] = useState<ThemePreference>("system");
-  const [resolved, setResolved] = useState<ResolvedTheme>("dark");
-
-  // Hydrate from localStorage on mount
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY) as ThemePreference | null;
-    const pref: ThemePreference =
-      stored === "light" || stored === "dark" || stored === "system"
-        ? stored
-        : "system";
-    setPreferenceState(pref);
-    setResolved(resolve(pref));
-  }, []);
+  const [preference, setPreferenceState] = useState<ThemePreference>(getSavedPreference);
+  const [resolved, setResolved] = useState<ResolvedTheme>(() => resolve(getSavedPreference()));
 
   // Listen for OS-level changes when in "system" mode
   useEffect(() => {
