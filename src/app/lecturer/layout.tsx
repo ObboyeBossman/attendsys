@@ -4,7 +4,7 @@ import "@/app/portal-light-theme.css";
 import "@/app/portal-dark-theme.css";
 
 export const metadata: Metadata = {
-  title: { default: "Lecturer Portal", template: "%s | Lecturer | ATTEN-SYS" },
+  title: { default: "Lecturer Portal", template: "%s | Lecturer | ATTENDSYS" },
 };
 
 const LECTURER_NAV = [

@@ -4,7 +4,7 @@ import "@/app/portal-light-theme.css";
 import "@/app/portal-dark-theme.css";
 
 export const metadata: Metadata = {
-  title: { default: "Rep Portal", template: "%s | Rep | ATTEN-SYS" },
+  title: { default: "Rep Portal", template: "%s | Rep | ATTENDSYS" },
 };
 
 const REP_NAV = [

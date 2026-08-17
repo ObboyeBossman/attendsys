@@ -5,7 +5,7 @@ import "@/app/portal-light-theme.css";
 import "@/app/portal-dark-theme.css";
 
 export const metadata: Metadata = {
-  title: { default: "Student Portal", template: "%s | Student | ATTEN-SYS" },
+  title: { default: "Student Portal", template: "%s | Student | ATTENDSYS" },
 };
 
 export default async function StudentLayout({ children }: { children: React.ReactNode }) {
