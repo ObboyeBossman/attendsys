@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { AdminContentWrapper } from "./AdminContentWrapper";
-import { AdminThemeApplier } from "./AdminThemeApplier";
 import { NoticeBanner } from "@/components/layout/NoticeBanner";
 import styles from "./admin.module.css";
 import "./admin-light-theme.css";
-import "./admin-dark-theme.css";
 
 export const metadata: Metadata = {
   title: { default: "Admin Portal", template: "%s | Admin | Attendsys" },
@@ -13,9 +11,7 @@ export const metadata: Metadata = {
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    /* Default to dark; AdminThemeApplier swaps to admin-light/admin-dark on the client */
-    <div className={styles.adminRoot} data-portal="admin-dark">
-      <AdminThemeApplier />
+    <div className={styles.adminRoot} data-portal="admin-light">
       <AdminSidebar />
       <main className={styles.adminMain}>
         <div className={styles.adminNoticeBannerBar}>
