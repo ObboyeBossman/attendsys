@@ -42,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${hanken.variable} ${jetbrains.variable}`} data-scroll-behavior="smooth">
+    <html lang="en" className={`${hanken.variable} ${jetbrains.variable}`} data-scroll-behavior="smooth" style={{ backgroundColor: '#ffffff' }}>
       <head>
         {/* Inline theme-color — parsed by the OS before JS hydration to prevent status bar flash */}
         <meta name="theme-color" content="#ffffff" />
