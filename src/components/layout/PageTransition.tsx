@@ -98,8 +98,7 @@ export function NavProgressBar() {
         style={{
           height: "100%",
           width: `${width}%`,
-          background:
-            "linear-gradient(90deg, var(--color-primary), var(--color-secondary))",
+          background: "#1A42C2",
           boxShadow: "0 0 8px var(--color-primary-glow)",
           transition: completing
             ? "width 200ms cubic-bezier(0.22, 1, 0.36, 1), opacity 300ms 50ms ease"
