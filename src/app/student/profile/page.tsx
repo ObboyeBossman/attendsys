@@ -5,7 +5,6 @@ import { r2PublicUrl } from "@/lib/r2";
 import { EditPhoneField } from "@/components/student/EditPhoneField";
 import { AvatarUpload } from "@/components/student/AvatarUpload";
 import { ChangePasswordForm } from "@/components/auth/ChangePasswordForm";
-import { AppearanceCard } from "@/components/theme/AppearanceCard";
 
 export const metadata: Metadata = { title: "My Profile" };
 
@@ -172,23 +171,6 @@ export default async function StudentProfilePage() {
         }}>
           Password
         </h2>
-        <ChangePasswordForm portalPrefix="/student" />
-      </div>
-
-      {/* ── Appearance ── */}
-      <div>
-        <h2 style={{
-          fontSize: "var(--text-xs)",
-          fontWeight: 700,
-          textTransform: "uppercase",
-          letterSpacing: "0.06em",
-          color: "var(--color-text-3)",
-          marginBottom: "var(--space-3)",
-        }}>
-          Appearance
-        </h2>
-        <AppearanceCard />
-      </div>
     </div>
   );
 }
