@@ -7,35 +7,60 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import styles from "./PortalLayout.module.css";
 import { PageShimmer } from "./PageTransition";
 import { NoticeBanner } from "./NoticeBanner";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
-type NavIcon =
+export type NavIcon =
   | "dashboard"
+  | "institution"
+  | "academic"
+  | "semesters"
+  | "groups"
+  | "users"
+  | "courses"
+  | "audit"
+  | "feedback"
+  | "settings"
   | "book"
   | "video"
-  | "users"
   | "flag"
   | "clock"
   | "user"
   | "check"
   | "bell"
   | "calendar"
-  | "star";
+  | "star"
+  | "history";
 
-function Icon({ name, size = 20 }: { name: NavIcon; size?: number }) {
+function Icon({ name, size = 18 }: { name: NavIcon; size?: number }) {
   const props = { width: size, height: size, viewBox: `0 0 ${size} ${size}`, fill: "none", stroke: "currentColor", strokeWidth: "1.75", strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
 
   switch (name) {
     case "dashboard":
-      return <svg {...props}><rect x="1" y="1" width="8" height="8" rx="1.5" /><rect x="11" y="1" width="8" height="8" rx="1.5" /><rect x="1" y="11" width="8" height="8" rx="1.5" /><rect x="11" y="11" width="8" height="8" rx="1.5" /></svg>;
-    case "book":
-      return <svg {...props}><path d="M4 2h12a1 1 0 011 1v14a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z"/><path d="M7 7h6M7 10h6M7 13h4"/></svg>;
-    case "video":
-      return <svg {...props}><rect x="2" y="5" width="12" height="10" rx="1.5"/><path d="M14 8l5-3v9l-5-3"/></svg>;
+      return <svg {...props}><rect x="1" y="1" width="7" height="7" rx="1.5" /><rect x="10" y="1" width="7" height="7" rx="1.5" /><rect x="1" y="10" width="7" height="7" rx="1.5" /><rect x="10" y="10" width="7" height="7" rx="1.5" /></svg>;
+    case "institution":
+      return <svg {...props}><path d="M1 17h16M3 17V7l6-5 6 5v10M7 17v-5h4v5" /></svg>;
+    case "academic":
+      return <svg {...props}><rect x="1" y="3" width="16" height="14" rx="1.5" /><path d="M1 7h16M6 1v4M12 1v4" /></svg>;
+    case "semesters":
+      return <svg {...props}><circle cx="9" cy="9" r="8" /><path d="M9 5v4l3 3" /></svg>;
+    case "groups":
+      return <svg {...props}><circle cx="6" cy="6" r="3" /><circle cx="12" cy="6" r="3" /><path d="M1 16c0-2.76 2.24-5 5-5M12 11c2.76 0 5 2.24 5 5" /><path d="M9 11c1.65 0 3 1.35 3 3" /></svg>;
     case "users":
       return <svg {...props}><circle cx="7" cy="6" r="3"/><circle cx="13" cy="6" r="3"/><path d="M1 18c0-3.31 2.69-6 6-6"/><path d="M13 12c3.31 0 6 2.69 6 6"/><path d="M10 12c1.66 0 3 1.34 3 3"/></svg>;
+    case "courses":
+    case "book":
+      return <svg {...props}><path d="M4 2h12a1 1 0 011 1v14a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z"/><path d="M7 7h6M7 10h6M7 13h4"/></svg>;
+    case "audit":
+      return <svg {...props}><path d="M3 1h12a1 1 0 011 1v14a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1z" /><path d="M6 6h6M6 9h6M6 12h4" /><circle cx="14" cy="14" r="3.5" fill="var(--color-bg)" stroke="currentColor" /><path d="M12.5 14h2M13.5 13v2" /></svg>;
+    case "feedback":
     case "flag":
       return <svg {...props}><path d="M4 2v18M4 2h12l-3 5 3 5H4"/></svg>;
+    case "settings":
+      return <svg {...props}><circle cx="9" cy="9" r="3" /><path d="M9 1v2M9 15v2M1 9h2M15 9h2M3.22 3.22l1.42 1.42M13.36 13.36l1.42 1.42M3.22 14.78l1.42-1.42M13.36 4.64l1.42-1.42" /></svg>;
+    case "video":
+      return <svg {...props}><rect x="2" y="5" width="12" height="10" rx="1.5"/><path d="M14 8l5-3v9l-5-3"/></svg>;
     case "clock":
+    case "history":
       return <svg {...props}><circle cx="10" cy="10" r="8"/><path d="M10 5v5l4 4"/></svg>;
     case "user":
       return <svg {...props}><circle cx="10" cy="6" r="4"/><path d="M2 19c0-4.42 3.58-8 8-8s8 3.58 8 8"/></svg>;
@@ -52,12 +77,17 @@ function Icon({ name, size = 20 }: { name: NavIcon; size?: number }) {
   }
 }
 
-interface NavItem {
+export interface NavChildItem {
+  label: string;
+  href: string;
+}
+
+export interface NavItem {
   label: string;
   href: string;
   icon: NavIcon;
-  /** Optional unread/alert count shown as a badge on the nav icon */
   badge?: number;
+  children?: readonly NavChildItem[];
 }
 
 interface SwitchTarget {
@@ -65,8 +95,8 @@ interface SwitchTarget {
   href: string;
 }
 
-interface PortalLayoutProps {
-  role: "lecturer" | "rep" | "student";
+export interface PortalLayoutProps {
+  role: "super_admin" | "lecturer" | "rep" | "student";
   roleLabel: string;
   navItems: readonly NavItem[];
   homeUrl: string;
@@ -76,44 +106,29 @@ interface PortalLayoutProps {
 }
 
 const ROLE_COLORS: Record<string, string> = {
-  lecturer: "#6366f1",
-  rep: "#f59e0b",
-  student: "#22c55e",
+  super_admin: "var(--color-primary)",
+  lecturer: "#1A42C2",
+  rep: "#1A42C2",
+  student: "#1A42C2",
 };
 
 const ROLE_INITIALS: Record<string, string> = {
+  super_admin: "A",
   lecturer: "L",
   rep: "R",
   student: "S",
 };
 
-// ── Hoisted sub-components (outside PortalLayout to avoid recreating on render) ──
-
-interface BrandMarkProps {
-  roleColor: string;
-  roleLabel: string;
-}
-
-function BrandMark({ roleColor, roleLabel }: BrandMarkProps) {
+// ── Hoisted BrandMark sub-component ──────────────────────────────────────────
+function BrandMark({ roleLabel }: { roleLabel: string }) {
   return (
     <>
       <div className={styles.brandIcon}>
-        <svg width="22" height="22" viewBox="0 0 28 28" fill="none">
-          <defs>
-            <linearGradient id="brandGradPortal" x1="0" y1="0" x2="28" y2="28">
-              <stop stopColor="#ef4444" />
-              <stop offset="1" stopColor="#3b82f6" />
-            </linearGradient>
-          </defs>
-          <rect width="28" height="28" rx="8" fill="url(#brandGradPortal)" />
-          <path d="M7 10h14M7 14h10M7 18h6" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
-          <circle cx="21" cy="18" r="4" fill="#22c55e" stroke="#fff" strokeWidth="1.5" />
-          <path d="M19.5 18l1 1 2-2" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        <BrandLogo size="md" />
       </div>
       <div>
         <div className={styles.brandName}>Attendsys</div>
-        <div className={styles.brandRole} style={{ color: roleColor }}>{roleLabel}</div>
+        <div className={styles.brandRole}>{roleLabel}</div>
       </div>
     </>
   );
@@ -131,49 +146,70 @@ interface NavLinksProps {
   userInitial: string;
 }
 
-function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, closeDrawer, onSignOut, userInitial }: NavLinksProps) {
+function NavLinks({ navItems, pathname, roleColor, roleLabel, switchTo, closeDrawer, onSignOut, userInitial }: NavLinksProps) {
   return (
     <>
       <nav className={styles.nav} aria-label={`${roleLabel} navigation`}>
         {navItems.map((item) => {
-          const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+          const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href + "/"));
+          const hasChildren = item.children && item.children.length > 0;
+          const isChildActive = hasChildren && item.children?.some((child) => pathname === child.href || pathname.startsWith(child.href + "/"));
+
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={closeDrawer}
-              className={`${styles.navItem} ${isActive ? styles.navItemActive : ""}`}
-              style={isActive ? { "--role-color": roleColor } as React.CSSProperties : undefined}
-            >
-              <span className={styles.navIcon} style={{ position: "relative" }}>
-                <Icon name={item.icon} size={18} />
-                {!!item.badge && item.badge > 0 && (
-                  <span
-                    aria-label={`${item.badge} unread`}
-                    style={{
-                      position: "absolute",
-                      top: -4,
-                      right: -6,
-                      minWidth: 16,
-                      height: 16,
-                      borderRadius: "var(--radius-full)",
-                      background: "var(--color-primary)",
-                      color: "#fff",
-                      fontSize: 10,
-                      fontWeight: 700,
-                      display: "inline-flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      padding: "0 4px",
-                      lineHeight: 1,
-                    }}
-                  >
-                    {item.badge > 99 ? "99+" : item.badge}
-                  </span>
-                )}
-              </span>
-              <span>{item.label}</span>
-            </Link>
+            <div key={item.href} className={styles.navGroup}>
+              <Link
+                href={item.href}
+                onClick={closeDrawer}
+                className={`${styles.navItem} ${isActive || isChildActive ? styles.navItemActive : ""}`}
+                style={(isActive || isChildActive) ? { "--role-color": roleColor } as React.CSSProperties : undefined}
+              >
+                <span className={styles.navIcon} style={{ position: "relative" }}>
+                  <Icon name={item.icon} size={18} />
+                  {!!item.badge && item.badge > 0 && (
+                    <span
+                      aria-label={`${item.badge} unread`}
+                      style={{
+                        position: "absolute",
+                        top: -4,
+                        right: -6,
+                        minWidth: 16,
+                        height: 16,
+                        borderRadius: "var(--radius-full)",
+                        background: "var(--color-primary)",
+                        color: "#fff",
+                        fontSize: 10,
+                        fontWeight: 700,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: "0 4px",
+                        lineHeight: 1,
+                      }}
+                    >
+                      {item.badge > 99 ? "99+" : item.badge}
+                    </span>
+                  )}
+                </span>
+                <span>{item.label}</span>
+              </Link>
+              {hasChildren && (
+                <div className={styles.childNav}>
+                  {item.children?.map((child) => {
+                    const isChildSelfActive = pathname === child.href || pathname.startsWith(child.href + "/");
+                    return (
+                      <Link
+                        key={child.href}
+                        href={child.href}
+                        onClick={closeDrawer}
+                        className={`${styles.childNavItem} ${isChildSelfActive ? styles.childNavItemActive : ""}`}
+                      >
+                        {child.label}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           );
         })}
       </nav>
@@ -188,10 +224,7 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
         </div>
       )}
       <div className={styles.sidebarFooter}>
-        <div
-          className={styles.avatar}
-          style={{ background: `linear-gradient(135deg, ${roleColor}, #3b82f6)` }}
-        >
+        <div className={styles.avatar}>
           {userInitial}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--space-2)", marginLeft: "auto" }}>
@@ -207,20 +240,23 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
   );
 }
 
-export function PortalLayout({ role, roleLabel, navItems, homeUrl, children, switchTo }: PortalLayoutProps) {
+export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: PortalLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
   const roleColor = ROLE_COLORS[role];
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [userInitial, setUserInitial] = useState(ROLE_INITIALS[role]);
-  const portalDataAttr = "portal-light";
 
-  // Fetch the real user name on mount to replace the generic role initial
+  // Fetch real user name on mount
   useEffect(() => {
     async function fetchInitial() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
+      if (role === "super_admin") {
+        setUserInitial("A");
+        return;
+      }
       const table = role === "rep" ? "students" : role === "lecturer" ? "lecturers" : "students";
       const { data } = await (supabase as any)
         .from(table)
@@ -231,12 +267,9 @@ export function PortalLayout({ role, roleLabel, navItems, homeUrl, children, swi
     }
     fetchInitial();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [role]);
 
-  // Close drawer on route change. This is a legitimate case of syncing
-  // local UI state to an external signal (the URL) rather than deriving
-  // it during render, since drawerOpen must remain independently toggleable
-  // by the menu button between navigations.
+  // Close drawer on route change
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setDrawerOpen((open) => (open ? false : open));
@@ -273,11 +306,11 @@ export function PortalLayout({ role, roleLabel, navItems, homeUrl, children, swi
   }
 
   return (
-    <div className={styles.root} data-portal={portalDataAttr}>
+    <div className={styles.root} data-portal="portal-light">
       {/* ── Desktop sidebar ──────────────────────────────────────── */}
       <aside className={styles.sidebar}>
         <div className={styles.brand}>
-          <BrandMark roleColor={roleColor} roleLabel={roleLabel} />
+          <BrandMark roleLabel={roleLabel} />
         </div>
         <NavLinks
           navItems={navItems}
@@ -305,45 +338,28 @@ export function PortalLayout({ role, roleLabel, navItems, homeUrl, children, swi
           </svg>
         </button>
         <div className={styles.mobileTopbarBrand}>
+          <BrandLogo size="sm" />
           <div>
             <div className={styles.mobileTopbarTitle}>Attendsys</div>
-            <div className={styles.mobileTopbarRole} style={{ color: roleColor }}>{roleLabel}</div>
+            <div className={styles.mobileTopbarRole}>{roleLabel}</div>
           </div>
         </div>
       </header>
 
       {/* ── Mobile drawer overlay ─────────────────────────────────── */}
-      {/* Backdrop */}
       <div
         className={`${styles.drawerBackdrop} ${drawerOpen ? styles.drawerBackdropOpen : ""}`}
         onClick={closeDrawer}
         aria-hidden="true"
       />
-      {/* Drawer panel */}
       <aside
         className={`${styles.drawer} ${drawerOpen ? styles.drawerOpen : ""}`}
         aria-label="Navigation menu"
         aria-hidden={!drawerOpen}
       >
         <div className={styles.drawerHeader}>
-          {/* Logo on the left inside the drawer */}
           <div className={styles.drawerBrand}>
-            <svg width="32" height="32" viewBox="0 0 28 28" fill="none">
-              <defs>
-                <linearGradient id="brandGradDrawer" x1="0" y1="0" x2="28" y2="28">
-                  <stop stopColor="#ef4444" />
-                  <stop offset="1" stopColor="#3b82f6" />
-                </linearGradient>
-              </defs>
-              <rect width="28" height="28" rx="8" fill="url(#brandGradDrawer)" />
-              <path d="M7 10h14M7 14h10M7 18h6" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
-              <circle cx="21" cy="18" r="4" fill="#22c55e" stroke="#fff" strokeWidth="1.5" />
-              <path d="M19.5 18l1 1 2-2" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <div>
-              <div className={styles.brandName}>Attendsys</div>
-              <div className={styles.brandRole} style={{ color: roleColor }}>{roleLabel}</div>
-            </div>
+            <BrandMark roleLabel={roleLabel} />
           </div>
           <button
             className={styles.drawerClose}
@@ -370,8 +386,6 @@ export function PortalLayout({ role, roleLabel, navItems, homeUrl, children, swi
 
       {/* ── Main content ─────────────────────────────────────────── */}
       <main className={styles.main}>
-        {/* Notice banners live inside main so they don't participate
-            in the root flex row and break the desktop layout */}
         <div className={styles.noticeBannerBar}>
           <NoticeBanner />
         </div>
@@ -384,7 +398,7 @@ export function PortalLayout({ role, roleLabel, navItems, homeUrl, children, swi
       {/* ── Bottom nav (mobile quick-access) ─────────────────────── */}
       <nav className={styles.bottomNav} aria-label="Mobile navigation">
         {navItems.slice(0, switchTo ? 4 : 5).map((item) => {
-          const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+          const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href + "/"));
           return (
             <Link
               key={item.href}
