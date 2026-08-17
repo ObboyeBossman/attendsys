@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { SettingsClient, type Setting } from "./SettingsClient";
-import { AppearanceCard } from "@/components/theme/AppearanceCard";
 
 export const metadata: Metadata = { title: "System Settings" };
 export const revalidate = 0; // always fresh — settings changes must be immediate
@@ -118,23 +117,6 @@ export default async function SettingsPage() {
           Click <strong>Edit</strong> on any setting to change its value. Each change is written
           to the database immediately and logged in the audit trail.
         </span>
-      </div>
-
-      {/* Appearance */}
-      <div style={{ marginBottom: "var(--space-8)" }}>
-        <h2
-          style={{
-            fontSize: "var(--text-sm)",
-            fontWeight: 700,
-            color: "var(--color-text-3)",
-            textTransform: "uppercase",
-            letterSpacing: "0.06em",
-            marginBottom: "var(--space-3)",
-          }}
-        >
-          Appearance
-        </h2>
-        <AppearanceCard />
       </div>
 
       {/* System settings section header */}
