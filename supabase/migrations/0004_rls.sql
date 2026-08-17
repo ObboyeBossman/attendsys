@@ -1,5 +1,5 @@
 -- =============================================================================
--- ATTENDSYS — 0004_rls.sql
+-- Attendsys — 0004_rls.sql
 -- Row Level Security: enable, policies, table by table.
 -- Apply after 0003_triggers.sql, before 0005_seed.sql.
 --

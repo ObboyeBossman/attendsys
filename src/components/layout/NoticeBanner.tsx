@@ -255,7 +255,7 @@ export function NoticeBanner() {
     banners.push({
       kind: "pwa",
       icon: <DownloadIcon />,
-      message: "Install ATTENDSYS for faster access and offline support.",
+      message: "Install Attendsys for faster access and offline support.",
       action: { label: "Install app", onClick: handleInstall },
     });
   }

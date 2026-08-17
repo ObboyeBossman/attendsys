@@ -144,7 +144,7 @@ const BrandMark = () => (
       </svg>
     </div>
     <div>
-      <div className={styles.brandName}>ATTENDSYS</div>
+      <div className={styles.brandName}>Attendsys</div>
       <div className={styles.brandRole}>Super Admin</div>
     </div>
   </>
@@ -302,7 +302,7 @@ export function AdminSidebar() {
         </button>
         {/* Mobile topbar brand — text only, no logo */}
         <div className={styles.mobileTopbarBrand}>
-          <div className={styles.brandName}>ATTENDSYS</div>
+          <div className={styles.brandName}>Attendsys</div>
           <div className={styles.brandRole}>Super Admin</div>
         </div>
       </header>

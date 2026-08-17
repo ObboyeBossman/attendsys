@@ -1,11 +1,11 @@
-# ATTENDSYS — Lecturer Portal
+# Attendsys — Lecturer Portal
 ## Coding Agent Prompt & Requirements Document
 
 ---
 
 ## Project Context
 
-You are building the **Lecturer Portal** for ATTENDSYS, a university attendance management system. The full stack is **Next.js (App Router)** on the frontend and **Supabase** (PostgreSQL + Auth + Realtime) on the backend, with **Cloudflare R2** for media. The database schema, all RLS policies, trigger functions, and business logic functions are fully deployed. Do not modify the database in any way. Build only the UI and data layer on top of it.
+You are building the **Lecturer Portal** for Attendsys, a university attendance management system. The full stack is **Next.js (App Router)** on the frontend and **Supabase** (PostgreSQL + Auth + Realtime) on the backend, with **Cloudflare R2** for media. The database schema, all RLS policies, trigger functions, and business logic functions are fully deployed. Do not modify the database in any way. Build only the UI and data layer on top of it.
 
 The lecturer portal lives under the route group `/lecturer/...`. Middleware must verify `user_profiles.role = 'lecturer'` AND `user_profiles.is_active = true` for the authenticated user. A user with any other role must be redirected to their appropriate portal or the login page.
 

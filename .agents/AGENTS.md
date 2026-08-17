@@ -1,5 +1,5 @@
-> **Claude agents:** After reading this file, you must also read `.agents/CLAUDE.md` before writing any code.
-> `CLAUDE.md` defines the workflow rules, git identity, branching strategy, security requirements, and validation steps that apply specifically to Claude in this project. Both files must be read and understood before implementation begins.
+<!-- > **Claude agents:** After reading this file, you must also read `.agents/CLAUDE.md` before writing any code.
+> `CLAUDE.md` defines the workflow rules, git identity, branching strategy, security requirements, and validation steps that apply specifically to Claude in this project. Both files must be read and understood before implementation begins. -->
 
 ---
 

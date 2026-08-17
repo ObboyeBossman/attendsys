@@ -1,5 +1,5 @@
 -- =============================================================================
--- ATTENDSYS — 0001_schema.sql
+-- Attendsys — 0001_schema.sql
 -- Squashed clean schema: extensions, enums, tables, indexes.
 -- Apply before 0002_functions.sql, 0003_triggers.sql, 0004_rls.sql,
 -- 0005_seed.sql.

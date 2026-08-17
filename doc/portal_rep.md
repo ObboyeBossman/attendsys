@@ -1,11 +1,11 @@
-# ATTENDSYS — Course Rep Portal
+# Attendsys — Course Rep Portal
 ## Coding Agent Prompt & Requirements Document
 
 ---
 
 ## Project Context
 
-You are building the **Course Rep Portal** for ATTENDSYS, a university attendance management system. The full stack is **Next.js (App Router)** on the frontend and **Supabase** (PostgreSQL + Auth + Realtime) on the backend, with **Cloudflare R2** for media. The database schema, all RLS policies, trigger functions, and business logic functions are fully deployed. Do not modify the database in any way. Build only the UI and data layer on top of it.
+You are building the **Course Rep Portal** for Attendsys, a university attendance management system. The full stack is **Next.js (App Router)** on the frontend and **Supabase** (PostgreSQL + Auth + Realtime) on the backend, with **Cloudflare R2** for media. The database schema, all RLS policies, trigger functions, and business logic functions are fully deployed. Do not modify the database in any way. Build only the UI and data layer on top of it.
 
 The course rep portal lives under the route group `/rep/...`. Middleware must verify `user_profiles.role = 'student'` AND `group_memberships.is_course_rep = true` AND `group_memberships.status = 'active'` for the authenticated user. A student who is not an active rep must be redirected to `/student/dashboard`. A non-student must be redirected to the login page.
 

@@ -8,7 +8,7 @@ import "./admin-light-theme.css";
 import "./admin-dark-theme.css";
 
 export const metadata: Metadata = {
-  title: { default: "Admin Portal", template: "%s | Admin | ATTENDSYS" },
+  title: { default: "Admin Portal", template: "%s | Admin | Attendsys" },
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

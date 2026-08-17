@@ -1,5 +1,5 @@
 -- =============================================================================
--- ATTENDSYS — 0003_triggers.sql
+-- Attendsys — 0003_triggers.sql
 -- All triggers and their backing functions.
 -- Apply after 0002_functions.sql, before 0004_rls.sql.
 --

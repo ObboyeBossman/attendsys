@@ -1,11 +1,11 @@
-# ATTENDSYS — Student Portal
+# Attendsys — Student Portal
 ## Coding Agent Prompt & Requirements Document
 
 ---
 
 ## Project Context
 
-You are building the **Student Portal** for ATTENDSYS, a university attendance management system. The full stack is **Next.js (App Router)** on the frontend and **Supabase** (PostgreSQL + Auth + Realtime + Storage) on the backend, with **Cloudflare R2** for media storage. The database schema, all RLS policies, trigger functions, and business logic functions are already fully deployed. You must not modify the database in any way. Your job is to build the UI and data layer that sits on top of it.
+You are building the **Student Portal** for Attendsys, a university attendance management system. The full stack is **Next.js (App Router)** on the frontend and **Supabase** (PostgreSQL + Auth + Realtime + Storage) on the backend, with **Cloudflare R2** for media storage. The database schema, all RLS policies, trigger functions, and business logic functions are already fully deployed. You must not modify the database in any way. Your job is to build the UI and data layer that sits on top of it.
 
 The student portal lives under the route group `/student/...`. It is completely separate from the rep, lecturer, and admin portals. A student can only access this portal. Middleware must verify the user's role from `user_profiles.role` and redirect any non-student to the appropriate portal or the login page.
 
