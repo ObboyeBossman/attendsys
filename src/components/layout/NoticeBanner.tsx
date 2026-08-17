@@ -60,7 +60,7 @@ function CloseIcon() {
 
 // ─── Session-storage helpers ──────────────────────────────────────────────────
 
-const DISMISSED_KEY = "atten-sys:banners-dismissed";
+const DISMISSED_KEY = "attendsys:banners-dismissed";
 
 function getDismissed(): Set<BannerKind> {
   try {
@@ -255,7 +255,7 @@ export function NoticeBanner() {
     banners.push({
       kind: "pwa",
       icon: <DownloadIcon />,
-      message: "Install ATTEN-SYS for faster access and offline support.",
+      message: "Install ATTENDSYS for faster access and offline support.",
       action: { label: "Install app", onClick: handleInstall },
     });
   }
