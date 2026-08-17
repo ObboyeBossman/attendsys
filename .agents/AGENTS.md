@@ -31,6 +31,41 @@ Use a base-8 spacing system (8/16/24/32/48/64px). Inconsistent spacing is the #1
 **Motion is meaning**
 Only animate when it communicates something: state change, direction of travel, hierarchy, or feedback. Never animate to entertain. Prefer 150–300ms easing curves. Respect `prefers-reduced-motion`.
 
+## ATTENDSYS DESIGN SYSTEM SPECIFICATIONS
+
+### 1. Typography System
+- **Font Stack:**
+  - **Headings / Impact:** `Plus Jakarta Sans` (weights `700` for titles, `600` for section headers)
+  - **Functional UI / Body / Tables / Buttons:** `Inter` (weights `400` body, `500` labels/emphasis, `600` buttons/table headers)
+  - **Monospace (Code / Timestamps / IDs):** `JetBrains Mono`
+- **Headings:** Letter-spacing `-0.02em`, line-height `1.2`
+- **Subheadings:** Letter-spacing `-0.015em`, line-height `1.25`
+- **Body Copy:** Line-height `1.55` for maximum scannability on mobile and desktop lists
+- **Tabular Figures:** Apply `.num` / `.tabular-nums` (`font-variant-numeric: tabular-nums`) to all numbers in data columns and tables
+- **Uppercase Labels:** Capped at `+0.08em` tracking (`.uppercase-label`)
+- **Slate Text Color Hierarchy:**
+  - Primary Titles (`--color-text`): `#111827` (slate-900)
+  - Secondary Copy (`--color-text-2`): `#475569` (slate-600)
+  - Meta & Captions (`--color-text-3`): `#64748B` (slate-500)
+
+### 2. Icon System (Lucide React Only)
+- **Library:** `lucide-react` (never mix icon libraries)
+- **Stroke Width:** `1.75` outline stroke width across all navigation and action icons
+- **Sizing Scale:**
+  - Navigation (Sidebar / Bottom Nav): `20px` (`size={20}`)
+  - Primary Action Buttons: `18px`–`20px`
+  - Tables & Inline Metadata: `16px` (`size={16}`)
+  - Status Indicators: `14px`–`16px`
+- **Color Rules:** Monochromatic slate (`#111827`) by default. Brand Blue (`#1A42C2`) only for active/selected interactive states. Danger Red (`#E53935`) for destructive actions.
+- **Animation Rules:** Scale `1.05–1.08` on hover for navigation & primary action buttons only. **Zero scale animations inside data tables or long lists.** Disabled on mobile viewports.
+
+### 3. Borderless Elevation & Surfaces
+- **Canvas:** `#FAFAFA` soft off-white background
+- **Surfaces:** `#FFFFFF` pure white floating cards and modal sheets
+- **Curvature:** `20px` rounded squircle corners (`--radius-xl`)
+- **Containment:** Borderless elevation shadow (`box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03)`). Paper-thin alpha strokes (`rgba(0, 0, 0, 0.05)`) when containment is required.
+- **CTAs:** High-intent action buttons use full black pill shapes (`#0A0A0A` fill, `border-radius: 9999px`, `color: #FFFFFF`).
+
 ## USER FLOW PRINCIPLES
 
 - Every flow has a "happy path" — optimize for it first, then handle edge cases
