@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "black-translucent",
+    statusBarStyle: "default",
     title: "AttendSys",
   },
   formatDetection: {
@@ -39,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${hanken.variable} ${jetbrains.variable}`} data-scroll-behavior="smooth">
+    <html lang="en" className={`${hanken.variable} ${jetbrains.variable}`} data-scroll-behavior="smooth" style={{ backgroundColor: '#ffffff' }}>
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
