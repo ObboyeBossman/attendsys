@@ -37,7 +37,7 @@ const pwaConfig = withPWA({
       urlPattern: /^https?.*/,
       handler: "NetworkFirst",
       options: {
-        cacheName: "atten-sys-cache",
+        cacheName: "attendsys-cache",
         expiration: {
           maxEntries: 200,
           maxAgeSeconds: 24 * 60 * 60, // 24 hours
