@@ -74,7 +74,7 @@ export function AppearanceCard() {
               Appearance
             </div>
             <div style={{ fontSize: "var(--text-xs)", color: "var(--color-text-3)", marginTop: 1 }}>
-              Choose how ATTEN-SYS looks for you
+              Choose how ATTENDSYS looks for you
             </div>
           </div>
         </div>
