@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import styles from "./AdminSidebar.module.css";
-import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 const NAV_ITEMS = [
   {
@@ -203,7 +202,6 @@ function NavContent({ pathname, closeDrawer, onSignOutClick, adminName }: NavCon
           <span className={styles.profileName}>{adminName ?? "Admin"}</span>
         </Link>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--space-2)" }}>
-          <ThemeToggle variant="icon" />
           <button
             onClick={onSignOutClick}
             className={styles.logoutBtn}
