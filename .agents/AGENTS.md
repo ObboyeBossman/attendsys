@@ -48,16 +48,46 @@ Only animate when it communicates something: state change, direction of travel, 
   - Secondary Copy (`--color-text-2`): `#475569` (slate-600)
   - Meta & Captions (`--color-text-3`): `#64748B` (slate-500)
 
-### 2. Icon System (Lucide React Only)
-- **Library:** `lucide-react` (never mix icon libraries)
-- **Stroke Width:** `1.75` outline stroke width across all navigation and action icons
-- **Sizing Scale:**
-  - Navigation (Sidebar / Bottom Nav): `20px` (`size={20}`)
-  - Primary Action Buttons: `18px`–`20px`
-  - Tables & Inline Metadata: `16px` (`size={16}`)
-  - Status Indicators: `14px`–`16px`
-- **Color Rules:** Monochromatic slate (`#111827`) by default. Brand Blue (`#1A42C2`) only for active/selected interactive states. Danger Red (`#E53935`) for destructive actions.
-- **Animation Rules:** Scale `1.05–1.08` on hover for navigation & primary action buttons only. **Zero scale animations inside data tables or long lists.** Disabled on mobile viewports.
+### 2. Icon System (Lucide React Only Guidelines)
+- **Library:** `lucide-react` (never mix icon libraries).
+- **Stroke Width:** `1.75` outline stroke width across all navigation and action icons (`strokeWidth={1.75}`).
+- **Monochromatic Default:** Slate-900 (`#111827`) by default. Brand Blue (`#1A42C2`) only for active/selected interactive states. Danger Red (`#E53935`) for destructive actions.
+
+#### Sizing Scale Table
+| Context | Size | Tailwind / Props | Use Case |
+|---|---|---|---|
+| Navigation (Sidebar / Bottom Nav) | 20–22px | `h-5 w-5` (`size={20}`) | Main navigation items |
+| Primary Action Buttons | 18–20px | `h-5 w-5` (`size={18-20}`) | "Open Session", "Mark Attendance" |
+| Table / List Actions | 16px | `h-4 w-4` (`size={16}`) | Row-level actions |
+| Status Indicators | 14–16px | `h-4 w-4` (`size={14-16}`) | Present / Absent / Late badges |
+| Inline with text | 16px | `h-4 w-4` (`size={16}`) | Form labels & metadata |
+
+#### Outline vs Filled Rules
+- **Default Navigation & Actions:** Outline preferred.
+- **Active / Selected Navigation:** Filled or heavier stroke accent.
+- **Status Present:** Filled `CheckCircle` recommended when active.
+- **Destructive Actions:** Outline + Danger Red (`#E53935`).
+
+#### Hover Animation Guidelines
+- **Sidebar & Bottom Nav Icons:** Scale `1.05–1.08` + color shift to Brand Blue (`#1A42C2`).
+- **Primary Action Buttons:** Scale `1.05` + subtle color change.
+- **Table Row Icons & Dense Lists:** **NO scale animation** (color change only, to maintain high scannability).
+- **Mobile Viewports:** **NO hover animations** (rely strictly on `:active` pressed states).
+
+#### What to Avoid
+- ❌ Never mix icon libraries (use `lucide-react` exclusively).
+- ❌ Never use spinning, bouncing, or complex multi-step icon animations.
+- ❌ Never apply scale animations inside data tables or long repeated lists.
+- ❌ Never use Brand Blue or Red on purely decorative or informational icons.
+- ❌ Never rely on icon color alone to convey state or meaning.
+
+#### Context-Specific Rules
+- **Navigation:** Scale `1.05-1.08` on hover; active state highlights in Brand Blue (`#1A42C2`).
+- **Primary Actions:** Icon + text combination preferred; subtle `1.05` scale on hover.
+- **Tables & Dense Lists:** Compact `16px` size; zero scale transform; high scannability.
+- **Status Icons:** Soft color fill; clickable status icons get gentle state feedback.
+- **Mobile:** Zero hover transforms; touch target ≥ 44×44px; active state feedback.
+- **Accessibility:** Provide `aria-label` or visible text for every icon-only button; respect `prefers-reduced-motion`.
 
 ### 3. Borderless Elevation & Surfaces
 - **Canvas:** `#FAFAFA` soft off-white background
