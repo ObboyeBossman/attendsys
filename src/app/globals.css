@@ -7,50 +7,72 @@
 
 /* ── CSS Custom Properties ───────────────────────────────── */
 :root {
-  /* Page canvas — warm off-white, not pure white */
-  --color-bg:           #F5F6FA;
-  --color-bg-secondary: #EEF0F6;
+  /* --- DESIGN TOKENS (Monochromatic-First System) --- */
+  --color-blue:           #1A42C2;
+  --color-blue-hover:     #1538A8;
+  --color-blue-active:    #102E8F;
+  --color-blue-light:     #E8EDFC;
 
-  /* Surfaces: sidebar/cards are pure white; secondary panels step up slightly */
-  --color-surface:      #FFFFFF;
-  --color-surface-2:    #F0F2F8;
-  --color-surface-3:    #E4E6F0;
+  --color-red:            #E53935;
+  --color-red-hover:      #C62828;
+  --color-red-active:     #B71C1C;
+  --color-red-light:      #FDECEA;
 
-  /* Borders: crisp hairlines */
-  --color-border:       #E5E7EB;
-  --color-border-hover: #CBD5E1;
+  --color-white:          #FFFFFF;
+  --color-black:          #0A0A0A;
 
-  /* Brand red & blue */
-  --color-primary:      #9d0a12;
-  --color-primary-rgb:  157, 10, 18;
-  --color-primary-dark: #82080f;
-  --color-primary-glow: rgba(157, 10, 18, 0.15);
-  
-  --color-secondary:    #3b82f6;
-  --color-secondary-dark: #2563eb;
+  --color-gray-100:       #F5F5F5;
+  --color-gray-200:       #EEEEEE;
+  --color-gray-300:       #E0E0E0;
+  --color-gray-400:       #BDBDBD;
+  --color-gray-500:       #9E9E9E;
+  --color-gray-600:       #757575;
+  --color-gray-700:       #616161;
+  --color-gray-800:       #424242;
+  --color-gray-900:       #212121;
 
-  /* Semantic colours */
+  /* --- APP SEMANTIC TOKENS --- */
+  --color-bg:           #F4F4F4;   /* app shell / screen bg */
+  --color-bg-secondary: #EEEEEE;
+
+  --color-surface:      #FFFFFF;   /* cards, sheets, inputs */
+  --color-surface-2:    #F5F5F5;   /* subtle section fills */
+  --color-surface-3:    #EEEEEE;
+
+  --color-border:       #E0E0E0;
+  --color-border-hover: #BDBDBD;
+
+  /* Primary Brand Blue for CTAs / decision points */
+  --color-primary:      #1A42C2;
+  --color-primary-rgb:  26, 66, 194;
+  --color-primary-dark: #1538A8;
+  --color-primary-glow: rgba(26, 66, 194, 0.15);
+
+  --color-secondary:      #424242;
+  --color-secondary-dark: #212121;
+
+  /* Semantic status colors */
   --color-success:      #16a34a;
   --color-success-bg:   rgba(22, 163, 74, 0.10);
   --color-warning:      #d97706;
   --color-warning-bg:   rgba(217, 119, 6, 0.10);
-  --color-danger:       #dc2626;
-  --color-danger-bg:    rgba(220, 38, 38, 0.08);
-  --color-info:         #0284c7;
-  --color-info-bg:      rgba(2, 132, 199, 0.10);
+  --color-danger:       #E53935;
+  --color-danger-bg:    #FDECEA;
+  --color-info:         #1A42C2;
+  --color-info-bg:      #E8EDFC;
 
   /* Attendance status */
   --color-present:      #16a34a;
   --color-present-bg:   rgba(22, 163, 74, 0.10);
   --color-late:         #d97706;
   --color-late-bg:      rgba(217, 119, 6, 0.10);
-  --color-absent:       #dc2626;
-  --color-absent-bg:    rgba(220, 38, 38, 0.08);
+  --color-absent:       #E53935;
+  --color-absent-bg:    #FDECEA;
 
-  /* Text — charcoal ramp */
-  --color-text:         #111827;
-  --color-text-2:       #374151;
-  --color-text-3:       #6B7280;
+  /* Text — Black structure, gray secondary */
+  --color-text:         #0A0A0A;
+  --color-text-2:       #616161;
+  --color-text-3:       #9E9E9E;
   --color-text-inverse: #FFFFFF;
 
   /* Typography — fonts are self-hosted via next/font (see layout.tsx) */
@@ -89,10 +111,10 @@
   --radius-full: 9999px;
 
   /* Shadows — soft for light surfaces */
-  --shadow-sm:  0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
-  --shadow-md:  0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
-  --shadow-lg:  0 10px 15px rgba(0,0,0,0.08), 0 4px 6px rgba(0,0,0,0.04);
-  --shadow-xl:  0 20px 25px rgba(0,0,0,0.10), 0 10px 10px rgba(0,0,0,0.04);
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:  0 4px 6px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg:  0 10px 15px rgba(0,0,0,0.07), 0 4px 6px rgba(0,0,0,0.04);
+  --shadow-xl:  0 20px 25px rgba(0,0,0,0.08), 0 10px 10px rgba(0,0,0,0.04);
   --shadow-glow:0 0 20px var(--color-primary-glow);
 
   /* Transitions */
@@ -191,7 +213,7 @@ p { color: var(--color-text-2); }
 
 /* Glass morphism card */
 .card-glass {
-  background: rgba(17, 24, 39, 0.7);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--color-border);
@@ -226,15 +248,27 @@ p { color: var(--color-text-2); }
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-  color: #fff;
-  border: none;
-  box-shadow: 0 4px 15px var(--color-primary-glow);
+  background: #0A0A0A;
+  color: #FFFFFF;
+  border: 1px solid #0A0A0A;
 }
 .btn-primary:hover {
-  background: linear-gradient(135deg, var(--color-primary-dark), var(--color-secondary-dark));
-  box-shadow: var(--shadow-glow);
+  background: #212121;
+  border-color: #212121;
 }
+.btn-primary:active { transform: scale(0.98); }
+
+.btn-cta {
+  background: #1A42C2;
+  color: #FFFFFF;
+  border: 1px solid #1A42C2;
+  box-shadow: 0 4px 14px rgba(26, 66, 194, 0.25);
+}
+.btn-cta:hover {
+  background: #1538A8;
+  border-color: #1538A8;
+}
+.btn-cta:active { transform: scale(0.98); }
 .btn-primary:active { transform: scale(0.98); }
 
 .btn-secondary {

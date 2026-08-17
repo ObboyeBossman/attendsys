@@ -23,57 +23,56 @@
 
 /* ── Core palette ─────────────────────────────────────────── */
 [data-portal="admin-light"] {
-  /* Page canvas — warm off-white, not pure white */
-  --color-bg:           #F5F6FA;
-  --color-bg-secondary: #EEF0F6;
+  /* Canvas & Surfaces */
+  --color-bg:           #F4F4F4;
+  --color-bg-secondary: #EEEEEE;
 
-  /* Surfaces: sidebar/cards are pure white; secondary panels step up slightly */
   --color-surface:      #FFFFFF;
-  --color-surface-2:    #F0F2F8;
-  --color-surface-3:    #E4E6F0;
+  --color-surface-2:    #F5F5F5;
+  --color-surface-3:    #EEEEEE;
 
-  /* Borders: crisp hairlines, no opacity hacks */
-  --color-border:       #E5E7EB;
-  --color-border-hover: #CBD5E1;
+  /* Borders */
+  --color-border:       #E0E0E0;
+  --color-border-hover: #BDBDBD;
 
-  /* Brand red — kept identical to dark mode for identity consistency */
-  --color-primary:      #9d0a12;
-  --color-primary-dark: #82080f;
-  --color-primary-glow: rgba(157, 10, 18, 0.15);
+  /* Brand Blue CTA & Destructive Red */
+  --color-primary:      #1A42C2;
+  --color-primary-rgb:  26, 66, 194;
+  --color-primary-dark: #1538A8;
+  --color-primary-glow: rgba(26, 66, 194, 0.15);
 
-  /* Blue secondary */
-  --color-secondary:      #3b82f6;
-  --color-secondary-dark: #2563eb;
+  --color-secondary:      #424242;
+  --color-secondary-dark: #212121;
 
-  /* Semantic colours — adjusted for light surfaces */
+  /* Semantic colours */
   --color-success:    #16a34a;
   --color-success-bg: rgba(22, 163, 74, 0.10);
   --color-warning:    #d97706;
   --color-warning-bg: rgba(217, 119, 6, 0.10);
-  --color-danger:     #dc2626;
-  --color-danger-bg:  rgba(220, 38, 38, 0.08);
-  --color-info:       #0284c7;
-  --color-info-bg:    rgba(2, 132, 199, 0.10);
+  --color-danger:     #E53935;
+  --color-danger-bg:  #FDECEA;
+  --color-info:       #1A42C2;
+  --color-info-bg:    #E8EDFC;
 
   /* Attendance status */
   --color-present:    #16a34a;
   --color-present-bg: rgba(22, 163, 74, 0.10);
   --color-late:       #d97706;
   --color-late-bg:    rgba(217, 119, 6, 0.10);
-  --color-absent:     #dc2626;
-  --color-absent-bg:  rgba(220, 38, 38, 0.08);
+  --color-absent:     #E53935;
+  --color-absent-bg:  #FDECEA;
 
-  /* Text ramp — charcoal, not full black, for reading comfort */
-  --color-text:         #111827;   /* near-black headings */
-  --color-text-2:       #374151;   /* body text */
-  --color-text-3:       #6B7280;   /* captions, placeholders */
+  /* Text ramp — Black structure */
+  --color-text:         #0A0A0A;   /* black headings */
+  --color-text-2:       #616161;   /* secondary text */
+  --color-text-3:       #9E9E9E;   /* captions, placeholders */
   --color-text-inverse: #FFFFFF;
 
-  /* Shadows — soft, not heavy; light UIs need air not drama */
+  /* Shadows */
   --shadow-sm:  0 1px 2px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
-  --shadow-md:  0 2px 8px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05);
-  --shadow-lg:  0 4px 16px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.06);
-  --shadow-xl:  0 8px 32px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.07);
+  --shadow-md:  0 2px 8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-lg:  0 4px 16px rgba(0,0,0,0.07), 0 2px 6px rgba(0,0,0,0.04);
+  --shadow-xl:  0 8px 32px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
   --shadow-glow: 0 0 18px var(--color-primary-glow);
 }
 
