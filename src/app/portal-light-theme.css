@@ -16,17 +16,17 @@
 /* ── Core palette ─────────────────────────────────────────── */
 [data-portal="portal-light"] {
   /* Page canvas */
-  --color-bg:           #F4F4F4;
-  --color-bg-secondary: #EEEEEE;
+  --color-bg:           #FAFAFA;
+  --color-bg-secondary: #F5F5F7;
 
   /* Surfaces */
   --color-surface:      #FFFFFF;
-  --color-surface-2:    #F5F5F5;
-  --color-surface-3:    #EEEEEE;
+  --color-surface-2:    #F5F5F7;
+  --color-surface-3:    #EBECEF;
 
   /* Borders */
-  --color-border:       #E0E0E0;
-  --color-border-hover: #BDBDBD;
+  --color-border:       rgba(0, 0, 0, 0.05);
+  --color-border-hover: rgba(0, 0, 0, 0.1);
 
   /* Brand Blue CTA & Destructive Red */
   --color-primary:      #1A42C2;
@@ -55,10 +55,10 @@
   --color-absent:     #E53935;
   --color-absent-bg:  #FDECEA;
 
-  /* Text — Black structure */
-  --color-text:         #0A0A0A;
-  --color-text-2:       #616161;
-  --color-text-3:       #9E9E9E;
+  /* Text — Slate hierarchy */
+  --color-text:         #111827;   /* slate-900 — primary titles */
+  --color-text-2:       #475569;   /* slate-600 — body copy & labels */
+  --color-text-3:       #64748B;   /* slate-500 — meta & captions */
   --color-text-inverse: #FFFFFF;
 
   /* Shadows */
