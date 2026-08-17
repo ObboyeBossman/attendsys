@@ -114,7 +114,7 @@ function BrandMark({ roleColor, roleLabel }: BrandMarkProps) {
         </svg>
       </div>
       <div>
-        <div className={styles.brandName}>ATTEN-SYS</div>
+        <div className={styles.brandName}>ATTENDSYS</div>
         <div className={styles.brandRole} style={{ color: roleColor }}>{roleLabel}</div>
       </div>
     </>
@@ -310,7 +310,7 @@ export function PortalLayout({ role, roleLabel, navItems, homeUrl, children, swi
         </button>
         <div className={styles.mobileTopbarBrand}>
           <div>
-            <div className={styles.mobileTopbarTitle}>ATTEN-SYS</div>
+            <div className={styles.mobileTopbarTitle}>ATTENDSYS</div>
             <div className={styles.mobileTopbarRole} style={{ color: roleColor }}>{roleLabel}</div>
           </div>
         </div>
@@ -346,7 +346,7 @@ export function PortalLayout({ role, roleLabel, navItems, homeUrl, children, swi
               <path d="M19.5 18l1 1 2-2" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <div>
-              <div className={styles.brandName}>ATTEN-SYS</div>
+              <div className={styles.brandName}>ATTENDSYS</div>
               <div className={styles.brandRole} style={{ color: roleColor }}>{roleLabel}</div>
             </div>
           </div>
