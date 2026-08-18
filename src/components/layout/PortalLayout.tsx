@@ -168,6 +168,7 @@ interface NavLinksProps {
 }
 
 function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, closeDrawer, onSignOut, userInitial, userName }: NavLinksProps) {
+  const router = useRouter();
   const settingsHref = navItems.find((item) => item.icon === "settings" || item.icon === "user")?.href || `/${role}/profile`;
 
   return (
@@ -239,12 +240,19 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
         </nav>
         {switchTo && (
           <div className={styles.switcherWrap}>
-            <Link href={switchTo.href} className={styles.switcherBtn}>
+            <button
+              type="button"
+              className={styles.switcherBtn}
+              onClick={() => {
+                closeDrawer();
+                router.push(switchTo.href);
+              }}
+            >
               <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M4 10h12M10 4l6 6-6 6" />
               </svg>
               {switchTo.label}
-            </Link>
+            </button>
           </div>
         )}
         {/* ── Temporary sign-out ── */}
@@ -259,8 +267,15 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
       </div>
       <div className={styles.sidebarFooter}>
         <div className={styles.footerRow}>
-          {/* Profile tile — navigates to settings */}
-          <Link href={settingsHref} onClick={closeDrawer} className={styles.profileTile}>
+          {/* Profile tile — navigates to settings without native browser URL hover preview */}
+          <button
+            type="button"
+            className={styles.profileTile}
+            onClick={() => {
+              closeDrawer();
+              router.push(settingsHref);
+            }}
+          >
             <div className={styles.profileAvatar} style={{ backgroundColor: "#b91c1c" }}>
               {userInitial}
             </div>
@@ -268,7 +283,7 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
               <span className={styles.profileName}>{userName || "User"}</span>
             </div>
             <Settings size={22} strokeWidth={2} className={styles.profileSettingsIcon} aria-hidden="true" />
-          </Link>
+          </button>
 
           {/* Back / close-drawer button — separate pill */}
           <button

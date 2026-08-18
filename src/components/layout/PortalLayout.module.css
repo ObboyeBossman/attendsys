@@ -202,12 +202,15 @@
   width: 100%;
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-md);
+  font-family: inherit;
   font-size: var(--text-sm);
   font-weight: 600;
   color: #f59e0b;
   text-decoration: none;
   background: rgba(245, 158, 11, 0.08);
   border: 1px solid rgba(245, 158, 11, 0.2);
+  cursor: pointer;
+  text-align: left;
   transition: all var(--transition-fast);
 }
 
@@ -273,6 +276,8 @@
   height: 46px;
   padding: 0 10px 0 8px;
   border-radius: 9999px;
+  font-family: inherit;
+  text-align: left;
   text-decoration: none;
   color: var(--color-text);
   background: var(--color-surface, #ffffff);
