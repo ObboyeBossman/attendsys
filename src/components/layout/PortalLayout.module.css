@@ -274,6 +274,11 @@
 
 
 /* ── Mobile Sliding Sheet Drawer ────────────────────────────────────────── */
+/*
+  The backdrop and drawer use visibility + pointer-events (not display:none) so
+  their DOM refs remain accessible during swipe gestures even when "closed".
+  On desktop they stay display:none — no refs needed there.
+*/
 .drawerBackdrop {
   display: none;
   position: fixed;
@@ -309,10 +314,13 @@
   overflow-y: auto;
   will-change: transform;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+  /* Keep content non-interactive while off-screen */
+  pointer-events: none;
 }
 
 .drawerOpen {
   transform: translateX(0);
+  pointer-events: auto;
 }
 
 .drawerHeader {
@@ -356,6 +364,7 @@
 }
 
 @media (max-width: 768px) {
+  /* Switch from display:none to flex so refs are live for swipe detection */
   .drawerBackdrop {
     display: block;
   }
@@ -363,6 +372,9 @@
     display: flex;
   }
 }
+
+/* ── Swipe in progress: re-enable pointer events on the drawer itself ─────── */
+/* This is handled in JS via inline style during the drag. */
 
 @media (prefers-reduced-motion: reduce) {
   .drawer {
