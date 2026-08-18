@@ -28,6 +28,7 @@ import {
   Star,
   History,
   GraduationCap,
+  ChevronsRight,
 } from "lucide-react";
 
 export type NavIcon =
@@ -165,97 +166,113 @@ interface NavLinksProps {
   closeDrawer: () => void;
   onSignOut: () => void;
   userInitial: string;
+  userName: string;
 }
 
-function NavLinks({ navItems, pathname, roleColor, roleLabel, switchTo, closeDrawer, onSignOut, userInitial }: NavLinksProps) {
+function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, closeDrawer, onSignOut, userInitial, userName }: NavLinksProps) {
+  const settingsHref = navItems.find((item) => item.icon === "settings" || item.icon === "user")?.href || `/${role}/profile`;
+
   return (
     <>
-      <nav className={styles.nav} aria-label={`${roleLabel} navigation`}>
-        {navItems.map((item) => {
-          const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href + "/"));
-          const hasChildren = item.children && item.children.length > 0;
-          const isChildActive = hasChildren && item.children?.some((child) => pathname === child.href || pathname.startsWith(child.href + "/"));
+      <div className={styles.navScrollArea}>
+        <nav className={styles.nav} aria-label={`${roleLabel} navigation`}>
+          {navItems.map((item) => {
+            const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href + "/"));
+            const hasChildren = item.children && item.children.length > 0;
+            const isChildActive = hasChildren && item.children?.some((child) => pathname === child.href || pathname.startsWith(child.href + "/"));
 
-          return (
-            <div key={item.href} className={styles.navGroup}>
-              <Link
-                href={item.href}
-                onClick={closeDrawer}
-                className={`${styles.navItem} ${isActive || isChildActive ? styles.navItemActive : ""}`}
-                style={(isActive || isChildActive) ? { "--role-color": roleColor } as React.CSSProperties : undefined}
-              >
-                <span className={styles.navIcon} data-icon={item.icon} style={{ position: "relative" }}>
-                  <Icon name={item.icon} size={18} />
-                  {!!item.badge && item.badge > 0 && (
-                    <span
-                      aria-label={`${item.badge} unread`}
-                      style={{
-                        position: "absolute",
-                        top: -4,
-                        right: -6,
-                        minWidth: 16,
-                        height: 16,
-                        borderRadius: "var(--radius-full)",
-                        background: "var(--color-primary)",
-                        color: "#fff",
-                        fontSize: 10,
-                        fontWeight: 700,
-                        display: "inline-flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        padding: "0 4px",
-                        lineHeight: 1,
-                      }}
-                    >
-                      {item.badge > 99 ? "99+" : item.badge}
-                    </span>
-                  )}
-                </span>
-                <span>{item.label}</span>
-              </Link>
-              {hasChildren && (
-                <div className={styles.childNav}>
-                  {item.children?.map((child) => {
-                    const isChildSelfActive = pathname === child.href || pathname.startsWith(child.href + "/");
-                    return (
-                      <Link
-                        key={child.href}
-                        href={child.href}
-                        onClick={closeDrawer}
-                        className={`${styles.childNavItem} ${isChildSelfActive ? styles.childNavItemActive : ""}`}
+            return (
+              <div key={item.href} className={styles.navGroup}>
+                <Link
+                  href={item.href}
+                  onClick={closeDrawer}
+                  className={`${styles.navItem} ${isActive || isChildActive ? styles.navItemActive : ""}`}
+                  style={(isActive || isChildActive) ? { "--role-color": roleColor } as React.CSSProperties : undefined}
+                >
+                  <span className={styles.navIcon} data-icon={item.icon} style={{ position: "relative" }}>
+                    <Icon name={item.icon} size={18} />
+                    {!!item.badge && item.badge > 0 && (
+                      <span
+                        aria-label={`${item.badge} unread`}
+                        style={{
+                          position: "absolute",
+                          top: -4,
+                          right: -6,
+                          minWidth: 16,
+                          height: 16,
+                          borderRadius: "var(--radius-full)",
+                          background: "var(--color-primary)",
+                          color: "#fff",
+                          fontSize: 10,
+                          fontWeight: 700,
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          padding: "0 4px",
+                          lineHeight: 1,
+                        }}
                       >
-                        {child.label}
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </nav>
-      {switchTo && (
-        <div className={styles.switcherWrap}>
-          <Link href={switchTo.href} className={styles.switcherBtn}>
-            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M4 10h12M10 4l6 6-6 6" />
-            </svg>
-            {switchTo.label}
-          </Link>
-        </div>
-      )}
+                        {item.badge > 99 ? "99+" : item.badge}
+                      </span>
+                    )}
+                  </span>
+                  <span>{item.label}</span>
+                </Link>
+                {hasChildren && (
+                  <div className={styles.childNav}>
+                    {item.children?.map((child) => {
+                      const isChildSelfActive = pathname === child.href || pathname.startsWith(child.href + "/");
+                      return (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          onClick={closeDrawer}
+                          className={`${styles.childNavItem} ${isChildSelfActive ? styles.childNavItemActive : ""}`}
+                        >
+                          {child.label}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </nav>
+        {switchTo && (
+          <div className={styles.switcherWrap}>
+            <Link href={switchTo.href} className={styles.switcherBtn}>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M4 10h12M10 4l6 6-6 6" />
+              </svg>
+              {switchTo.label}
+            </Link>
+          </div>
+        )}
+      </div>
       <div className={styles.sidebarFooter}>
-        <div className={styles.avatar}>
-          {userInitial}
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "var(--space-2)", marginLeft: "auto" }}>
-          <button onClick={onSignOut} className={styles.logoutBtn} title="Sign out">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10 11l4-4-4-4M14 7H6" />
-            </svg>
-            Sign out
+        <Link href={settingsHref} onClick={closeDrawer} className={styles.profileTile}>
+          <div className={styles.profileAvatarContainer}>
+            <div className={styles.profileAvatar} style={{ backgroundColor: "#b91c1c" }}>
+              {userInitial}
+            </div>
+          </div>
+          <div className={styles.profileInfo}>
+            <span className={styles.profileName}>{userName || "User"}</span>
+          </div>
+          <button
+            type="button"
+            className={styles.backBtn}
+            aria-label="Back"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              closeDrawer();
+            }}
+          >
+            <ChevronsRight size={28} strokeWidth={2} />
           </button>
-        </div>
+        </Link>
       </div>
     </>
   );
@@ -522,6 +539,7 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
           closeDrawer={closeDrawer}
           onSignOut={openSignOut}
           userInitial={userInitial}
+          userName={userName}
         />
       </aside>
 
@@ -551,15 +569,6 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
           <div className={styles.drawerBrand}>
             <BrandMark roleLabel={roleLabel} />
           </div>
-          <button
-            className={styles.drawerClose}
-            onClick={closeDrawer}
-            aria-label="Close navigation menu"
-          >
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
-              <path d="M4 4l10 10M14 4L4 14" />
-            </svg>
-          </button>
         </div>
         <NavLinks
           navItems={navItems}
@@ -571,6 +580,7 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
           closeDrawer={closeDrawer}
           onSignOut={openSignOut}
           userInitial={userInitial}
+          userName={userName}
         />
       </aside>
 
@@ -585,21 +595,8 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
         </div>
       </main>
 
-      {/* ── Bottom profile tile (mobile) ─────────────────────────── */}
-      <BottomNav
-        navItems={navItems}
-        pathname={pathname}
-        switchTo={switchTo}
-        userName={userName}
-        userInitial={userInitial}
-        settingsHref={
-          role === "super_admin" ? "/admin/settings" :
-          role === "lecturer"   ? "/lecturer/profile" :
-          role === "rep"        ? "/rep/profile" :
-                                  "/student/profile"
-        }
-        onBack={() => window.history.back()}
-      />
+      {/* ── Bottom nav (mobile) ───────────────────────────────────── */}
+      <BottomNav navItems={navItems} pathname={pathname} switchTo={switchTo} />
 
       {/* ── Sign-out confirmation dialog ─────────────────────────── */}
       {confirmSignOut && (

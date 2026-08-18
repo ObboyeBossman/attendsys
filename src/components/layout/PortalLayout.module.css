@@ -16,7 +16,7 @@
   display: flex;
   flex-direction: column;
   z-index: 100;
-  overflow-y: auto;
+  overflow: hidden; /* top and bottom fixed, middle scrollable */
 }
 
 .brand {
@@ -24,7 +24,12 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-5) var(--space-4);
-  border-bottom: 1px solid var(--color-border);
+  background: var(--bottom-nav-bg);
+  -webkit-backdrop-filter: var(--bottom-nav-blur);
+  backdrop-filter: var(--bottom-nav-blur);
+  border-bottom: 1px solid var(--bottom-nav-border);
+  box-shadow: var(--glass-shadow-down);
+  flex-shrink: 0;
 }
 
 .brandIcon {
@@ -52,9 +57,37 @@
   font-weight: 500;
 }
 
-.nav {
+/* ── Scrollable middle section ───────────────────────────────────────────── */
+.navScrollArea {
   flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   padding: var(--space-4) var(--space-3);
+  /* Firefox gray thin scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+/* WebKit gray scrollbar */
+.navScrollArea::-webkit-scrollbar {
+  width: 6px;
+}
+
+.navScrollArea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.navScrollArea::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 9999px;
+}
+
+.navScrollArea::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
+}
+
+.nav {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -78,9 +111,6 @@
   color: var(--color-text);
   text-decoration: none;
 }
-
-
-
 
 .navItemActive {
   background: #111827;
@@ -174,42 +204,96 @@
   flex-shrink: 0;
 }
 
+/* ── Fixed bottom section & elevated profile tile ───────────────────────── */
 .sidebarFooter {
-  padding: var(--space-4);
+  padding: var(--space-3) var(--space-4);
   border-top: 1px solid var(--color-border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
+  flex-shrink: 0;
+  background: inherit;
 }
 
-.avatar {
-  width: 32px;
-  height: 32px;
+.profileTile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 8px 12px 8px 8px;
+  border-radius: 9999px;
+  text-decoration: none;
+  color: var(--color-text);
+  background: transparent;
+  transition: background 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+  cursor: pointer;
+}
+
+.profileTile:hover {
+  background: var(--color-surface-2, #f1f5f9);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.profileAvatarContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  flex-shrink: 0;
+}
+
+.profileAvatar {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 15px;
 }
 
-.logoutBtn {
-  background: none;
-  border: none;
+.profileInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.profileName {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
+}
+
+.backBtn {
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   cursor: pointer;
-  color: var(--color-text-3);
-  padding: var(--space-2);
-  border-radius: var(--radius-md);
+  color: var(--color-text);
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  transition: all var(--transition-fast);
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  transition: all 150ms ease;
+  flex-shrink: 0;
 }
 
-.logoutBtn:hover {
-  color: var(--color-danger);
-  background: var(--color-danger-bg);
+.backBtn:hover {
+  background: #e2e8f0;
+  color: var(--color-text);
+  border-color: var(--color-border);
+  transform: scale(1.05);
 }
 
 /* ── Notice banner bar ──────────────────────────────────────────────────── */
@@ -346,7 +430,11 @@
   align-items: center;
   justify-content: space-between;
   padding: 20px 24px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  background: var(--bottom-nav-bg);
+  -webkit-backdrop-filter: var(--bottom-nav-blur);
+  backdrop-filter: var(--bottom-nav-blur);
+  border-bottom: 1px solid var(--bottom-nav-border);
+  box-shadow: var(--glass-shadow-down);
   flex-shrink: 0;
 }
 
