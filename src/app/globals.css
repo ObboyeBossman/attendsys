@@ -1,11 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=MuseoModerno:wght@300;400;500;600;700&display=swap');
+
 /* ============================================================
    Attendsys — Global Design System
    ============================================================ */
 
-/* Fonts loaded at runtime via CSS @import (avoids build-time network fetch) */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
 /* ── CSS Custom Properties ───────────────────────────────── */
+
 :root {
   /* --- DESIGN TOKENS (Monochromatic-First System) --- */
   --color-blue:           #1A42C2;

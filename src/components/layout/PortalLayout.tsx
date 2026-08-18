@@ -142,15 +142,13 @@ const ROLE_INITIALS: Record<string, string> = {
 };
 
 // ── Hoisted BrandMark sub-component ──────────────────────────────────────────
-function BrandMark({ roleLabel }: { roleLabel: string }) {
+// roleLabel intentionally unused here — subtitle removed per design spec
+function BrandMark({ roleLabel: _roleLabel }: { roleLabel: string }) {
   return (
     <>
-      <div className={styles.brandIcon}>
-        <BrandLogo size="md" />
-      </div>
-      <div>
-        <div className={styles.brandName}>AttendSys</div>
-        <div className={styles.brandRole}>{roleLabel}</div>
+      <span className={styles.brandName}>AttendSys</span>
+      <div className={styles.brandIconBtn} aria-label="AttendSys logo">
+        <BrandLogo size="md" label="" />
       </div>
     </>
   );
@@ -249,6 +247,15 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
             </Link>
           </div>
         )}
+        {/* ── Temporary sign-out ── */}
+        <div className={styles.tempSignOutWrap}>
+          <button onClick={onSignOut} className={styles.tempSignOutBtn} type="button">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10 11l4-4-4-4M14 7H6" />
+            </svg>
+            Sign out
+          </button>
+        </div>
       </div>
       <div className={styles.sidebarFooter}>
         <Link href={settingsHref} onClick={closeDrawer} className={styles.profileTile}>
