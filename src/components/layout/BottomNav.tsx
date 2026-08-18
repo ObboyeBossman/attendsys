@@ -62,8 +62,8 @@ interface BottomNavProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export function BottomNav({ navItems, pathname, switchTo }: BottomNavProps) {
-  // Show first 4 items when switchTo is present; 5 otherwise
-  const displayedItems = navItems.slice(0, switchTo ? 4 : 5);
+  // Strict maximum of 4 items on bottom navigation across all portals
+  const displayedItems = navItems.slice(0, 4);
 
   const activeIndex = displayedItems.findIndex(
     (item) =>
