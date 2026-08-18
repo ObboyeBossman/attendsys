@@ -260,16 +260,25 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
       <div className={styles.sidebarFooter}>
         <Link href={settingsHref} onClick={closeDrawer} className={styles.profileTile}>
           <div className={styles.profileAvatarContainer}>
-            <div className={styles.profileAvatar} style={{ backgroundColor: roleColor }}>
+            <div className={styles.profileAvatar} style={{ backgroundColor: "#b91c1c" }}>
               {userInitial}
             </div>
           </div>
           <div className={styles.profileInfo}>
             <span className={styles.profileName}>{userName || "User"}</span>
           </div>
-          <span className={styles.profileChevron} aria-hidden="true">
-            <ChevronsRight size={18} strokeWidth={1.75} />
-          </span>
+          <button
+            type="button"
+            className={styles.backBtn}
+            aria-label="Back"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              closeDrawer();
+            }}
+          >
+            <ChevronsRight size={28} strokeWidth={2} />
+          </button>
         </Link>
       </div>
     </>
