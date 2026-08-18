@@ -8,15 +8,8 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
   },
   {
     label: "Institution",
-    href: "/admin/institution/faculties",
+    href: "/admin/institution",
     icon: "institution",
-    children: [
-      { label: "Faculties", href: "/admin/institution/faculties" },
-      { label: "Departments", href: "/admin/institution/departments" },
-      { label: "Programmes", href: "/admin/institution/programmes" },
-      { label: "Qual. Types", href: "/admin/institution/qualification-types" },
-      { label: "Levels", href: "/admin/institution/levels" },
-    ],
   },
   {
     label: "Academic Years",
@@ -35,13 +28,8 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
   },
   {
     label: "Users",
-    href: "/admin/users/students",
+    href: "/admin/users",
     icon: "users",
-    children: [
-      { label: "Students", href: "/admin/users/students" },
-      { label: "Lecturers", href: "/admin/users/lecturers" },
-      { label: "Super Admins", href: "/admin/users/admins" },
-    ],
   },
   {
     label: "Courses",
