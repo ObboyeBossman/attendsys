@@ -23,13 +23,13 @@ import type { NavItem, NavIcon as NavIconName } from "./PortalLayout";
 import styles from "./BottomNav.module.css";
 
 // ── Icon renderer ─────────────────────────────────────────────────────────────
-// Active: filled (fill="currentColor", no stroke) — solid presence.
-// Inactive: outline (fill="none", stroke) — recedes into the background.
+// Active: prominent stroke accent (strokeWidth=2.25) + scale elevation.
+// Inactive: standard outline (strokeWidth=1.75) — recedes into the background.
 function NavIcon({ name, active }: { name: NavIconName; active: boolean }) {
-  const base = { size: 22 };
-  const filled = { ...base, strokeWidth: 0, fill: "currentColor" };
-  const outline = { ...base, strokeWidth: 1.75, fill: "none" };
-  const p = active ? filled : outline;
+  const p = {
+    size: 22,
+    strokeWidth: active ? 2.25 : 1.75,
+  };
 
   switch (name) {
     case "dashboard":   return <LayoutDashboard {...p} />;
