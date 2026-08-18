@@ -8,6 +8,7 @@ import styles from "./PortalLayout.module.css";
 import { PageShimmer } from "./PageTransition";
 import { NoticeBanner } from "./NoticeBanner";
 import { BrandLogo } from "@/components/brand/BrandLogo";
+import { BottomNav } from "./BottomNav";
 
 import {
   LayoutDashboard,
@@ -414,61 +415,8 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
         </div>
       </main>
 
-      {/* ── Bottom nav (mobile quick-access) ─────────────────────── */}
-      <nav className={styles.bottomNav} aria-label="Mobile navigation">
-        {navItems.slice(0, switchTo ? 4 : 5).map((item) => {
-          const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href + "/"));
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`${styles.bottomNavItem} ${isActive ? styles.bottomNavItemActive : ""}`}
-              aria-current={isActive ? "page" : undefined}
-            >
-              <span style={{ position: "relative", display: "inline-flex", flexShrink: 0 }}>
-                <Icon name={item.icon} size={20} />
-                {!!item.badge && item.badge > 0 && (
-                  <span
-                    aria-label={`${item.badge} unread`}
-                    style={{
-                      position: "absolute",
-                      top: -4,
-                      right: -6,
-                      minWidth: 16,
-                      height: 16,
-                      borderRadius: "var(--radius-full)",
-                      background: isActive ? "var(--color-bg)" : "var(--color-primary)",
-                      color: isActive ? "var(--color-text)" : "#fff",
-                      fontSize: 10,
-                      fontWeight: 700,
-                      display: "inline-flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      padding: "0 4px",
-                      lineHeight: 1,
-                    }}
-                  >
-                    {item.badge > 99 ? "99+" : item.badge}
-                  </span>
-                )}
-              </span>
-              <span className={styles.bottomNavLabel}>{item.label}</span>
-            </Link>
-          );
-        })}
-        {switchTo && (
-          <Link
-            href={switchTo.href}
-            className={styles.bottomNavItem}
-            title={switchTo.label}
-          >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flexShrink: 0 }}>
-              <path d="M4 10h12M10 4l6 6-6 6" />
-            </svg>
-            <span className={styles.bottomNavLabel}>Switch</span>
-          </Link>
-        )}
-      </nav>
+      {/* ── Bottom nav (mobile) ───────────────────────────────────── */}
+      <BottomNav navItems={navItems} pathname={pathname} switchTo={switchTo} />
 
       {/* ── Sign-out confirmation dialog ─────────────────────────── */}
       {confirmSignOut && (

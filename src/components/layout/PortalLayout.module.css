@@ -249,107 +249,11 @@
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
-  /* Prevent any child from creating a horizontal scrollbar / overflow */
   overflow-x: hidden;
   box-sizing: border-box;
 }
 
-/* ── Floating pill bottom nav ────────────────────────────────────────────── */
 
-.bottomNav {
-  display: none;
-  position: fixed;
-  bottom: calc(var(--space-4) + env(safe-area-inset-bottom));
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 100;
-
-  /* Floating pill container */
-  background: #FFFFFF;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 9999px;
-  padding: 6px;
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.08),
-    0 2px 6px rgba(0, 0, 0, 0.04);
-
-  /* Horizontal row of items */
-  align-items: center;
-  gap: 4px;
-
-  /* Don't stretch to full width */
-  width: auto;
-  max-width: calc(100vw - var(--space-8));
-}
-
-.bottomNavItem {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  height: 48px;
-  padding: 0 14px;
-  border-radius: 9999px;
-  color: var(--color-text-3);
-  text-decoration: none;
-  font-family: var(--font-body);
-  font-size: var(--text-md);
-  font-weight: 500;
-  white-space: nowrap;
-  transition:
-    background 180ms cubic-bezier(0.22, 1, 0.36, 1),
-    color 180ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 120ms ease;
-}
-
-.bottomNavItem:active {
-  transform: scale(0.94);
-}
-
-.bottomNavItem:hover {
-  background: var(--color-surface-2);
-  color: var(--color-text);
-  text-decoration: none;
-}
-
-/* The label — hidden on inactive items */
-.bottomNavItem .bottomNavLabel {
-  display: none;
-  font-size: var(--text-md);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-/* Active item: expands into filled black pill with label */
-.bottomNavItemActive {
-  background: #111827;
-  color: #FFFFFF;
-  padding: 0 18px 0 14px;
-}
-
-.bottomNavItemActive .bottomNavLabel {
-  display: inline;
-}
-
-.bottomNavItemActive:hover {
-  background: #111827;
-  color: #FFFFFF;
-  opacity: 0.96;
-}
-
-/* Light portal override — pill stays dark for contrast */
-[data-portal="portal-light"] .bottomNavItemActive {
-  background: #1a1a2e;
-  color: #fff;
-}
-
-[data-portal="portal-light"] .bottomNav {
-  background: #fff;
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.12),
-    0 2px 6px rgba(0, 0, 0, 0.08);
-}
 
 @media (max-width: 768px) {
   .sidebar {
@@ -364,9 +268,6 @@
   }
   .content {
     padding: var(--space-4);
-  }
-  .bottomNav {
-    display: flex;
   }
 }
 
