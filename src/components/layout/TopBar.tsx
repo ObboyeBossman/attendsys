@@ -51,7 +51,7 @@ export function TopBar({
   onMenuPress,
   onProfilePress,
   userInitial = "AB",
-  title = "AttendSys",
+  title = "Dashboard",
 }: TopBarProps) {
   const [internalActiveTab, setInternalActiveTab] = useState<TopBarTabId>(
     tabs[0]?.id || "today"

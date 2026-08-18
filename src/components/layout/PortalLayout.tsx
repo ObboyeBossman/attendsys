@@ -549,6 +549,31 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
     router.replace("/login");
   }
 
+  // Derive pageTitle dynamically from pathname and navItems
+  const activeNavItem = navItems.find(
+    (item) =>
+      pathname === item.href ||
+      (item.href !== "/admin" && pathname.startsWith(item.href + "/"))
+  );
+  let activeChildTitle = "";
+  if (activeNavItem?.children) {
+    const matchedChild = activeNavItem.children.find(
+      (c) => pathname === c.href || pathname.startsWith(c.href + "/")
+    );
+    if (matchedChild) activeChildTitle = matchedChild.label;
+  }
+  const rawSegment = pathname.split("/").filter(Boolean).pop() || "";
+  const formattedSegment = rawSegment
+    ? rawSegment.charAt(0).toUpperCase() + rawSegment.slice(1).replace(/-/g, " ")
+    : "";
+
+  const pageTitle =
+    activeChildTitle ||
+    activeNavItem?.label ||
+    (formattedSegment && formattedSegment !== "Admin" && formattedSegment !== "Student" && formattedSegment !== "Lecturer" && formattedSegment !== "Rep"
+      ? formattedSegment
+      : "Dashboard");
+
   return (
     <div className={styles.root} data-portal="portal-light">
       {/* ── Desktop sidebar ──────────────────────────────────────── */}
@@ -576,6 +601,7 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
         onMenuPress={() => setDrawerOpen(true)}
         onProfilePress={openSignOut}
         userInitial={userInitial}
+        title={pageTitle}
         tabs={pathname.endsWith("/dashboard") ? undefined : []}
       />
 
