@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -29,6 +28,8 @@ import {
   History,
   GraduationCap,
   ChevronsRight,
+  LogOut,
+  ArrowRightLeft,
 } from "lucide-react";
 
 export type NavIcon =
@@ -182,9 +183,12 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
 
             return (
               <div key={item.href} className={styles.navGroup}>
-                <Link
-                  href={item.href}
-                  onClick={closeDrawer}
+                <button
+                  type="button"
+                  onClick={() => {
+                    closeDrawer();
+                    router.push(item.href);
+                  }}
                   className={`${styles.navItem} ${isActive || isChildActive ? styles.navItemActive : ""}`}
                 >
                   <span className={styles.navIcon} data-icon={item.icon} style={{ position: "relative" }}>
@@ -215,20 +219,23 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
                     )}
                   </span>
                   <span>{item.label}</span>
-                </Link>
+                </button>
                 {hasChildren && (
                   <div className={styles.childNav}>
                     {item.children?.map((child) => {
                       const isChildSelfActive = pathname === child.href || pathname.startsWith(child.href + "/");
                       return (
-                        <Link
+                        <button
                           key={child.href}
-                          href={child.href}
-                          onClick={closeDrawer}
+                          type="button"
+                          onClick={() => {
+                            closeDrawer();
+                            router.push(child.href);
+                          }}
                           className={`${styles.childNavItem} ${isChildSelfActive ? styles.childNavItemActive : ""}`}
                         >
                           {child.label}
-                        </Link>
+                        </button>
                       );
                     })}
                   </div>
@@ -236,33 +243,32 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
               </div>
             );
           })}
-        </nav>
-        {switchTo && (
-          <div className={styles.switcherWrap}>
+          {switchTo && (
             <button
               type="button"
-              className={styles.switcherBtn}
+              className={styles.navItem}
               onClick={() => {
                 closeDrawer();
                 router.push(switchTo.href);
               }}
             >
-              <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M4 10h12M10 4l6 6-6 6" />
-              </svg>
-              {switchTo.label}
+              <span className={styles.navIcon}>
+                <ArrowRightLeft size={20} strokeWidth={1.75} />
+              </span>
+              <span>{switchTo.label}</span>
             </button>
-          </div>
-        )}
-        {/* ── Temporary sign-out ── */}
-        <div className={styles.tempSignOutWrap}>
-          <button onClick={onSignOut} className={styles.tempSignOutBtn} type="button">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10 11l4-4-4-4M14 7H6" />
-            </svg>
-            Sign out
+          )}
+          <button
+            type="button"
+            className={styles.navItem}
+            onClick={onSignOut}
+          >
+            <span className={styles.navIcon}>
+              <LogOut size={20} strokeWidth={1.75} />
+            </span>
+            <span>Sign out</span>
           </button>
-        </div>
+        </nav>
       </div>
       <div className={styles.sidebarFooter}>
         <div className={styles.footerRow}>
