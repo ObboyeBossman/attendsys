@@ -276,6 +276,7 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
   const roleColor = ROLE_COLORS[role];
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [userInitial, setUserInitial] = useState(ROLE_INITIALS[role]);
+  const [userName, setUserName] = useState<string>("");
 
   // ── Swipe gesture state (refs — no re-renders during drag) ───────────────
   const drawerRef = useRef<HTMLElement>(null);
@@ -449,6 +450,7 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
       if (!user) return;
       if (role === "super_admin") {
         setUserInitial("A");
+        setUserName("Admin");
         return;
       }
       const table = role === "rep" ? "students" : role === "lecturer" ? "lecturers" : "students";
@@ -457,7 +459,11 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
         .select("name")
         .eq("id", user.id)
         .single();
-      if (data?.name) setUserInitial((data.name as string).charAt(0).toUpperCase());
+      if (data?.name) {
+        const fullName = data.name as string;
+        setUserInitial(fullName.charAt(0).toUpperCase());
+        setUserName(fullName);
+      }
     }
     fetchInitial();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -579,8 +585,21 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
         </div>
       </main>
 
-      {/* ── Bottom nav (mobile) ───────────────────────────────────── */}
-      <BottomNav navItems={navItems} pathname={pathname} switchTo={switchTo} />
+      {/* ── Bottom profile tile (mobile) ─────────────────────────── */}
+      <BottomNav
+        navItems={navItems}
+        pathname={pathname}
+        switchTo={switchTo}
+        userName={userName}
+        userInitial={userInitial}
+        settingsHref={
+          role === "super_admin" ? "/admin/settings" :
+          role === "lecturer"   ? "/lecturer/profile" :
+          role === "rep"        ? "/rep/profile" :
+                                  "/student/profile"
+        }
+        onBack={() => window.history.back()}
+      />
 
       {/* ── Sign-out confirmation dialog ─────────────────────────── */}
       {confirmSignOut && (
