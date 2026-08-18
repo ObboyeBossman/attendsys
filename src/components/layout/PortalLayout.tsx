@@ -263,7 +263,7 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, switchTo, closeDra
 
 // ── Swipe gesture constants ───────────────────────────────────────────────────
 const DRAWER_WIDTH = 320;          // max drawer width in px (matches CSS min(320px, 85vw))
-const EDGE_ZONE = 40;              // px from left edge that initiates an open swipe
+const EDGE_ZONE = 200;             // px from left edge that initiates an open swipe
 const OPEN_THRESHOLD = 0.4;        // fraction of drawer width to commit open
 const CLOSE_THRESHOLD = 0.4;       // fraction of drawer width to commit closed
 const VELOCITY_THRESHOLD = 0.4;    // px/ms — fast flick overrides distance check
