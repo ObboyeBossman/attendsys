@@ -3,11 +3,11 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Mail, Phone, ArrowRight, CheckCircle2, RefreshCw } from "lucide-react";
+import { Mail, Phone, Eye, EyeOff, AlertCircle, RefreshCw } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import styles from "./LoginClient.module.css";
 
-type AuthView = "logout" | "email-form" | "phone-form" | "success";
+type AuthView = "logout" | "email-form";
 
 export function LoginClient() {
   const router = useRouter();
@@ -15,91 +15,91 @@ export function LoginClient() {
 
   const [authView, setAuthView] = useState<AuthView>("logout");
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
-  // ── Email Submission ──────────────────────────────────────────────────────
-  const handleEmailSubmit = async (e: React.FormEvent) => {
+  // ── Email & Password Authentication ─────────────────────────────────────
+  const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || loading) return;
+    if (!email || !password || loading) return;
+
+    setError(null);
     setLoading(true);
-    setErrorMessage(null);
 
     try {
-      // Send Supabase Magic Link
-      const { error } = await supabase.auth.signInWithOtp({
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email: email.trim().toLowerCase(),
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
+        password,
       });
 
-      if (error) {
-        throw error;
+      if (signInError) {
+        setError(signInError.message || "Invalid email or password. Please try again.");
+        return;
       }
 
-      setSuccessMessage(`Secure authentication link sent to ${email}`);
-      setAuthView("success");
-    } catch (err: any) {
-      // Fallback message for demo/local testing
-      setSuccessMessage(`Secure authentication link sent to ${email}`);
-      setAuthView("success");
-    } finally {
-      setLoading(false);
-    }
-  };
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-  // ── Phone Submission ──────────────────────────────────────────────────────
-  const handlePhoneSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!phone || loading) return;
-    setLoading(true);
-    setErrorMessage(null);
-
-    try {
-      const { error } = await supabase.auth.signInWithOtp({
-        phone: phone.trim(),
-      });
-
-      if (error) {
-        throw error;
+      if (!user) {
+        setError("Authentication failed. Please try again.");
+        return;
       }
 
-      setSuccessMessage(`Verification code sent to ${phone}`);
-      setAuthView("success");
-    } catch (err: any) {
-      setSuccessMessage(`Verification code sent to ${phone}`);
-      setAuthView("success");
-    } finally {
-      setLoading(false);
-    }
-  };
+      // Fetch user profile role
+      const { data: profile, error: profileError } = await supabase
+        .from("user_profiles")
+        .select("role, is_active, must_change_password")
+        .eq("id", user.id)
+        .single();
 
-  // ── OAuth Login ───────────────────────────────────────────────────────────
-  const handleOAuthLogin = async (provider: string) => {
-    if (loading) return;
-    setLoading(true);
-    setErrorMessage(null);
-
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: provider.toLowerCase() as "google",
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-
-      if (error) {
-        throw error;
+      if (profileError || !profile) {
+        setError("Could not load account details. Contact support.");
+        return;
       }
 
-      setSuccessMessage(`Successfully authenticated via ${provider}!`);
-      setAuthView("success");
+      const p = profile as { role: string; is_active: boolean; must_change_password: boolean };
+
+      if (!p.is_active && p.role !== "student") {
+        await supabase.auth.signOut();
+        setError("Your account has been deactivated. Contact the administrator.");
+        return;
+      }
+
+      const portalMap: Record<string, string> = {
+        super_admin: "/admin/dashboard",
+        lecturer: "/lecturer/dashboard",
+        student: "/student/dashboard",
+      };
+
+      let destination = portalMap[p.role] ?? "/student/dashboard";
+
+      if (p.role === "student") {
+        const { data: repMembership } = await supabase
+          .from("group_memberships")
+          .select("id")
+          .eq("student_id", user.id)
+          .eq("is_course_rep", true)
+          .eq("status", "active")
+          .limit(1)
+          .maybeSingle();
+
+        if (repMembership) {
+          destination = "/rep/dashboard";
+        }
+      }
+
+      if (p.must_change_password) {
+        const encodedNext = encodeURIComponent(destination);
+        destination = `/change-password?next=${encodedNext}`;
+      }
+
+      router.replace(destination);
+      router.refresh();
     } catch (err: any) {
-      setSuccessMessage(`Successfully authenticated via ${provider}!`);
-      setAuthView("success");
+      setError(err.message || "An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -128,12 +128,11 @@ export function LoginClient() {
         <span className={styles.institutionName}>Takoradi Technical University</span>
       </div>
 
-
       <main className={styles.main}>
         {/* Wordmark using exact sidebar brand typography */}
         <h1 className={styles.brandTitle}>ATTENDSYS</h1>
 
-        {/* ── LOGOUT VIEW ── */}
+        {/* ── OPTIONS VIEW ── */}
         {authView === "logout" && (
           <div className={styles.fadeIn}>
             <div className={styles.subHeadingGroup}>
@@ -144,8 +143,9 @@ export function LoginClient() {
             </div>
 
             <div className={styles.optionsStack}>
-              {/* Email */}
+              {/* Email — Enabled */}
               <button
+                type="button"
                 onClick={() => setAuthView("email-form")}
                 className={styles.optionBtn}
               >
@@ -155,22 +155,26 @@ export function LoginClient() {
                 Continue with Email
               </button>
 
-              {/* Phone */}
+              {/* Phone — Temporarily Disabled */}
               <button
-                onClick={() => setAuthView("phone-form")}
-                className={styles.optionBtn}
+                type="button"
+                disabled
+                className={`${styles.optionBtn} ${styles.disabledOptionBtn}`}
+                title="Phone sign-in is temporarily disabled"
               >
                 <span className={styles.optionIconLeft}>
                   <Phone size={18} strokeWidth={1.75} />
                 </span>
-                Continue with Phone
+                <span>Continue with Phone</span>
+                <span className={styles.disabledBadge}>Coming Soon</span>
               </button>
 
-              {/* Google */}
+              {/* Google — Temporarily Disabled */}
               <button
-                onClick={() => handleOAuthLogin("Google")}
-                disabled={loading}
-                className={styles.optionBtn}
+                type="button"
+                disabled
+                className={`${styles.optionBtn} ${styles.disabledOptionBtn}`}
+                title="Google sign-in is temporarily disabled"
               >
                 <span className={styles.optionIconLeft}>
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -192,105 +196,116 @@ export function LoginClient() {
                     />
                   </svg>
                 </span>
-                Continue with Google
+                <span>Continue with Google</span>
+                <span className={styles.disabledBadge}>Coming Soon</span>
               </button>
             </div>
           </div>
         )}
 
-        {/* ── EMAIL FORM ── */}
+        {/* ── EMAIL & PASSWORD FORM (Routiness Aesthetic) ── */}
         {authView === "email-form" && (
-          <form onSubmit={handleEmailSubmit} className={`${styles.fadeIn} ${styles.formBody}`}>
-            <div className={styles.formHeader}>
-              <button
-                type="button"
-                onClick={() => setAuthView("logout")}
-                className={styles.backBtn}
-              >
-                ← Back
-              </button>
-              <h2 className={styles.formTitle}>Sign in with Email</h2>
-              <p className={styles.formDesc}>
-                Enter your registered corporate or student email.
-              </p>
-            </div>
-            <input
-              type="email"
-              required
-              placeholder="name@company.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={styles.input}
-            />
-            <button type="submit" disabled={loading} className={styles.submitBtn}>
-              {loading ? (
-                <RefreshCw size={16} className={styles.spinIcon} />
-              ) : (
-                <>
-                  <span>Send Login Link</span>
-                  <ArrowRight size={15} />
-                </>
-              )}
-            </button>
-          </form>
-        )}
+          <form onSubmit={handlePasswordLogin} className={`${styles.fadeIn} ${styles.formBody}`}>
+            {error && (
+              <div className={styles.errorBox} role="alert">
+                <AlertCircle size={18} strokeWidth={1.75} style={{ flexShrink: 0 }} />
+                <span>{error}</span>
+              </div>
+            )}
 
-        {/* ── PHONE FORM ── */}
-        {authView === "phone-form" && (
-          <form onSubmit={handlePhoneSubmit} className={`${styles.fadeIn} ${styles.formBody}`}>
-            <div className={styles.formHeader}>
-              <button
-                type="button"
-                onClick={() => setAuthView("logout")}
-                className={styles.backBtn}
-              >
-                ← Back
-              </button>
-              <h2 className={styles.formTitle}>Sign in with Phone</h2>
-              <p className={styles.formDesc}>
-                Enter your mobile number to receive a verification code.
-              </p>
+            {/* Email Field with Floating Notch Label */}
+            <div className={styles.inputFieldGroup}>
+              <span className={styles.floatingLabel}>Email</span>
+              <div className={styles.inputWrap}>
+                <input
+                  type="email"
+                  required
+                  placeholder="name@ttu.edu.gh"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (error) setError(null);
+                  }}
+                  className={styles.notchInput}
+                  disabled={loading}
+                />
+              </div>
             </div>
-            <input
-              type="tel"
-              required
-              placeholder="+233 55 000 0000"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className={styles.input}
-            />
-            <button type="submit" disabled={loading} className={styles.submitBtn}>
-              {loading ? (
-                <RefreshCw size={16} className={styles.spinIcon} />
-              ) : (
-                <>
-                  <span>Send Code</span>
-                  <ArrowRight size={15} />
-                </>
-              )}
-            </button>
-          </form>
-        )}
 
-        {/* ── SUCCESS ── */}
-        {authView === "success" && (
-          <div className={`${styles.fadeIn} ${styles.successCard}`}>
-            <div className={styles.successIconCircle}>
-              <CheckCircle2 size={28} />
+            {/* Password Field with Floating Notch Label & Eye Toggle */}
+            <div className={styles.inputFieldGroup}>
+              <span className={styles.floatingLabel}>Password</span>
+              <div className={styles.inputWrap}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  placeholder="••••••••••••"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (error) setError(null);
+                  }}
+                  className={styles.notchInput}
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  className={styles.eyeToggle}
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <EyeOff size={18} strokeWidth={1.75} />
+                  ) : (
+                    <Eye size={18} strokeWidth={1.75} />
+                  )}
+                </button>
+              </div>
             </div>
-            <h2 className={styles.successTitle}>Authentication Active</h2>
-            <p className={styles.successMsg}>{successMessage}</p>
+
+            {/* Submit Button */}
             <button
-              onClick={() => {
-                setAuthView("logout");
-                setEmail("");
-                setPhone("");
-              }}
-              className={styles.signOutBtn}
+              type="submit"
+              disabled={loading || !email || !password}
+              className={styles.submitBtn}
             >
-              Sign out
+              {loading ? (
+                <>
+                  <RefreshCw size={16} className={styles.spinIcon} />
+                  <span>SIGNING IN…</span>
+                </>
+              ) : (
+                <span>SIGN IN</span>
+              )}
             </button>
-          </div>
+
+            {/* Forgot password link */}
+            <div>
+              <button
+                type="button"
+                onClick={() =>
+                  alert("To reset your password, contact your department administrator or the ICT Helpdesk.")
+                }
+                className={styles.forgotLink}
+              >
+                Forgot password?
+              </button>
+            </div>
+
+            {/* Back button to return to options */}
+            <div className={styles.backBtnRow}>
+              <button
+                type="button"
+                onClick={() => {
+                  setAuthView("logout");
+                  setError(null);
+                }}
+                className={styles.backBtn}
+              >
+                ← Back to options
+              </button>
+            </div>
+          </form>
         )}
       </main>
 

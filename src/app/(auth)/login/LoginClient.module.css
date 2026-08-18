@@ -25,7 +25,7 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 16px 24px;
+  padding: 20px 24px 12px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -45,8 +45,8 @@
   letter-spacing: -0.01em;
   line-height: 1.2;
 }
-/* ── Grid background pattern ──────────────────────────────────────────────── */
 
+/* ── Grid background pattern ──────────────────────────────────────────────── */
 .bgGrid {
   position: fixed;
   inset: 0;
@@ -100,10 +100,6 @@
   background: linear-gradient(to left, #FFFFFF, transparent);
 }
 
-.spacer {
-  flex: 1;
-}
-
 /* ── Main card container ─────────────────────────────────────────────────── */
 .main {
   position: relative;
@@ -112,7 +108,7 @@
   width: 100%;
   max-width: 380px;
   margin: 0 auto;
-  padding: 24px 24px 16px;
+  padding: 16px 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -123,12 +119,12 @@
 /* ── Brand Title (Sidebar Typography: MuseoModerno) ───────────────────────── */
 .brandTitle {
   font-family: 'MuseoModerno', var(--font-heading), sans-serif;
-  font-size: 42px;
+  font-size: 38px;
   font-weight: 500;
   color: #000000;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
   line-height: 1;
 }
 
@@ -150,15 +146,15 @@
 }
 
 .subHeadingGroup {
-  margin-bottom: 32px;
+  margin-bottom: 28px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .subTitle {
   font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
-  font-size: 16px;
+  font-size: 15px;
   color: #111827;
   font-weight: 500;
 }
@@ -199,16 +195,34 @@
   cursor: pointer;
   outline: none;
   -webkit-tap-highlight-color: transparent;
-  transition: background 150ms ease, transform 150ms ease;
+  transition: background 150ms ease, transform 150ms ease, opacity 150ms ease;
   user-select: none;
 }
 
-.optionBtn:hover {
+.optionBtn:hover:not(:disabled) {
   background: #E2E8F0;
 }
 
-.optionBtn:active {
+.optionBtn:active:not(:disabled) {
   transform: scale(0.98);
+}
+
+.disabledOptionBtn {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: #F8FAFC;
+  border: 1px dashed #CBD5E1;
+}
+
+.disabledBadge {
+  margin-left: auto;
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  background: #E2E8F0;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  color: #64748B;
+  font-weight: 500;
 }
 
 .optionIconLeft {
@@ -220,85 +234,95 @@
   flex-shrink: 0;
 }
 
-/* ── Back button ─────────────────────────────────────────────────────────── */
-.backBtn {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  color: #94A3B8;
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: 20px;
-  transition: color 150ms ease;
-  padding: 0;
-}
-
-.backBtn:hover {
-  color: #111827;
-}
-
-.formHeader {
-  text-align: left;
-  margin-bottom: 24px;
-  width: 100%;
-}
-
-.formTitle {
-  font-family: 'MuseoModerno', sans-serif;
-  font-size: 18px;
-  font-weight: 400;
-  color: #111827;
-  margin-bottom: 4px;
-  letter-spacing: 0.02em;
-}
-
-.formDesc {
-  font-family: 'JetBrains Mono', monospace;
-  color: #94A3B8;
-  font-size: 12px;
-  margin-top: 6px;
-  line-height: 1.4;
-}
-
-/* ── Inputs & CTAs ───────────────────────────────────────────────────────── */
+/* ── Floating notch inputs (Routiness design) ────────────────────────────── */
 .formBody {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 18px;
   width: 100%;
 }
 
-.input {
+.inputFieldGroup {
+  position: relative;
   width: 100%;
-  padding: 16px 20px;
-  border-radius: 16px;
-  background: #F8FAFC;
-  border: 1px solid #E2E8F0;
-  outline: none;
-  color: #111827;
+  text-align: left;
+}
+
+.floatingLabel {
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  background: #FFFFFF;
+  padding: 0 6px;
+  font-family: var(--font-body), sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748B;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  z-index: 5;
+  border-radius: 4px;
+}
+
+.inputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.notchInput {
+  width: 100%;
   font-family: var(--font-body), sans-serif;
   font-size: 14px;
   font-weight: 500;
+  padding: 16px 44px 16px 20px;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: #FFFFFF;
+  color: #111827;
+  outline: none;
   transition: border-color 150ms ease, box-shadow 150ms ease;
   box-sizing: border-box;
 }
 
-.input:focus {
+.notchInput:focus {
   border-color: #111827;
   box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
 }
 
+.eyeToggle {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #94A3B8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 50%;
+  transition: color 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.eyeToggle:hover {
+  color: #111827;
+}
+
+/* ── CTAs & Buttons ──────────────────────────────────────────────────────── */
 .submitBtn {
   width: 100%;
   padding: 16px 24px;
   border-radius: 9999px;
   background: #111827;
   color: #FFFFFF;
-  font-size: 14px;
-  font-weight: 600;
+  font-family: var(--font-body), sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   border: none;
   cursor: pointer;
   display: flex;
@@ -308,13 +332,15 @@
   transition: background 150ms ease, transform 150ms ease;
   outline: none;
   user-select: none;
+  margin-top: 4px;
 }
 
-.submitBtn:hover {
+.submitBtn:hover:not(:disabled) {
   background: #1F2937;
+  transform: scale(1.01);
 }
 
-.submitBtn:active {
+.submitBtn:active:not(:disabled) {
   transform: scale(0.98);
 }
 
@@ -322,6 +348,65 @@
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+}
+
+.forgotLink {
+  font-family: var(--font-body), sans-serif;
+  font-size: 13px;
+  color: #64748B;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: color 150ms ease;
+  margin-top: 14px;
+  display: inline-block;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.forgotLink:hover {
+  color: #111827;
+}
+
+.backBtnRow {
+  margin-top: 16px;
+  text-align: center;
+  width: 100%;
+}
+
+.backBtn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: #94A3B8;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 150ms ease;
+  padding: 6px 12px;
+  border-radius: 9999px;
+}
+
+.backBtn:hover {
+  color: #111827;
+}
+
+/* ── Error Banner ────────────────────────────────────────────────────────── */
+.errorBox {
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: #FEF2F2;
+  color: #DC2626;
+  font-family: var(--font-body), sans-serif;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  text-align: left;
+  line-height: 1.4;
 }
 
 /* ── Spinner animation ──────────────────────────────────────────────────── */
@@ -335,61 +420,6 @@
   }
 }
 
-/* ── Success state ──────────────────────────────────────────────────────── */
-.successCard {
-  width: 100%;
-  padding: 24px 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.successIconCircle {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: #ECFDF5;
-  color: #059669;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 16px;
-  border: 1px solid #A7F3D0;
-}
-
-.successTitle {
-  font-family: 'MuseoModerno', sans-serif;
-  font-size: 18px;
-  font-weight: 400;
-  color: #111827;
-  margin-bottom: 8px;
-}
-
-.successMsg {
-  font-family: 'JetBrains Mono', monospace;
-  color: #64748B;
-  font-size: 12px;
-  margin-bottom: 24px;
-  max-width: 280px;
-  line-height: 1.5;
-}
-
-.signOutBtn {
-  padding: 12px 24px;
-  border-radius: 9999px;
-  background: #F1F5F9;
-  color: #111827;
-  font-size: 14px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: background 150ms ease;
-}
-
-.signOutBtn:hover {
-  background: #E2E8F0;
-}
-
 /* ── Footer ─────────────────────────────────────────────────────────────── */
 .footer {
   position: relative;
@@ -397,7 +427,7 @@
   width: 100%;
   max-width: 440px;
   margin: 0 auto;
-  padding: 0 24px 32px;
+  padding: 0 24px 20px;
   text-align: center;
 }
 
