@@ -400,7 +400,7 @@
 /* ── Floating Custom Toast ────────────────────────────────────────────────── */
 .toastContainer {
   position: fixed;
-  top: 16px;
+  top: 68px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 9999;
