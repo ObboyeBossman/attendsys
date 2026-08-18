@@ -18,7 +18,35 @@
   color: #FFFFFF;
 }
 
+/* ── TTU Institution Header (top of screen) ───────────────────────────────── */
+.institutionHeader {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.institutionLogo {
+  /* Desaturate the TTU crest to black & white */
+  filter: grayscale(100%) brightness(0.85);
+  flex-shrink: 0;
+  display: block;
+}
+
+.institutionName {
+  font-family: var(--font-body), 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
 /* ── Grid background pattern ──────────────────────────────────────────────── */
+
 .bgGrid {
   position: fixed;
   inset: 0;

@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Mail, Phone, ArrowRight, CheckCircle2, RefreshCw } from "lucide-react";
+import Image from "next/image";
+import { Phone, ArrowRight, CheckCircle2, RefreshCw } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import styles from "./LoginClient.module.css";
 
@@ -113,6 +114,18 @@ export function LoginClient() {
         <div className={styles.fadeBottom} />
         <div className={styles.fadeLeft} />
         <div className={styles.fadeRight} />
+      </div>
+
+      {/* ── TTU Institution Header ── */}
+      <div className={styles.institutionHeader}>
+        <Image
+          src="/ttu_logo.png"
+          alt="Takoradi Technical University logo"
+          width={40}
+          height={40}
+          className={styles.institutionLogo}
+        />
+        <span className={styles.institutionName}>Takoradi Technical University</span>
       </div>
 
       <div className={styles.spacer} />
