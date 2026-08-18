@@ -23,10 +23,14 @@ import type { NavItem, NavIcon as NavIconName } from "./PortalLayout";
 import styles from "./BottomNav.module.css";
 
 // ── Icon renderer ─────────────────────────────────────────────────────────────
-// Active state: heavier stroke (2) to communicate selection without color alone.
-// Inactive: standard 1.75 stroke.
+// Active: filled (fill="currentColor", no stroke) — solid presence.
+// Inactive: outline (fill="none", stroke) — recedes into the background.
 function NavIcon({ name, active }: { name: NavIconName; active: boolean }) {
-  const p = { size: 22, strokeWidth: active ? 2 : 1.75 };
+  const base = { size: 22 };
+  const filled = { ...base, strokeWidth: 0, fill: "currentColor" };
+  const outline = { ...base, strokeWidth: 1.75, fill: "none" };
+  const p = active ? filled : outline;
+
   switch (name) {
     case "dashboard":   return <LayoutDashboard {...p} />;
     case "institution": return <Building2 {...p} />;
@@ -116,6 +120,9 @@ export function BottomNav({ navItems, pathname, switchTo }: BottomNavProps) {
           </Link>
         )}
       </div>
+
+      {/* iOS-style home indicator */}
+      <div className={styles.homeIndicator} aria-hidden="true" />
     </nav>
   );
 }
