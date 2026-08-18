@@ -147,6 +147,12 @@
   --glass-shadow-up:   0 -8px 30px rgba(0, 0, 0, 0.06);
   --glass-blur:        blur(20px) saturate(200%);
 
+  /* Bottom nav — stronger frosted glass so content bleeds through visibly */
+  --bottom-nav-bg:     rgba(255, 255, 255, 0.55);
+  --bottom-nav-blur:   blur(40px) saturate(180%);
+  --bottom-nav-border: rgba(255, 255, 255, 0.70);
+  --bottom-nav-shadow: 0 -8px 32px rgba(0, 0, 0, 0.08);
+
   /* Interactive element colours on glass */
   --glass-icon-bg:       rgba(0, 0, 0, 0.06);
   --glass-icon-bg-hover: rgba(0, 0, 0, 0.10);
