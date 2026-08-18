@@ -1,7 +1,7 @@
 /* ── Bottom Navigation Bar ───────────────────────────────────────────────────
    Full-width glassmorphic bar, desktop hidden / mobile only.
-   Features a sliding black pill indicator that moves between active items
-   using measured DOM positions (useLayoutEffect + getBoundingClientRect).
+   Provides generous safe area padding so touch targets never conflict
+   with native device gesture bars (iOS Home Indicator / Android Nav Bar).
    ────────────────────────────────────────────────────────────────────────── */
 
 .nav {
@@ -21,9 +21,8 @@
   border-top: 1px solid rgba(255, 255, 255, 0.6);
   box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.05);
 
-  padding: 10px 16px 0;
-  /* Safe area for iPhone notch / home indicator region */
-  padding-bottom: env(safe-area-inset-bottom);
+  /* Generous padding top & bottom with native device safe area fallback */
+  padding: 12px 16px calc(14px + env(safe-area-inset-bottom, 16px));
 }
 
 @media (max-width: 768px) {
@@ -36,23 +35,10 @@
 .container {
   position: relative;
   display: flex;
-  align-items: stretch;
-  max-width: 480px;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 440px;
   margin: 0 auto;
-}
-
-/* ── Sliding pill ──────────────────────────────────────────────────────────── */
-.pill {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.06);
-  border-radius: 12px;
-  pointer-events: none;
-  /* Spring easing matches reference code */
-  transition:
-    left  350ms cubic-bezier(0.34, 1.56, 0.64, 1),
-    width 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* ── Nav items ─────────────────────────────────────────────────────────────── */
@@ -65,7 +51,6 @@
   flex: 1;
   gap: 4px;
   padding: 6px 4px;
-  min-height: 56px;
   border-radius: 12px;
   text-decoration: none;
   color: #94A3B8; /* slate-400 — inactive */
@@ -152,22 +137,8 @@
   pointer-events: none;
 }
 
-/* ── iOS home indicator ────────────────────────────────────────────────────── */
-/* Signals swipe-up affordance — mirrors native iOS design */
-.homeIndicator {
-  width: 120px;
-  height: 4px;
-  background: rgba(0, 0, 0, 0.75);
-  border-radius: 9999px;
-  margin: 8px auto 4px;
-  opacity: 0.65;
-}
-
 /* ── Reduced motion ────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .pill {
-    transition: none;
-  }
   .item,
   .iconWrap,
   .label {

@@ -1,6 +1,5 @@
 "use client";
 
-import { useRef, useLayoutEffect, useState } from "react";
 import Link from "next/link";
 import {
   LayoutDashboard,
@@ -65,54 +64,18 @@ export function BottomNav({ navItems, pathname, switchTo }: BottomNavProps) {
   // Strict maximum of 4 items on bottom navigation across all portals
   const displayedItems = navItems.slice(0, 4);
 
-  const activeIndex = displayedItems.findIndex(
-    (item) =>
-      pathname === item.href ||
-      (item.href !== "/admin" && pathname.startsWith(item.href + "/"))
-  );
-
-  // Sliding pill — tracks the active item's measured DOM position
-  const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
-  const [pillStyle, setPillStyle] = useState({ left: 0, width: 0 });
-  const [mounted, setMounted] = useState(false);
-
-  useLayoutEffect(() => {
-    const idx = activeIndex === -1 ? 0 : activeIndex;
-    const el = itemRefs.current[idx];
-    if (!el) return;
-
-    const parent = el.parentElement as HTMLElement;
-    const parentRect = parent.getBoundingClientRect();
-    const elRect = el.getBoundingClientRect();
-
-    setPillStyle({
-      left: elRect.left - parentRect.left,
-      width: elRect.width,
-    });
-    setMounted(true);
-  }, [activeIndex, pathname]);
-
   return (
     <nav className={styles.nav} aria-label="Mobile navigation">
       <div className={styles.container}>
-        {/* Sliding black pill — renders only after first measurement */}
-        {mounted && (
-          <span
-            className={styles.pill}
-            style={{ left: pillStyle.left, width: pillStyle.width }}
-            aria-hidden="true"
-          />
-        )}
+        {displayedItems.map((item) => {
+          const isActive =
+            pathname === item.href ||
+            (item.href !== "/admin" && pathname.startsWith(item.href + "/"));
 
-        {displayedItems.map((item, index) => {
-          const isActive = activeIndex === index;
           return (
             <Link
               key={item.href}
               href={item.href}
-              ref={(el: HTMLAnchorElement | null) => {
-                itemRefs.current[index] = el;
-              }}
               className={`${styles.item} ${isActive ? styles.itemActive : ""}`}
               aria-current={isActive ? "page" : undefined}
             >
@@ -132,7 +95,6 @@ export function BottomNav({ navItems, pathname, switchTo }: BottomNavProps) {
           );
         })}
 
-        {/* Portal switcher — not tracked by pill */}
         {switchTo && (
           <Link href={switchTo.href} className={styles.item}>
             <span className={styles.iconWrap}>
@@ -154,9 +116,6 @@ export function BottomNav({ navItems, pathname, switchTo }: BottomNavProps) {
           </Link>
         )}
       </div>
-
-      {/* iOS home indicator — signals swipe-up affordance */}
-      <div className={styles.homeIndicator} aria-hidden="true" />
     </nav>
   );
 }
