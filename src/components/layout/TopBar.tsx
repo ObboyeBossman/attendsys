@@ -81,35 +81,37 @@ export function TopBar({
         <MenuIcon />
       </button>
 
-      {/* Center — tabs */}
-      <div className={styles.tabsContainer}>
-        {tabs.map(({ id, label }) => {
-          const isActive = activeTab === id;
-          return (
-            <button
-              key={id}
-              onClick={() => handleTabClick(id)}
-              className={styles.tabBtn}
-            >
-              <span
-                className={`${styles.tabLabel} ${
-                  isActive ? styles.tabLabelActive : styles.tabLabelInactive
-                }`}
+      {/* Center — tabs (only rendered when tabs are provided) */}
+      {tabs.length > 0 && (
+        <div className={styles.tabsContainer}>
+          {tabs.map(({ id, label }) => {
+            const isActive = activeTab === id;
+            return (
+              <button
+                key={id}
+                onClick={() => handleTabClick(id)}
+                className={styles.tabBtn}
               >
-                {label}
-              </span>
+                <span
+                  className={`${styles.tabLabel} ${
+                    isActive ? styles.tabLabelActive : styles.tabLabelInactive
+                  }`}
+                >
+                  {label}
+                </span>
 
-              {/* Active underline */}
-              <span
-                className={styles.activeUnderline}
-                style={{
-                  width: isActive ? "100%" : "0%",
-                }}
-              />
-            </button>
-          );
-        })}
-      </div>
+                {/* Active underline */}
+                <span
+                  className={styles.activeUnderline}
+                  style={{
+                    width: isActive ? "100%" : "0%",
+                  }}
+                />
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* Right — profile avatar */}
       <button

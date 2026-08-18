@@ -352,6 +352,7 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
         onMenuPress={() => setDrawerOpen(true)}
         onProfilePress={openSignOut}
         userInitial={userInitial}
+        tabs={pathname.endsWith("/dashboard") ? undefined : []}
       />
 
       {/* ── Mobile drawer overlay ─────────────────────────────────── */}
