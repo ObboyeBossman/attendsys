@@ -263,8 +263,26 @@
     margin-left: 0;
     /* 64px topbar + dynamic banner height set by JS via --banner-h */
     padding-top: calc(64px + var(--banner-h, 0px));
-    /* extra bottom clearance: pill nav height (~56px) + gap (16px) + safe area */
-    padding-bottom: calc(84px + env(safe-area-inset-bottom));
+    /* bottom clearance: profile tile height (~76px) + safe area */
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+    /* Allow vertical scroll in the middle content zone */
+    overflow-y: auto;
+    /* Custom gray scrollbar (WebKit) */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(100, 116, 139, 0.35) transparent;
+  }
+  .main::-webkit-scrollbar {
+    width: 5px;
+  }
+  .main::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .main::-webkit-scrollbar-thumb {
+    background: rgba(100, 116, 139, 0.35);
+    border-radius: 9999px;
+  }
+  .main::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 116, 139, 0.60);
   }
   .content {
     padding: var(--space-4);

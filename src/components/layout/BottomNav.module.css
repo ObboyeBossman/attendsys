@@ -1,8 +1,8 @@
-/* ── Bottom Navigation Bar ───────────────────────────────────────────────────
-   Glassmorphic bar — desktop hidden / mobile only.
-   All colours and glass values driven by --glass-* / --color-* tokens.
-   Zero hardcoded values.
-   ────────────────────────────────────────────────────────────────────────── */
+/* ── Bottom Profile Tile ─────────────────────────────────────────────────────
+   Replaces the old icon nav on mobile.
+   The whole card navigates to settings; the back button is independent.
+   Matches the reference UI (avatar + name → settings, back btn with hover bg).
+   ─────────────────────────────────────────────────────────────────────────── */
 
 .nav {
   display: none;
@@ -13,137 +13,194 @@
   right: 0;
   z-index: 100;
 
-  /* Glass — dedicated bottom-nav tokens for smooth frosted glass effect */
+  /* Same glass treatment as the top bar */
   background: var(--bottom-nav-bg);
   -webkit-backdrop-filter: var(--bottom-nav-blur);
   backdrop-filter: var(--bottom-nav-blur);
   border-top: 1px solid var(--bottom-nav-border);
   box-shadow: var(--bottom-nav-shadow);
 
-  /* Hardware acceleration & layer isolation: prevents text passthrough / window louver effect */
+  /* Layout: back button on the left, tile fills the rest */
+  display: flex;
+  align-items: center;
+  gap: 0;
+
+  /* Horizontal padding; bottom accounts for iOS/Android home-gesture bar */
+  padding: 10px 16px calc(14px + env(safe-area-inset-bottom, 0px));
+
+  /* GPU layer — prevents scroll bleed through glass */
   isolation: isolate;
   transform: translateZ(0);
   will-change: transform, backdrop-filter;
-
-  /* top | sides | bottom — safe-area-inset-bottom covers iOS/Android gesture bars;
-     16px fallback ensures clearance on devices that report 0 inset */
-  padding: 12px 24px calc(16px + env(safe-area-inset-bottom, 0px));
 }
 
-@media (max-width: 768px) {
+/* Hidden on desktop — sidebar takes over */
+@media (min-width: 769px) {
   .nav {
-    display: block;
+    display: none !important;
   }
 }
 
-/* ── Inner row ─────────────────────────────────────────────────────────────── */
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 440px;
-  margin: 0 auto;
+/* Show only on mobile */
+@media (max-width: 768px) {
+  .nav {
+    display: flex;
+  }
 }
 
-/* ── Nav items ─────────────────────────────────────────────────────────────── */
-.item {
-  position: relative;
+/* ── Back button ─────────────────────────────────────────────────────────────
+   Sits to the LEFT of the tile (matches reference: icon gets bg circle on hover) */
+.backBtn {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex: 1;
-  gap: 5px;
-  padding: 4px 4px 2px;
-  border-radius: 12px;
-  text-decoration: none;
-  color: var(--glass-inactive);
-  font-family: var(--font-body);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  line-height: 1;
+  cursor: pointer;
+  color: var(--glass-icon-color, #111827);
   -webkit-tap-highlight-color: transparent;
-  user-select: none;
-  outline: none;
-  transition: color 200ms ease;
+  transition: background 160ms ease, transform 120ms ease;
+  margin-right: 8px;
 }
 
-.item:hover {
-  text-decoration: none;
+.backBtn:hover {
+  background: var(--glass-icon-bg-hover, rgba(0, 0, 0, 0.07));
 }
 
-.item:active {
-  transform: scale(0.93);
+.backBtn:active {
+  transform: scale(0.90);
   transition: transform 80ms ease;
 }
 
-/* Active state — black, matching reference */
-.itemActive {
-  color: var(--glass-active);
+/* ── Tile (settings link) ────────────────────────────────────────────────────
+   Full-width clickable row → settings page.
+   Hover shifts background, matching the reference card-hover behaviour. */
+.tile {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 16px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 160ms ease;
+  min-width: 0; /* allow text truncation */
 }
 
-.itemActive:hover {
-  color: var(--glass-active);
+.tile:hover {
+  background: var(--glass-icon-bg-hover, rgba(0, 0, 0, 0.05));
   text-decoration: none;
 }
 
-/* ── Icon wrapper ──────────────────────────────────────────────────────────── */
-.iconWrap {
-  position: relative;
-  display: inline-flex;
+.tile:active {
+  background: rgba(0, 0, 0, 0.09);
+  transition: background 60ms ease;
+}
+
+/* ── Avatar circle ───────────────────────────────────────────────────────────
+   Matches the reference: solid coloured circle with white initial. */
+.avatar {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #111827;
+  color: #ffffff;
+  display: flex;
   align-items: center;
   justify-content: center;
-  color: inherit;
-  transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1), color 200ms ease;
-}
-
-.itemActive .iconWrap {
-  transform: scale(1.12);
-}
-
-/* ── Label ─────────────────────────────────────────────────────────────────── */
-.label {
-  font-size: 11px;
-  font-weight: 500;
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
   letter-spacing: 0.01em;
-  color: inherit;
-  transition: font-weight 150ms ease;
+  user-select: none;
 }
 
-.itemActive .label {
-  font-weight: 700;
+/* ── Name block ──────────────────────────────────────────────────────────────
+   Two-line stacked layout: primary name + muted sub-label */
+.nameBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
 }
 
-/* ── Badge ─────────────────────────────────────────────────────────────────── */
-.badge {
-  position: absolute;
-  top: -4px;
-  right: -6px;
-  min-width: 16px;
-  height: 16px;
-  border-radius: 9999px;
-  background: var(--color-primary);
-  color: var(--color-text-inverse);
-  font-size: 10px;
-  font-weight: 700;
-  display: inline-flex;
+.userName {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text, #111827);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subLabel {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--color-text-3, #64748B);
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+
+/* ── Right chevron ───────────────────────────────────────────────────────────
+   Subtle right-pointing arrow — affordance for navigation */
+.chevronRight {
+  flex-shrink: 0;
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 4px;
-  line-height: 1;
-  pointer-events: none;
+  color: var(--color-text-3, #94a3b8);
+  transition: transform 160ms ease, color 160ms ease;
 }
 
+.tile:hover .chevronRight {
+  transform: translateX(2px);
+  color: var(--color-text-2, #475569);
+}
 
-/* ── Reduced motion ────────────────────────────────────────────────────────── */
+/* ── Scrollbar style — gray ──────────────────────────────────────────────────
+   Applied globally via :root so every scrollable area in the portal picks it up */
+:global(::-webkit-scrollbar) {
+  width: 5px;
+  height: 5px;
+}
+:global(::-webkit-scrollbar-track) {
+  background: transparent;
+}
+:global(::-webkit-scrollbar-thumb) {
+  background: rgba(100, 116, 139, 0.35); /* slate-500 at 35% */
+  border-radius: 9999px;
+}
+:global(::-webkit-scrollbar-thumb:hover) {
+  background: rgba(100, 116, 139, 0.60);
+}
+
+/* Firefox */
+:global(*) {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 116, 139, 0.35) transparent;
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────────────────*/
 @media (prefers-reduced-motion: reduce) {
-  .item,
-  .iconWrap,
-  .label {
+  .backBtn,
+  .tile,
+  .chevronRight {
     transition: none;
   }
-  .item:active {
+  .backBtn:active {
     transform: none;
   }
 }

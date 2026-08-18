@@ -1,127 +1,93 @@
 "use client";
 
 import Link from "next/link";
-import {
-  LayoutDashboard,
-  Building2,
-  Calendar,
-  Users,
-  BookOpen,
-  FileCheck2,
-  Flag,
-  Settings,
-  Video,
-  Clock,
-  User,
-  CheckCircle2,
-  Bell,
-  Star,
-  History,
-  GraduationCap,
-} from "lucide-react";
 import type { NavItem, NavIcon as NavIconName } from "./PortalLayout";
 import styles from "./BottomNav.module.css";
-
-// ── Icon renderer ─────────────────────────────────────────────────────────────
-// Active: prominent stroke accent (strokeWidth=2.25) + scale elevation.
-// Inactive: standard outline (strokeWidth=1.75) — recedes into the background.
-function NavIcon({ name, active }: { name: NavIconName; active: boolean }) {
-  const p = {
-    size: 22,
-    strokeWidth: active ? 2.25 : 1.75,
-  };
-
-  switch (name) {
-    case "dashboard":   return <LayoutDashboard {...p} />;
-    case "institution": return <Building2 {...p} />;
-    case "academic":    return <GraduationCap {...p} />;
-    case "semesters":
-    case "calendar":    return <Calendar {...p} />;
-    case "groups":
-    case "users":       return <Users {...p} />;
-    case "courses":
-    case "book":        return <BookOpen {...p} />;
-    case "audit":       return <FileCheck2 {...p} />;
-    case "feedback":
-    case "flag":        return <Flag {...p} />;
-    case "settings":    return <Settings {...p} />;
-    case "video":       return <Video {...p} />;
-    case "clock":       return <Clock {...p} />;
-    case "history":     return <History {...p} />;
-    case "user":        return <User {...p} />;
-    case "check":       return <CheckCircle2 {...p} />;
-    case "bell":        return <Bell {...p} />;
-    case "star":        return <Star {...p} />;
-    default:            return null;
-  }
-}
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 interface BottomNavProps {
   navItems: readonly NavItem[];
   pathname: string;
   switchTo?: { label: string; href: string };
+  /** Full display name for the profile tile */
+  userName?: string;
+  /** Single letter initial for the avatar */
+  userInitial?: string;
+  /** Route the tile links to (profile or settings page) */
+  settingsHref?: string;
+  /** Called when the back chevron is pressed */
+  onBack?: () => void;
+}
+
+// ── Back chevron ──────────────────────────────────────────────────────────────
+function BackIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
+  );
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
-export function BottomNav({ navItems, pathname, switchTo }: BottomNavProps) {
-  // Enforce maximum of 3 total items on bottom navigation
-  const maxNavItems = switchTo ? 2 : 3;
-  const displayedItems = navItems.slice(0, maxNavItems);
-
+export function BottomNav({
+  userName = "",
+  userInitial = "U",
+  settingsHref = "/",
+  onBack,
+}: BottomNavProps) {
   return (
-    <nav className={styles.nav} aria-label="Mobile navigation">
-      <div className={styles.container}>
-        {displayedItems.map((item) => {
-          const isActive =
-            pathname === item.href ||
-            (item.href !== "/admin" && pathname.startsWith(item.href + "/"));
+    <nav className={styles.nav} aria-label="Profile and settings">
+      {/* The whole tile is a settings link — except the back button */}
+      <Link href={settingsHref} className={styles.tile} aria-label="Go to settings">
+        {/* Avatar */}
+        <div className={styles.avatar} aria-hidden="true">
+          {userInitial}
+        </div>
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`${styles.item} ${isActive ? styles.itemActive : ""}`}
-              aria-current={isActive ? "page" : undefined}
-            >
-              <span className={styles.iconWrap}>
-                {!!item.badge && item.badge > 0 && (
-                  <span
-                    className={styles.badge}
-                    aria-label={`${item.badge} unread`}
-                  >
-                    {item.badge > 99 ? "99+" : item.badge}
-                  </span>
-                )}
-                <NavIcon name={item.icon} active={isActive} />
-              </span>
-              <span className={styles.label}>{item.label}</span>
-            </Link>
-          );
-        })}
+        {/* Name + sub-label */}
+        <div className={styles.nameBlock}>
+          <span className={styles.userName}>
+            {userName || "My Account"}
+          </span>
+          <span className={styles.subLabel}>Settings &amp; profile</span>
+        </div>
 
-        {switchTo && (
-          <Link href={switchTo.href} className={styles.item}>
-            <span className={styles.iconWrap}>
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 20 20"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.75"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M4 10h12M10 4l6 6-6 6" />
-              </svg>
-            </span>
-            <span className={styles.label}>{switchTo.label}</span>
-          </Link>
-        )}
-      </div>
+        {/* Right chevron — decorative affordance */}
+        <div className={styles.chevronRight} aria-hidden="true">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </div>
+      </Link>
 
+      {/* Back button — sits outside the Link so it doesn't navigate to settings */}
+      <button
+        className={styles.backBtn}
+        onClick={onBack}
+        aria-label="Go back"
+        type="button"
+      >
+        <BackIcon />
+      </button>
     </nav>
   );
 }
