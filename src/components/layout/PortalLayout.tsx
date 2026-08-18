@@ -130,9 +130,9 @@ export interface PortalLayoutProps {
 
 const ROLE_COLORS: Record<string, string> = {
   super_admin: "var(--color-primary)",
-  lecturer: "#1A42C2",
-  rep: "#1A42C2",
-  student: "#1A42C2",
+  lecturer: "var(--color-primary)",
+  rep: "var(--color-primary)",
+  student: "var(--color-primary)",
 };
 
 const ROLE_INITIALS: Record<string, string> = {

@@ -7,10 +7,10 @@
 
 :root {
   /* --- DESIGN TOKENS (Monochromatic-First System) --- */
-  --color-blue:           #1A42C2;
-  --color-blue-hover:     #1538A8;
-  --color-blue-active:    #102E8F;
-  --color-blue-light:     #E8EDFC;
+  --color-blue:           var(--color-primary);
+  --color-blue-hover:     var(--color-primary-dark);
+  --color-blue-active:    var(--color-primary-dark);
+  --color-blue-light:     var(--color-surface-2);
 
   --color-red:            #E53935;
   --color-red-hover:      #C62828;
@@ -41,14 +41,14 @@
   --color-border:       rgba(0, 0, 0, 0.05);
   --color-border-hover: rgba(0, 0, 0, 0.1);
 
-  /* Primary Brand Blue for CTAs / decision points */
-  --color-primary:      #1A42C2;
-  --color-primary-rgb:  26, 66, 194;
-  --color-primary-dark: #1538A8;
-  --color-primary-glow: rgba(26, 66, 194, 0.15);
+  /* Primary Structural Black for CTAs / decision points */
+  --color-primary:      #111827;
+  --color-primary-rgb:  17, 24, 39;
+  --color-primary-dark: #0A0A0A;
+  --color-primary-glow: rgba(17, 24, 39, 0.12);
 
-  --color-secondary:      #424242;
-  --color-secondary-dark: #212121;
+  --color-secondary:      #475569;
+  --color-secondary-dark: #334155;
 
   /* Semantic status colors */
   --color-success:      #16a34a;
@@ -57,8 +57,8 @@
   --color-warning-bg:   rgba(217, 119, 6, 0.10);
   --color-danger:       #E53935;
   --color-danger-bg:    #FDECEA;
-  --color-info:         #1A42C2;
-  --color-info-bg:      #E8EDFC;
+  --color-info:         #111827;
+  --color-info-bg:      #F1F5F9;
 
   /* Attendance status */
   --color-present:      #16a34a;
@@ -331,13 +331,13 @@ button, input, select, textarea {
 .btn-primary:active { transform: scale(0.96); }
 
 .btn-cta {
-  background: #1A42C2;
+  background: var(--color-primary);
   color: #FFFFFF;
   border: none;
-  box-shadow: 0 4px 14px rgba(26, 66, 194, 0.25);
+  box-shadow: 0 4px 14px var(--color-primary-glow);
 }
 .btn-cta:hover {
-  background: #1538A8;
+  background: var(--color-primary-dark);
   transform: scale(1.02);
 }
 .btn-cta:active { transform: scale(0.96); }
