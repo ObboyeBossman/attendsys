@@ -118,31 +118,31 @@
   border-radius: var(--radius-lg);
   font-size: var(--text-md);
   font-weight: 500;
-  color: var(--color-text-2);
+  color: var(--color-text, #111827);
   text-decoration: none;
-  transition: transform 150ms ease, color 150ms ease, background 150ms ease;
+  transition: background 150ms ease, color 150ms ease;
+  cursor: pointer;
 }
 
 .navItem:hover {
-  background: var(--color-surface-2);
-  color: var(--color-text);
+  background: var(--glass-icon-bg-hover);
+  color: var(--color-text, #111827);
   text-decoration: none;
 }
 
 .navItemActive {
-  background: #111827;
-  color: #FFFFFF;
+  background: var(--glass-icon-bg-hover);
+  color: var(--color-text, #111827);
   font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .navItemActive .navIcon {
-  color: #FFFFFF;
+  color: var(--color-text, #111827);
 }
 
 .navItemActive:hover {
-  background: #111827;
-  color: #FFFFFF;
+  background: var(--glass-icon-bg-hover);
+  color: var(--color-text, #111827);
 }
 
 .navGroup {
@@ -162,31 +162,34 @@
 .childNavItem {
   display: flex;
   align-items: center;
-  padding: var(--space-2) var(--space-3);
+  padding: 8px 12px;
   border-radius: var(--radius-md);
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   font-weight: 500;
   color: var(--color-text-2);
   text-decoration: none;
-  transition: all var(--transition-fast);
+  transition: background 150ms ease, color 150ms ease;
 }
 
 .childNavItem:hover {
-  background: var(--color-surface-2);
-  color: var(--color-text);
+  background: var(--glass-icon-bg-hover);
+  color: var(--color-text, #111827);
   text-decoration: none;
 }
 
 .childNavItemActive {
-  background: var(--color-surface-3);
-  color: var(--color-text);
+  background: var(--glass-icon-bg-hover);
+  color: var(--color-text, #111827);
   font-weight: 600;
 }
 
 .navIcon {
-  color: var(--color-text-3);
+  color: var(--color-text, #111827);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-  transition: color var(--transition-fast);
+  transition: color 150ms ease;
 }
 
 /* ── Portal Switcher ─────────────────────────────────────────────────── */
