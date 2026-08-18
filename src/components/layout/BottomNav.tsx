@@ -121,8 +121,6 @@ export function BottomNav({ navItems, pathname, switchTo }: BottomNavProps) {
         )}
       </div>
 
-      {/* iOS-style home indicator */}
-      <div className={styles.homeIndicator} aria-hidden="true" />
     </nav>
   );
 }
