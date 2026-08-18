@@ -85,11 +85,11 @@
 
 /* ── Glassmorphism tokens — light portal ──────────────────── */
 [data-portal="portal-light"] {
-  --glass-bg:            rgba(255, 255, 255, 0.55);
-  --glass-border:        rgba(255, 255, 255, 0.65);
+  --glass-bg:            rgba(255, 255, 255, 0.35);
+  --glass-border:        rgba(255, 255, 255, 0.45);
   --glass-shadow-down:   0 8px 30px rgba(0, 0, 0, 0.05);
   --glass-shadow-up:     0 -8px 30px rgba(0, 0, 0, 0.05);
-  --glass-blur:          blur(24px) saturate(180%);
+  --glass-blur:          blur(20px) saturate(200%);
   --glass-icon-bg:       rgba(0, 0, 0, 0.06);
   --glass-icon-bg-hover: rgba(0, 0, 0, 0.10);
   --glass-icon-color:    var(--color-text);
