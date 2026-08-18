@@ -119,15 +119,20 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: var(--glass-active);
+  background: var(--glass-icon-bg);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 15px;
   font-weight: 600;
-  color: var(--color-bg);
+  color: var(--glass-icon-color);
   letter-spacing: 0.02em;
   user-select: none;
+  transition: background 150ms ease;
+}
+
+.profileBtn:hover .profileAvatar {
+  background: var(--glass-icon-bg-hover);
 }
 
 /* ── Reduced motion ──────────────────────────────────────────────────── */
