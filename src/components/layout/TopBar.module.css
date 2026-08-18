@@ -31,8 +31,8 @@
 
 /* ── Menu Button (Left) ──────────────────────────────────────────────── */
 .menuBtn {
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: var(--glass-icon-bg);
   border: none;
@@ -116,14 +116,14 @@
 }
 
 .profileAvatar {
-  width: 34px;
-  height: 34px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: var(--glass-active);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--color-bg);
   letter-spacing: 0.02em;
