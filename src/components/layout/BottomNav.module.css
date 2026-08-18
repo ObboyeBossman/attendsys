@@ -20,7 +20,9 @@
   border-top: 1px solid var(--bottom-nav-border);
   box-shadow: var(--bottom-nav-shadow);
 
-  padding: 12px 24px calc(8px + env(safe-area-inset-bottom, 12px));
+  /* top | sides | bottom — safe-area-inset-bottom covers iOS/Android gesture bars;
+     16px fallback ensures clearance on devices that report 0 inset */
+  padding: 12px 24px calc(16px + env(safe-area-inset-bottom, 0px));
 }
 
 @media (max-width: 768px) {
@@ -128,15 +130,6 @@
   pointer-events: none;
 }
 
-/* ── iOS home indicator ────────────────────────────────────────────────────── */
-.homeIndicator {
-  width: 128px;
-  height: 4px;
-  border-radius: 9999px;
-  background: var(--color-black);
-  margin: 10px auto 0;
-  opacity: 0.65;
-}
 
 /* ── Reduced motion ────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
