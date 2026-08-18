@@ -23,7 +23,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-5) var(--space-4);
+  padding: 12px 20px;
   background: var(--bottom-nav-bg);
   -webkit-backdrop-filter: var(--bottom-nav-blur);
   backdrop-filter: var(--bottom-nav-blur);
@@ -475,7 +475,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px;
+  padding: 12px 20px;
   background: var(--bottom-nav-bg);
   -webkit-backdrop-filter: var(--bottom-nav-blur);
   backdrop-filter: var(--bottom-nav-blur);
