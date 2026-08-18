@@ -4,11 +4,14 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 20px;
-  background-color: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(24px) saturate(200%);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+
+  /* Glassmorphism — driven by theme tokens, never hardcoded */
+  background-color: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow-down);
+
   /* Fixed at the very top — always visible as user scrolls */
   position: fixed;
   top: 0;
@@ -31,20 +34,20 @@
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.06);
+  background: var(--glass-icon-bg);
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #111111;
+  color: var(--glass-icon-color);
   flex-shrink: 0;
   -webkit-tap-highlight-color: transparent;
   transition: background 150ms ease, transform 150ms ease;
 }
 
 .menuBtn:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: var(--glass-icon-bg-hover);
 }
 
 .menuBtn:active {
@@ -77,12 +80,12 @@
 
 .tabLabelActive {
   font-weight: 600;
-  color: #111111;
+  color: var(--glass-active);
 }
 
 .tabLabelInactive {
   font-weight: 400;
-  color: #aaaaaa;
+  color: var(--glass-inactive);
 }
 
 .activeUnderline {
@@ -91,7 +94,7 @@
   left: 50%;
   transform: translateX(-50%);
   height: 2px;
-  background: #111111;
+  background: var(--glass-active);
   border-radius: 2px;
   transition: width 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -116,17 +119,18 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #111827, #374151);
+  background: var(--glass-active);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 13px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--color-bg);
   letter-spacing: 0.02em;
   user-select: none;
 }
 
+/* ── Reduced motion ──────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .activeUnderline,
   .tabLabel,
