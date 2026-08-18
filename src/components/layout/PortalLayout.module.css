@@ -255,10 +255,6 @@
 
 
 
-
-
-
-
 @media (max-width: 768px) {
   .sidebar {
     display: none;
@@ -269,30 +265,13 @@
     padding-top: calc(64px + var(--banner-h, 0px));
     /* extra bottom clearance: pill nav height (~56px) + gap (16px) + safe area */
     padding-bottom: calc(84px + env(safe-area-inset-bottom));
-    /* GPU-composited transform — driven by JS during swipe, and by .mainPushed when open */
-    transform-origin: right center;
-    will-change: transform;
-    transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
-                border-radius 320ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   .content {
     padding: var(--space-4);
   }
-
-  /* Applied to .main via JS when drawer is fully open */
-  .mainPushed {
-    transform: translateX(75%) scale(0.88);
-    border-radius: var(--radius-2xl);
-    overflow: hidden;
-    pointer-events: none; /* prevent interaction with content while drawer is open */
-  }
 }
 
-@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
-  .main {
-    transition: none;
-  }
-}
+
 
 /* ── Mobile Sliding Sheet Drawer ────────────────────────────────────────── */
 /*
@@ -385,11 +364,10 @@
 }
 
 @media (max-width: 768px) {
-  /* Backdrop hidden on mobile — the main-content push effect replaces the dim overlay */
+  /* Switch from display:none to flex so refs are live for swipe detection */
   .drawerBackdrop {
-    display: none !important;
+    display: block;
   }
-  /* Drawer is kept in DOM (display:flex) so the ref is live for swipe detection */
   .drawer {
     display: flex;
     width: 100vw;
