@@ -303,7 +303,7 @@
   top: 0;
   left: 0;
   bottom: 0;
-  width: min(320px, 85vw);
+  width: min(320px, 85vw); /* overridden to 100vw on mobile — see media query below */
   background: #FFFFFF;
   border-right: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 0 24px 24px 0;
@@ -370,6 +370,8 @@
   }
   .drawer {
     display: flex;
+    width: 100vw;
+    border-radius: 0; /* no rounded right edge — fills the full screen */
   }
 }
 
