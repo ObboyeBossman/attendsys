@@ -1,7 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=MuseoModerno:wght@300;400;500;600;700&display=swap');
-
 /* ============================================================
    Attendsys — Global Design System
+   Fonts are loaded via <link> tags in src/app/layout.tsx
    ============================================================ */
 
 /* ── CSS Custom Properties ───────────────────────────────── */
