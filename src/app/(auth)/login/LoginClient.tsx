@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Phone, ArrowRight, CheckCircle2, RefreshCw } from "lucide-react";
+import { Mail, Phone, ArrowRight, CheckCircle2, RefreshCw } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import styles from "./LoginClient.module.css";
 
@@ -149,7 +149,9 @@ export function LoginClient() {
                 onClick={() => setAuthView("email-form")}
                 className={styles.optionBtn}
               >
-                <span className={styles.optionIconLeft}>@</span>
+                <span className={styles.optionIconLeft}>
+                  <Mail size={18} strokeWidth={1.75} />
+                </span>
                 Continue with Email
               </button>
 
@@ -159,7 +161,7 @@ export function LoginClient() {
                 className={styles.optionBtn}
               >
                 <span className={styles.optionIconLeft}>
-                  <Phone size={16} strokeWidth={2} />
+                  <Phone size={18} strokeWidth={1.75} />
                 </span>
                 Continue with Phone
               </button>
