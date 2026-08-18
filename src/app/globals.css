@@ -137,6 +137,22 @@
   --sidebar-width: 260px;
   --topbar-height: 64px;
   --bottom-nav-height: 64px;
+
+  /* ── Glassmorphism tokens ─────────────────────────────────
+     Used by TopBar and BottomNav. Override per theme below.
+     ──────────────────────────────────────────────────────── */
+  --glass-bg:          rgba(255, 255, 255, 0.55);
+  --glass-border:      rgba(255, 255, 255, 0.65);
+  --glass-shadow-down: 0 8px 30px rgba(0, 0, 0, 0.06);
+  --glass-shadow-up:   0 -8px 30px rgba(0, 0, 0, 0.06);
+  --glass-blur:        blur(24px) saturate(180%);
+
+  /* Interactive element colours on glass */
+  --glass-icon-bg:       rgba(0, 0, 0, 0.06);
+  --glass-icon-bg-hover: rgba(0, 0, 0, 0.10);
+  --glass-icon-color:    var(--color-text);
+  --glass-inactive:      var(--color-text-3);
+  --glass-active:        var(--color-text);
 }
 
 /* ── Reset & Base ────────────────────────────────────────── */
