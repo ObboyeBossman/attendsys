@@ -280,7 +280,6 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
   // ── Swipe gesture state (refs — no re-renders during drag) ───────────────
   const drawerRef = useRef<HTMLElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
-  const mainRef = useRef<HTMLElement>(null);
   const swipeState = useRef<{
     tracking: boolean;
     startX: number;
@@ -307,47 +306,30 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
   }, []);
 
   // ── Apply live drag transform directly to DOM (bypass React state) ───────
-  const applyDragTransform = useCallback((translateX: number, progress: number) => {
+  const applyDragTransform = useCallback((translateX: number, backdropOpacity: number) => {
     const drawer = drawerRef.current;
-    const main = mainRef.current;
-    if (!drawer) return;
+    const backdrop = backdropRef.current;
+    if (!drawer || !backdrop) return;
 
     drawer.style.transition = "none";
+    backdrop.style.transition = "none";
     drawer.style.transform = `translateX(${translateX}px)`;
-
-    // Push-scale the main content: translate right + scale down proportionally
-    if (main && window.innerWidth <= 768) {
-      main.style.transition = "none";
-      const pushX = progress * window.innerWidth * 0.75;  // up to 75vw push
-      const scale = 1 - progress * 0.12;                  // 1 → 0.88
-      main.style.transform = `translateX(${pushX}px) scale(${scale})`;
-      main.style.borderRadius = progress > 0.05 ? "var(--radius-2xl)" : "";
-      main.style.pointerEvents = progress > 0.5 ? "none" : "";
-    }
+    backdrop.style.opacity = String(backdropOpacity);
+    backdrop.style.pointerEvents = backdropOpacity > 0 ? "auto" : "none";
   }, []);
 
   // ── Snap to final open/closed state (re-enable CSS transitions) ──────────
   const snapDrawer = useCallback((open: boolean) => {
     const drawer = drawerRef.current;
-    const main = mainRef.current;
-    if (!drawer) return;
+    const backdrop = backdropRef.current;
+    if (!drawer || !backdrop) return;
 
-    // Clear inline styles — let CSS classes take over with transitions
+    // Re-enable CSS transitions for the snap animation
     drawer.style.transition = "";
+    backdrop.style.transition = "";
     drawer.style.transform = "";
-
-    if (main) {
-      main.style.transition = "";
-      main.style.transform = "";
-      main.style.borderRadius = "";
-      main.style.pointerEvents = "";
-      // Apply/remove the pushed class for the CSS-transitioned snap
-      if (open) {
-        main.classList.add(styles.mainPushed);
-      } else {
-        main.classList.remove(styles.mainPushed);
-      }
-    }
+    backdrop.style.opacity = "";
+    backdrop.style.pointerEvents = "";
 
     setDrawerOpen(open);
   }, []);
@@ -363,9 +345,9 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
 
       const touch = e.touches[0];
       const state = swipeState.current;
-      const currentlyOpen = drawerRef.current?.classList.contains(styles.drawerOpen) ||
-                            mainRef.current?.classList.contains(styles.mainPushed) ||
-                            document.body.style.overflow === "hidden";
+      const isOpen = drawerRef.current?.classList.contains(styles.drawerOpen) ||
+                     drawerRef.current?.style.transform === "translateX(0px)";
+      const currentlyOpen = isOpen || document.body.style.overflow === "hidden";
 
       // Only initiate from left edge when closed, or anywhere on drawer when open
       if (!currentlyOpen && touch.clientX > EDGE_ZONE) return;
@@ -412,13 +394,13 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
         const clampedDelta = Math.max(-effectiveWidth, Math.min(0, deltaX));
         const translateX = clampedDelta;
         const progress = 1 + clampedDelta / effectiveWidth; // 1→0
-        applyDragTransform(translateX, progress);
+        applyDragTransform(translateX, progress * 0.45); // backdrop max opacity 0.45
       } else {
         // Opening: clamp deltaX to [0, effectiveWidth]
         const clampedDelta = Math.max(0, Math.min(effectiveWidth, deltaX));
         const translateX = -effectiveWidth + clampedDelta;
         const progress = clampedDelta / effectiveWidth; // 0→1
-        applyDragTransform(translateX, progress);
+        applyDragTransform(translateX, progress * 0.45);
       }
     }
 
@@ -508,10 +490,7 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
     return () => window.removeEventListener("keydown", handler);
   }, [confirmSignOut]);
 
-  const closeDrawer = useCallback(() => {
-    mainRef.current?.classList.remove(styles.mainPushed);
-    setDrawerOpen(false);
-  }, []);
+  const closeDrawer = useCallback(() => setDrawerOpen(false), []);
   const openSignOut = useCallback(() => setConfirmSignOut(true), []);
 
   async function handleLogout() {
@@ -590,11 +569,7 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
       </aside>
 
       {/* ── Main content ─────────────────────────────────────────── */}
-      <main
-        ref={mainRef}
-        className={styles.main}
-        onClick={drawerOpen ? closeDrawer : undefined}
-      >
+      <main className={styles.main}>
         <div className={styles.noticeBannerBar}>
           <NoticeBanner />
         </div>
