@@ -269,7 +269,7 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
             <div className={styles.profileInfo}>
               <span className={styles.profileName}>{userName || "User"}</span>
             </div>
-            <Settings size={16} strokeWidth={1.75} className={styles.profileSettingsIcon} aria-hidden="true" />
+            <Settings size={22} strokeWidth={2} className={styles.profileSettingsIcon} aria-hidden="true" />
           </Link>
 
           {/* Back / close-drawer button — separate pill */}
