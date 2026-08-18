@@ -56,10 +56,7 @@ export function NavigationProgressProvider({
 
   const startNavigation = useCallback((href: string) => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    // 80 ms grace — if the page swaps faster than this, no shimmer shows
-    debounceRef.current = setTimeout(() => {
-      setState({ navigating: true, targetHref: href });
-    }, 80);
+    setState({ navigating: true, targetHref: href });
   }, []);
 
   const stopNavigation = useCallback(() => {
