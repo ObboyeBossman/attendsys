@@ -258,28 +258,30 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
         </div>
       </div>
       <div className={styles.sidebarFooter}>
-        <Link href={settingsHref} onClick={closeDrawer} className={styles.profileTile}>
-          <div className={styles.profileAvatarContainer}>
-            <div className={styles.profileAvatar} style={{ backgroundColor: "#b91c1c" }}>
-              {userInitial}
+        <div className={styles.footerRow}>
+          {/* Profile tile — navigates to settings */}
+          <Link href={settingsHref} onClick={closeDrawer} className={styles.profileTile}>
+            <div className={styles.profileAvatarContainer}>
+              <div className={styles.profileAvatar} style={{ backgroundColor: "#b91c1c" }}>
+                {userInitial}
+              </div>
             </div>
-          </div>
-          <div className={styles.profileInfo}>
-            <span className={styles.profileName}>{userName || "User"}</span>
-          </div>
+            <div className={styles.profileInfo}>
+              <span className={styles.profileName}>{userName || "User"}</span>
+            </div>
+            <Settings size={16} strokeWidth={1.75} className={styles.profileSettingsIcon} aria-hidden="true" />
+          </Link>
+
+          {/* Back / close-drawer button — separate pill */}
           <button
             type="button"
             className={styles.backBtn}
-            aria-label="Back"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              closeDrawer();
-            }}
+            aria-label="Close menu"
+            onClick={closeDrawer}
           >
-            <ChevronsRight size={28} strokeWidth={2} />
+            <ChevronsRight size={22} strokeWidth={2} />
           </button>
-        </Link>
+        </div>
       </div>
     </>
   );
