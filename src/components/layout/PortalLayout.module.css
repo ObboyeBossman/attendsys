@@ -269,11 +269,12 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: 8px 10px 8px 8px;
+  /* Fixed height matches backBtn exactly (46px) */
+  height: 46px;
+  padding: 0 10px 0 8px;
   border-radius: 9999px;
   text-decoration: none;
   color: var(--color-text);
-  /* White surface — mirrors backBtn so both pills are visually equal */
   background: var(--color-surface, #ffffff);
   border: 1px solid var(--color-border);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -285,34 +286,28 @@
 }
 
 .profileTile:hover {
-  /* Same grey as backBtn hover — consistent across both footer pills */
-  background: #e2e8f0;
+  /* Matches TopBar menuBtn / profileBtn hover — same glass token */
+  background: var(--glass-icon-bg-hover);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   text-decoration: none;
 }
 
+/* Container removed — avatar sits directly inside the tile */
 .profileAvatarContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  flex-shrink: 0;
+  display: none;
 }
 
 .profileAvatar {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 13px;
+  flex-shrink: 0;
 }
 
 .profileInfo {
@@ -356,8 +351,8 @@
 }
 
 .backBtn:hover {
-  /* Grey surface on hover — same tone as profileTile hover; no scale transform */
-  background: #e2e8f0;
+  /* Matches TopBar menuBtn / profileBtn hover — same glass token */
+  background: var(--glass-icon-bg-hover);
   color: var(--color-text);
   border-color: var(--color-border);
 }
