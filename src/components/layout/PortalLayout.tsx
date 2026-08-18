@@ -9,6 +9,7 @@ import { PageShimmer } from "./PageTransition";
 import { NoticeBanner } from "./NoticeBanner";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 import { BottomNav } from "./BottomNav";
+import { TopBar } from "./TopBar";
 
 import {
   LayoutDashboard,
@@ -346,25 +347,12 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
       </aside>
 
       {/* ── Mobile topbar ────────────────────────────────────────── */}
-      <header className={styles.mobileTopbar}>
-        <button
-          className={styles.hamburger}
-          onClick={() => setDrawerOpen(true)}
-          aria-label="Open navigation menu"
-          aria-expanded={drawerOpen}
-        >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
-            <path d="M3 5h14M3 10h14M3 15h14" />
-          </svg>
-        </button>
-        <div className={styles.mobileTopbarBrand}>
-          <BrandLogo size="sm" />
-          <div>
-            <div className={styles.mobileTopbarTitle}>AttendSys</div>
-            <div className={styles.mobileTopbarRole}>{roleLabel}</div>
-          </div>
-        </div>
-      </header>
+      {/* ── Top Bar (Mobile / Sticky) ───────────────────────────── */}
+      <TopBar
+        onMenuPress={() => setDrawerOpen(true)}
+        onProfilePress={openSignOut}
+        userInitial={userInitial}
+      />
 
       {/* ── Mobile drawer overlay ─────────────────────────────────── */}
       <div
