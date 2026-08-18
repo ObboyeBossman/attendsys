@@ -3,7 +3,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  z-index: 10000;
+  z-index: 999999;
   background: #FFFFFF;
   display: flex;
   flex-direction: column;
@@ -11,7 +11,7 @@
   justify-content: center;
   text-align: center;
   padding: 32px 24px;
-  animation: loaderFadeIn 200ms ease forwards;
+  animation: loaderFadeIn 180ms ease forwards;
   user-select: none;
 }
 

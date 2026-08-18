@@ -1,13 +1,15 @@
 "use client";
 
 /**
- * FullscreenLoader — Global reusable stage-aware loading overlay
+ * FullscreenLoader — Pure global reusable loading overlay
  *
- * Generic, clean full-screen loader featuring a monochromatic circular progress indicator
- * and dynamic action message. Can be used as a standalone component or via global context.
+ * Uses React createPortal directly onto document.body with z-index: 999999 to guarantee
+ * that when active, it completely covers all headers, footers, and content.
+ * Renders ONLY the circular progress indicator and stage status message.
  */
 
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
+import { createPortal } from "react-dom";
 import styles from "./FullscreenLoader.module.css";
 
 interface FullscreenLoaderProps {
@@ -19,9 +21,15 @@ export function FullscreenLoader({
   visible = true,
   message = "Loading…",
 }: FullscreenLoaderProps) {
-  if (!visible) return null;
+  const [mounted, setMounted] = useState(false);
 
-  return (
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!visible || !mounted) return null;
+
+  const overlayContent = (
     <div
       className={styles.overlay}
       role="dialog"
@@ -43,6 +51,8 @@ export function FullscreenLoader({
       </div>
     </div>
   );
+
+  return createPortal(overlayContent, document.body);
 }
 
 // ── Global Context & Hook ──────────────────────────────────────────────────
