@@ -141,7 +141,7 @@
   /* ── Glassmorphism tokens ─────────────────────────────────
      Used by TopBar and BottomNav. Override per theme below.
      ──────────────────────────────────────────────────────── */
-  --glass-bg:          rgba(255, 255, 255, 0.35);
+  --glass-bg:          rgba(255, 255, 255, 0.40);
   --glass-border:      rgba(255, 255, 255, 0.45);
   --glass-shadow-down: 0 8px 30px rgba(0, 0, 0, 0.06);
   --glass-shadow-up:   0 -8px 30px rgba(0, 0, 0, 0.06);
