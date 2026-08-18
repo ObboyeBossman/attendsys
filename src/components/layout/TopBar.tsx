@@ -62,6 +62,12 @@ export function TopBar({
       setInternalActiveTab(tabId);
     }
     onChangeTab?.(tabId);
+    // Dispatch a custom event so dashboard client components can react
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("topbar-tab-change", { detail: { tabId } })
+      );
+    }
   };
 
   return (
