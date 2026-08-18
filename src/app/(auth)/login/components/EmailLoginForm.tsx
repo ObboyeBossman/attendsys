@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, AlertCircle, RefreshCw } from "lucide-react";
+import { Eye, EyeOff, AlertCircle, RefreshCw, X } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import styles from "../LoginClient.module.css";
 
@@ -20,6 +20,15 @@ export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Auto-dismiss toast after 4 seconds
+  useEffect(() => {
+    if (!error) return;
+    const timer = setTimeout(() => {
+      setError(null);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, [error]);
+
   const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password || loading) return;
@@ -34,7 +43,7 @@ export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
       });
 
       if (signInError) {
-        setError(signInError.message || "Invalid email or password. Please try again.");
+        setError(signInError.message || "Invalid login credentials");
         return;
       }
 
@@ -63,7 +72,7 @@ export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
 
       if (!p.is_active && p.role !== "student") {
         await supabase.auth.signOut();
-        setError("Your account has been deactivated. Contact the administrator.");
+        setError("Your account has been deactivated. Contact admin.");
         return;
       }
 
@@ -105,103 +114,116 @@ export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
   };
 
   return (
-    <form onSubmit={handlePasswordLogin} className={`${styles.fadeIn} ${styles.formBody}`}>
+    <>
+      {/* Floating Custom Toast Banner */}
       {error && (
-        <div className={styles.errorBox} role="alert">
-          <AlertCircle size={18} strokeWidth={1.75} style={{ flexShrink: 0 }} />
-          <span>{error}</span>
+        <div className={styles.toastContainer} role="alert" aria-live="assertive">
+          <div className={`${styles.toastCard} ${styles.toastError}`}>
+            <AlertCircle size={18} strokeWidth={1.75} style={{ flexShrink: 0 }} />
+            <span>{error}</span>
+            <button
+              type="button"
+              className={styles.toastClose}
+              onClick={() => setError(null)}
+              aria-label="Dismiss notification"
+            >
+              <X size={14} strokeWidth={2} />
+            </button>
+          </div>
         </div>
       )}
 
-      {/* Email Field with Floating Notch Label */}
-      <div className={styles.inputFieldGroup}>
-        <span className={styles.floatingLabel}>Email</span>
-        <div className={styles.inputWrap}>
-          <input
-            type="email"
-            required
-            placeholder="name@ttu.edu.gh"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              if (error) setError(null);
-            }}
-            className={styles.notchInput}
-            disabled={loading}
-          />
+      <form onSubmit={handlePasswordLogin} className={`${styles.fadeIn} ${styles.formBody}`}>
+        {/* Email Field with Floating Notch Label */}
+        <div className={styles.inputFieldGroup}>
+          <span className={styles.floatingLabel}>Email</span>
+          <div className={styles.inputWrap}>
+            <input
+              type="email"
+              required
+              placeholder="name@ttu.edu.gh"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (error) setError(null);
+              }}
+              className={styles.notchInput}
+              disabled={loading}
+            />
+          </div>
         </div>
-      </div>
 
-      {/* Password Field with Floating Notch Label & Eye Toggle */}
-      <div className={styles.inputFieldGroup}>
-        <span className={styles.floatingLabel}>Password</span>
-        <div className={styles.inputWrap}>
-          <input
-            type={showPassword ? "text" : "password"}
-            required
-            placeholder="••••••••••••"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              if (error) setError(null);
-            }}
-            className={styles.notchInput}
-            disabled={loading}
-          />
+        {/* Password Field with Floating Notch Label & Eye Toggle */}
+        <div className={styles.inputFieldGroup}>
+          <span className={styles.floatingLabel}>Password</span>
+          <div className={styles.inputWrap}>
+            <input
+              type={showPassword ? "text" : "password"}
+              required
+              placeholder="••••••••••••"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (error) setError(null);
+              }}
+              className={styles.notchInput}
+              disabled={loading}
+            />
+            <button
+              type="button"
+              className={styles.eyeToggle}
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? (
+                <EyeOff size={18} strokeWidth={1.75} />
+              ) : (
+                <Eye size={18} strokeWidth={1.75} />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={loading || !email || !password}
+          className={styles.submitBtn}
+        >
+          {loading ? (
+            <>
+              <RefreshCw size={16} className={styles.spinIcon} />
+              <span>SIGNING IN…</span>
+            </>
+          ) : (
+            <span>SIGN IN</span>
+          )}
+        </button>
+
+        {/* Forgot password link */}
+        <div>
           <button
             type="button"
-            className={styles.eyeToggle}
-            onClick={() => setShowPassword(!showPassword)}
-            aria-label={showPassword ? "Hide password" : "Show password"}
+            onClick={() =>
+              alert("To reset your password, contact your department administrator or the ICT Helpdesk.")
+            }
+            className={styles.forgotLink}
           >
-            {showPassword ? (
-              <EyeOff size={18} strokeWidth={1.75} />
-            ) : (
-              <Eye size={18} strokeWidth={1.75} />
-            )}
+            Forgot password?
           </button>
         </div>
-      </div>
 
-      {/* Submit Button */}
-      <button
-        type="submit"
-        disabled={loading || !email || !password}
-        className={styles.submitBtn}
-      >
-        {loading ? (
-          <>
-            <RefreshCw size={16} className={styles.spinIcon} />
-            <span>SIGNING IN…</span>
-          </>
-        ) : (
-          <span>SIGN IN</span>
-        )}
-      </button>
-
-      {/* Forgot password link */}
-      <div>
-        <button
-          type="button"
-          onClick={() =>
-            alert("To reset your password, contact your department administrator or the ICT Helpdesk.")
-          }
-          className={styles.forgotLink}
-        >
-          Forgot password?
-        </button>
-      </div>
-
-      {/* Back button to return to options */}
-      <div className={styles.backBtnRow}>
-        <button
-          type="button"
-          onClick={onBack}
-          className={styles.backBtn}
-        >
-          ← Back to options
-        </button>
-      </div>
-    </form>
+        {/* Back button to return to options */}
+        <div className={styles.backBtnRow}>
+          <button
+            type="button"
+            onClick={onBack}
+            className={styles.backBtn}
+          >
+            ← Back to options
+          </button>
+        </div>
+      </form>
+    </>
   );
 }
