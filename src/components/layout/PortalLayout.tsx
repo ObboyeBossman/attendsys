@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import styles from "./PortalLayout.module.css";
 import { PageShimmer } from "./PageTransition";
@@ -261,6 +261,13 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, switchTo, closeDra
   );
 }
 
+// ── Swipe gesture constants ───────────────────────────────────────────────────
+const DRAWER_WIDTH = 320;          // max drawer width in px (matches CSS min(320px, 85vw))
+const EDGE_ZONE = 40;              // px from left edge that initiates an open swipe
+const OPEN_THRESHOLD = 0.4;        // fraction of drawer width to commit open
+const CLOSE_THRESHOLD = 0.4;       // fraction of drawer width to commit closed
+const VELOCITY_THRESHOLD = 0.4;    // px/ms — fast flick overrides distance check
+
 export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: PortalLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -268,6 +275,161 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
   const roleColor = ROLE_COLORS[role];
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [userInitial, setUserInitial] = useState(ROLE_INITIALS[role]);
+
+  // ── Swipe gesture state (refs — no re-renders during drag) ───────────────
+  const drawerRef = useRef<HTMLElement>(null);
+  const backdropRef = useRef<HTMLDivElement>(null);
+  const swipeState = useRef({
+    tracking: false,        // are we tracking a swipe?
+    startX: 0,
+    startY: 0,
+    currentX: 0,
+    startTime: 0,
+    drawerOpenAtStart: false,
+    isHorizontal: false | null,   // null = not yet determined
+  });
+  const prefersReducedMotion = useRef(false);
+
+  // Detect prefers-reduced-motion once on mount
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    prefersReducedMotion.current = mq.matches;
+  }, []);
+
+  // ── Apply live drag transform directly to DOM (bypass React state) ───────
+  const applyDragTransform = useCallback((translateX: number, backdropOpacity: number) => {
+    const drawer = drawerRef.current;
+    const backdrop = backdropRef.current;
+    if (!drawer || !backdrop) return;
+
+    drawer.style.transition = "none";
+    backdrop.style.transition = "none";
+    drawer.style.transform = `translateX(${translateX}px)`;
+    backdrop.style.opacity = String(backdropOpacity);
+    backdrop.style.pointerEvents = backdropOpacity > 0 ? "auto" : "none";
+  }, []);
+
+  // ── Snap to final open/closed state (re-enable CSS transitions) ──────────
+  const snapDrawer = useCallback((open: boolean) => {
+    const drawer = drawerRef.current;
+    const backdrop = backdropRef.current;
+    if (!drawer || !backdrop) return;
+
+    // Re-enable CSS transitions for the snap animation
+    drawer.style.transition = "";
+    backdrop.style.transition = "";
+    drawer.style.transform = "";
+    backdrop.style.opacity = "";
+    backdrop.style.pointerEvents = "";
+
+    setDrawerOpen(open);
+  }, []);
+
+  // ── Touch event handlers ─────────────────────────────────────────────────
+  useEffect(() => {
+    // Only attach on mobile — sidebar is hidden above 768px
+    const isMobile = () => window.innerWidth <= 768;
+
+    function onTouchStart(e: TouchEvent) {
+      if (!isMobile()) return;
+      if (prefersReducedMotion.current) return;
+
+      const touch = e.touches[0];
+      const state = swipeState.current;
+      const isOpen = drawerRef.current?.classList.contains(styles.drawerOpen) ||
+                     drawerRef.current?.style.transform === "translateX(0px)";
+      const currentlyOpen = isOpen || document.body.style.overflow === "hidden";
+
+      // Only initiate from left edge when closed, or anywhere on drawer when open
+      if (!currentlyOpen && touch.clientX > EDGE_ZONE) return;
+
+      state.tracking = true;
+      state.startX = touch.clientX;
+      state.startY = touch.clientY;
+      state.currentX = touch.clientX;
+      state.startTime = Date.now();
+      state.drawerOpenAtStart = currentlyOpen;
+      state.isHorizontal = null;
+    }
+
+    function onTouchMove(e: TouchEvent) {
+      const state = swipeState.current;
+      if (!state.tracking) return;
+
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - state.startX;
+      const deltaY = touch.clientY - state.startY;
+
+      // Determine direction on first significant move (prevents hijacking vertical scroll)
+      if (state.isHorizontal === null) {
+        if (Math.abs(deltaX) < 4 && Math.abs(deltaY) < 4) return;
+        state.isHorizontal = Math.abs(deltaX) > Math.abs(deltaY);
+        if (!state.isHorizontal) {
+          state.tracking = false;
+          return;
+        }
+      }
+
+      if (!state.isHorizontal) return;
+
+      // Prevent page scroll while we're handling the swipe
+      e.preventDefault();
+
+      state.currentX = touch.clientX;
+
+      const effectiveWidth = Math.min(DRAWER_WIDTH, window.innerWidth * 0.85);
+
+      if (state.drawerOpenAtStart) {
+        // Closing: clamp deltaX to [−effectiveWidth, 0]
+        const clampedDelta = Math.max(-effectiveWidth, Math.min(0, deltaX));
+        const translateX = clampedDelta;
+        const progress = 1 + clampedDelta / effectiveWidth; // 1→0
+        applyDragTransform(translateX, progress * 0.45); // backdrop max opacity 0.45
+      } else {
+        // Opening: clamp deltaX to [0, effectiveWidth]
+        const clampedDelta = Math.max(0, Math.min(effectiveWidth, deltaX));
+        const translateX = -effectiveWidth + clampedDelta;
+        const progress = clampedDelta / effectiveWidth; // 0→1
+        applyDragTransform(translateX, progress * 0.45);
+      }
+    }
+
+    function onTouchEnd() {
+      const state = swipeState.current;
+      if (!state.tracking) return;
+      state.tracking = false;
+
+      const deltaX = state.currentX - state.startX;
+      const elapsed = Date.now() - state.startTime;
+      const velocity = Math.abs(deltaX) / Math.max(elapsed, 1); // px/ms
+      const effectiveWidth = Math.min(DRAWER_WIDTH, window.innerWidth * 0.85);
+      const isFastFlick = velocity > VELOCITY_THRESHOLD;
+
+      if (state.drawerOpenAtStart) {
+        // Decide whether to close
+        const shouldClose = isFastFlick
+          ? deltaX < -10                                          // any leftward flick
+          : deltaX < -(effectiveWidth * CLOSE_THRESHOLD);        // dragged > 40% left
+        snapDrawer(!shouldClose);
+      } else {
+        // Decide whether to open
+        const shouldOpen = isFastFlick
+          ? deltaX > 10                                           // any rightward flick
+          : deltaX > effectiveWidth * OPEN_THRESHOLD;            // dragged > 40% right
+        snapDrawer(shouldOpen);
+      }
+    }
+
+    document.addEventListener("touchstart", onTouchStart, { passive: true });
+    document.addEventListener("touchmove", onTouchMove, { passive: false });
+    document.addEventListener("touchend", onTouchEnd, { passive: true });
+
+    return () => {
+      document.removeEventListener("touchstart", onTouchStart);
+      document.removeEventListener("touchmove", onTouchMove);
+      document.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [applyDragTransform, snapDrawer]);
 
   // Fetch real user name on mount
   useEffect(() => {
@@ -357,11 +519,13 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
 
       {/* ── Mobile drawer overlay ─────────────────────────────────── */}
       <div
+        ref={backdropRef}
         className={`${styles.drawerBackdrop} ${drawerOpen ? styles.drawerBackdropOpen : ""}`}
         onClick={closeDrawer}
         aria-hidden="true"
       />
       <aside
+        ref={drawerRef}
         className={`${styles.drawer} ${drawerOpen ? styles.drawerOpen : ""}`}
         aria-label="Navigation menu"
         aria-hidden={!drawerOpen}
