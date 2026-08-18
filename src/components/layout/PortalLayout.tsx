@@ -262,7 +262,8 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, switchTo, closeDra
 }
 
 // ── Swipe gesture constants ───────────────────────────────────────────────────
-const DRAWER_WIDTH = 320;          // max drawer width in px (matches CSS min(320px, 85vw))
+// On mobile the drawer is 100vw — we resolve the actual width at runtime in the handlers
+const DRAWER_WIDTH = 320;          // fallback for desktop (unused); mobile uses window.innerWidth
 const EDGE_ZONE = 200;             // px from left edge that initiates an open swipe
 const OPEN_THRESHOLD = 0.4;        // fraction of drawer width to commit open
 const CLOSE_THRESHOLD = 0.4;       // fraction of drawer width to commit closed
@@ -385,7 +386,8 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
 
       state.currentX = touch.clientX;
 
-      const effectiveWidth = Math.min(DRAWER_WIDTH, window.innerWidth * 0.85);
+      // On mobile the drawer is 100vw
+      const effectiveWidth = window.innerWidth;
 
       if (state.drawerOpenAtStart) {
         // Closing: clamp deltaX to [−effectiveWidth, 0]
@@ -410,7 +412,8 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
       const deltaX = state.currentX - state.startX;
       const elapsed = Date.now() - state.startTime;
       const velocity = Math.abs(deltaX) / Math.max(elapsed, 1); // px/ms
-      const effectiveWidth = Math.min(DRAWER_WIDTH, window.innerWidth * 0.85);
+      // On mobile the drawer is 100vw
+      const effectiveWidth = window.innerWidth;
       const isFastFlick = velocity > VELOCITY_THRESHOLD;
 
       if (state.drawerOpenAtStart) {
