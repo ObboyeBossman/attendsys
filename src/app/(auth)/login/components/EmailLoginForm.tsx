@@ -147,18 +147,6 @@ export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
 
             <div className={styles.loaderTextWrap}>
               <h2 className={styles.loaderStageTitle}>{authStage}</h2>
-              <p className={styles.loaderStageSub}>Takoradi Technical University Authentication</p>
-            </div>
-
-            <div className={styles.loaderTTUBadge}>
-              <Image
-                src="/ttu_logo.png"
-                alt="TTU Crest"
-                width={16}
-                height={16}
-                style={{ filter: "grayscale(100%)" }}
-              />
-              <span>Secured Session Access</span>
             </div>
           </div>
         </div>
