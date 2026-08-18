@@ -17,6 +17,7 @@ export interface TopBarProps {
   onMenuPress?: () => void;
   onProfilePress?: () => void;
   userInitial?: string;
+  title?: string;
 }
 
 const DEFAULT_TABS: TopBarTab[] = [
@@ -50,6 +51,7 @@ export function TopBar({
   onMenuPress,
   onProfilePress,
   userInitial = "AB",
+  title = "AttendSys",
 }: TopBarProps) {
   const [internalActiveTab, setInternalActiveTab] = useState<TopBarTabId>(
     tabs[0]?.id || "today"
@@ -70,6 +72,8 @@ export function TopBar({
     }
   };
 
+  const hasTabs = tabs && tabs.length > 0;
+
   return (
     <header className={styles.topbar}>
       {/* Left — menu */}
@@ -81,8 +85,8 @@ export function TopBar({
         <MenuIcon />
       </button>
 
-      {/* Center — tabs (only rendered when tabs are provided) */}
-      {tabs.length > 0 && (
+      {/* Center — tabs (dashboard) or brand title by default (non-dashboard) */}
+      {hasTabs ? (
         <div className={styles.tabsContainer}>
           {tabs.map(({ id, label }) => {
             const isActive = activeTab === id;
@@ -111,6 +115,8 @@ export function TopBar({
             );
           })}
         </div>
+      ) : (
+        <div className={styles.brandTitle}>{title}</div>
       )}
 
       {/* Right — profile avatar */}

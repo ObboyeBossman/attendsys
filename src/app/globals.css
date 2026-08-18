@@ -141,17 +141,18 @@
   /* ── Glassmorphism tokens ─────────────────────────────────
      Used by TopBar and BottomNav. Override per theme below.
      ──────────────────────────────────────────────────────── */
-  --glass-bg:          rgba(255, 255, 255, 0.40);
+  --glass-bg:          rgba(255, 255, 255, 0.60);
   --glass-border:      rgba(255, 255, 255, 0.45);
-  --glass-shadow-down: 0 8px 30px rgba(0, 0, 0, 0.06);
-  --glass-shadow-up:   0 -8px 30px rgba(0, 0, 0, 0.06);
-  --glass-blur:        blur(20px) saturate(200%);
+  --glass-shadow-down: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --glass-shadow-up:   0 -4px 20px rgba(0, 0, 0, 0.05);
+  --glass-blur:        blur(24px) saturate(180%);
 
-  /* Bottom nav — stronger frosted glass so content bleeds through visibly */
-  --bottom-nav-bg:     rgba(255, 255, 255, 0.98);
-  --bottom-nav-blur:   blur(40px) saturate(180%);
-  --bottom-nav-border: rgba(255, 255, 255, 0.70);
-  --bottom-nav-shadow: 0 -8px 32px rgba(0, 0, 0, 0.08);
+  /* Bottom nav & Top bar — reduced background opaqueness for more translucent frosted glass,
+     preserving heavy 24px backdrop blur so text stays completely diffused while colors show through */
+  --bottom-nav-bg:     linear-gradient(180deg, rgba(255, 255, 255, 0.58) 0%, rgba(255, 255, 255, 0.72) 100%);
+  --bottom-nav-blur:   blur(24px) saturate(180%);
+  --bottom-nav-border: rgba(255, 255, 255, 0.55);
+  --bottom-nav-shadow: 0 -4px 24px rgba(0, 0, 0, 0.06);
 
   /* Interactive element colours on glass */
   --glass-icon-bg:       rgba(0, 0, 0, 0.06);

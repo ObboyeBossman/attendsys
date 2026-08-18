@@ -65,8 +65,9 @@ interface BottomNavProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export function BottomNav({ navItems, pathname, switchTo }: BottomNavProps) {
-  // Strict maximum of 4 items on bottom navigation across all portals
-  const displayedItems = navItems.slice(0, 4);
+  // Enforce maximum of 3 total items on bottom navigation
+  const maxNavItems = switchTo ? 2 : 3;
+  const displayedItems = navItems.slice(0, maxNavItems);
 
   return (
     <nav className={styles.nav} aria-label="Mobile navigation">

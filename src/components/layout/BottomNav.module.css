@@ -13,12 +13,17 @@
   right: 0;
   z-index: 100;
 
-  /* Glass — dedicated bottom-nav tokens for stronger frosted effect */
+  /* Glass — dedicated bottom-nav tokens for smooth frosted glass effect */
   background: var(--bottom-nav-bg);
-  backdrop-filter: var(--bottom-nav-blur);
   -webkit-backdrop-filter: var(--bottom-nav-blur);
+  backdrop-filter: var(--bottom-nav-blur);
   border-top: 1px solid var(--bottom-nav-border);
   box-shadow: var(--bottom-nav-shadow);
+
+  /* Hardware acceleration & layer isolation: prevents text passthrough / window louver effect */
+  isolation: isolate;
+  transform: translateZ(0);
+  will-change: transform, backdrop-filter;
 
   /* top | sides | bottom — safe-area-inset-bottom covers iOS/Android gesture bars;
      16px fallback ensures clearance on devices that report 0 inset */

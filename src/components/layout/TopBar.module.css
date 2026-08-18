@@ -5,12 +5,17 @@
   justify-content: space-between;
   padding: 12px 20px;
 
-  /* Glassmorphism — driven by theme tokens, never hardcoded */
-  background-color: var(--bottom-nav-bg);
-  backdrop-filter: var(--bottom-nav-blur);
+  /* Glassmorphism — driven by theme tokens */
+  background: var(--bottom-nav-bg);
   -webkit-backdrop-filter: var(--bottom-nav-blur);
+  backdrop-filter: var(--bottom-nav-blur);
   border-bottom: 1px solid var(--bottom-nav-border);
   box-shadow: var(--glass-shadow-down);
+
+  /* Hardware acceleration & layer isolation: prevents text passthrough / window louver effect */
+  isolation: isolate;
+  transform: translateZ(0);
+  will-change: transform, backdrop-filter;
 
   /* Fixed at the very top — always visible as user scrolls */
   position: fixed;
@@ -54,7 +59,16 @@
   transform: scale(0.94);
 }
 
-/* ── Tabs (Center) ───────────────────────────────────────────────────── */
+/* ── Brand Title / Tabs (Center) ─────────────────────────────────────── */
+.brandTitle {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--glass-active);
+  letter-spacing: -0.02em;
+  user-select: none;
+}
+
 .tabsContainer {
   display: flex;
   align-items: center;
