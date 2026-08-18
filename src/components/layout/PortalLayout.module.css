@@ -79,10 +79,8 @@
   text-decoration: none;
 }
 
-.navItem:hover .navIcon {
-  transform: scale(1.06);
-  color: var(--color-primary);
-}
+
+
 
 .navItemActive {
   background: #111827;
@@ -670,3 +668,189 @@
   from { opacity: 0; transform: translateY(12px) scale(0.97); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
+
+/* ── Sidebar icon animations ─────────────────────────────────────────────
+   One-shot semantic motions on nav item hover.
+   Each animation fires once on hover-enter and naturally reverses on leave.
+   All motion is gated behind prefers-reduced-motion.
+   Active (black pill) items are explicitly excluded — the icon is already
+   communicating state through fill + color; adding motion there is noise.
+   ─────────────────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: no-preference) {
+
+  /* Prevent animation on active items */
+  .navItemActive .navIcon svg {
+    animation: none !important;
+  }
+
+  /* ── Dashboard: grid squares pop in stagger ── */
+  @keyframes iconDashboard {
+    0%   { transform: scale(0.88); opacity: 0.6; }
+    60%  { transform: scale(1.08); opacity: 1; }
+    100% { transform: scale(1);    opacity: 1; }
+  }
+  .navItem:not(.navItemActive):hover .navIcon[data-icon="dashboard"] svg {
+    animation: iconDashboard 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* ── Book / Courses: rock left then right ── */
+  @keyframes iconBook {
+    0%   { transform: rotate(0deg); }
+    25%  { transform: rotate(-6deg); }
+    65%  { transform: rotate(5deg); }
+    100% { transform: rotate(0deg); }
+  }
+  .navItem:not(.navItemActive):hover .navIcon[data-icon="book"] svg,
+  .navItem:not(.navItemActive):hover .navIcon[data-icon="courses"] svg {
+    animation: iconBook 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    transform-origin: center bottom;
+  }
+
+  /* ── Calendar / Semesters: date square drops in ── */
+  @keyframes iconCalendar {
+    0%   { transform: translateY(-3px); opacity: 0.5; }
+    70%  { transform: translateY(1px);  opacity: 1; }
+    100% { transform: translateY(0);    opacity: 1; }
+  }
+  .navItem:not(.navItemActive):hover .navIcon[data-icon="calendar"] svg,
+  .navItem:not(.navItemActive):hover .navIcon[data-icon="semesters"] svg {
+    animation: iconCalendar 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* ── Users / Groups: second figure slides in ── */
+  @keyframes iconUsers {
+    0%   { transform: translateX(-4px); opacity: 0.5; }
+    70%  { transform: translateX(2px);  opacity: 1; }
+    100% { transform: translateX(0);    opacity: 1; }
+  }
+  .navItem:not(.navItemActive):hover .navIcon[data-icon="users"] svg,
+  .navItem:not(.navItemActive):hover .navIcon[data-icon="groups"] svg {
+    animation: iconUsers 230ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* ── GraduationCap / Academic: lifts up and settles ── */
+  @keyframes iconGradCap {
+    0%   { transform: translateY(0); }
+    40%  { transform: translateY(-4px); }
+    70%  { transform: translateY(1px); }
+    100% { transform: translateY(0); }
+  }
+  .navItem:not(.navItemActive):hover .navIcon[data-icon="academic"] svg {
+    animation: iconGradCap 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* ── Institution: subtle lift ── */
+  @keyframes iconBuilding {
+    0%   { transform: translateY(0) scale(1); }
+    45%  { transform: translateY(-3px) scale(1.04); }
+    100% { transform: translateY(0) scale(1); }
+  }
+  .navItem:not(.navItemActive):hover .navIcon[data-icon="institution"] svg {
+    animation: iconBuilding 250ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* ── Settings / Gear: rotates 45° ── */
+  @keyframes iconSettings {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(45deg); }
+  }
+  .navItem:not(.navItemActive):hover .navIcon[data-icon="settings"] svg {
+    animation: iconSettings 300ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    transform-origin: center center;
+  }
+
+  /* ── Bell: swings left → right from top pivot ── */
+  @keyframes iconBell {
+    0%   { transform: rotate(0deg); }
+    20%  { transform: rotate(-12deg); }
+    50%  { transform: rotate(10deg); }
+    75%  { transform: rotate(-5deg); }
+    100% { transform: rotate(0deg); }
+  }
+  .navItem:not(.navItemActive):hover .navIcon[data-icon="bell"] svg {
+    animation: iconBell 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    transform-origin: center top;
+  }
+
+  /* ── Clock: hands sweep 90° clockwise ── */
+  @keyframes iconClock {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(90deg); }
+  }
+  .navItem:not(.navItemActive):hover .navIcon[data-icon="clock"] svg {
+    animation: iconClock 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    transform-origin: center center;
+  }
+
+  /* ── History: counter-clockwise arc ── */
+  @keyframes iconHistory {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(-90deg); }
+  }
+  .navItem:not(.navItemActive):hover .navIcon[data-icon="history"] svg {
+    animation: iconHistory 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    transform-origin: center center;
+  }
+
+  /* ── FileCheck / Audit: bounce up ── */
+  @keyframes iconFileCheck {
+    0%   { transform: translateY(0) scale(1); }
+    40%  { transform: translateY(-3px) scale(1.04); }
+    70%  { transform: translateY(1px) scale(0.98); }
+    100% { transform: translateY(0) scale(1); }
+  }
+  .navItem:not(.navItemActive):hover .navIcon[data-icon="audit"] svg {
+    animation: iconFileCheck 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* ── Flag / Feedback: wave ── */
+  @keyframes iconFlag {
+    0%   { transform: rotate(0deg); }
+    30%  { transform: rotate(-8deg); }
+    65%  { transform: rotate(6deg); }
+    100% { transform: rotate(0deg); }
+  }
+  .navItem:not(.navItemActive):hover .navIcon[data-icon="flag"] svg,
+  .navItem:not(.navItemActive):hover .navIcon[data-icon="feedback"] svg {
+    animation: iconFlag 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    transform-origin: left bottom;
+  }
+
+  /* ── Video: nudges right ── */
+  @keyframes iconVideo {
+    0%   { transform: translateX(0); }
+    40%  { transform: translateX(3px); }
+    70%  { transform: translateX(-1px); }
+    100% { transform: translateX(0); }
+  }
+  .navItem:not(.navItemActive):hover .navIcon[data-icon="video"] svg {
+    animation: iconVideo 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* ── Star: scale pulse ── */
+  @keyframes iconStar {
+    0%   { transform: scale(1) rotate(0deg); }
+    40%  { transform: scale(1.2) rotate(12deg); }
+    70%  { transform: scale(0.95) rotate(-4deg); }
+    100% { transform: scale(1) rotate(0deg); }
+  }
+  .navItem:not(.navItemActive):hover .navIcon[data-icon="star"] svg {
+    animation: iconStar 250ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    transform-origin: center center;
+  }
+
+  /* ── User / Check: bounce up ── */
+  @keyframes iconUser {
+    0%   { transform: translateY(0); }
+    40%  { transform: translateY(-3px); }
+    70%  { transform: translateY(1px); }
+    100% { transform: translateY(0); }
+  }
+  .navItem:not(.navItemActive):hover .navIcon[data-icon="user"] svg,
+  .navItem:not(.navItemActive):hover .navIcon[data-icon="check"] svg {
+    animation: iconUser 210ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+}
+

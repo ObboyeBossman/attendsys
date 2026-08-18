@@ -182,7 +182,7 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, switchTo, closeDra
                 className={`${styles.navItem} ${isActive || isChildActive ? styles.navItemActive : ""}`}
                 style={(isActive || isChildActive) ? { "--role-color": roleColor } as React.CSSProperties : undefined}
               >
-                <span className={styles.navIcon} style={{ position: "relative" }}>
+                <span className={styles.navIcon} data-icon={item.icon} style={{ position: "relative" }}>
                   <Icon name={item.icon} size={18} />
                   {!!item.badge && item.badge > 0 && (
                     <span
