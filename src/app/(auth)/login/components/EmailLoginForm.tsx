@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Eye, EyeOff, AlertCircle, RefreshCw, X } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import styles from "../LoginClient.module.css";
@@ -18,6 +19,7 @@ export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [authStage, setAuthStage] = useState<string>("Checking credentials…");
   const [error, setError] = useState<string | null>(null);
 
   // Auto-dismiss toast after 4 seconds
@@ -35,6 +37,7 @@ export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
 
     setError(null);
     setLoading(true);
+    setAuthStage("Checking credentials…");
 
     try {
       const { error: signInError } = await supabase.auth.signInWithPassword({
@@ -44,8 +47,12 @@ export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
 
       if (signInError) {
         setError(signInError.message || "Invalid login credentials");
+        setLoading(false);
         return;
       }
+
+      // Stage 2: Credentials verified, check user session & roles
+      setAuthStage("Verifying account permissions…");
 
       const {
         data: { user },
@@ -53,6 +60,7 @@ export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
 
       if (!user) {
         setError("Authentication failed. Please try again.");
+        setLoading(false);
         return;
       }
 
@@ -65,6 +73,7 @@ export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
 
       if (profileError || !profile) {
         setError("Could not load account details. Contact support.");
+        setLoading(false);
         return;
       }
 
@@ -73,16 +82,18 @@ export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
       if (!p.is_active && p.role !== "student") {
         await supabase.auth.signOut();
         setError("Your account has been deactivated. Contact admin.");
+        setLoading(false);
         return;
       }
 
-      const portalMap: Record<string, string> = {
-        super_admin: "/admin/dashboard",
-        lecturer: "/lecturer/dashboard",
-        student: "/student/dashboard",
+      // Stage 3: Resolve portal destination
+      const portalMap: Record<string, { label: string; path: string }> = {
+        super_admin: { label: "Admin Portal", path: "/admin/dashboard" },
+        lecturer: { label: "Lecturer Portal", path: "/lecturer/dashboard" },
+        student: { label: "Student Portal", path: "/student/dashboard" },
       };
 
-      let destination = portalMap[p.role] ?? "/student/dashboard";
+      let dest = portalMap[p.role] ?? { label: "Student Portal", path: "/student/dashboard" };
 
       if (p.role === "student") {
         const { data: repMembership } = await supabase
@@ -95,28 +106,66 @@ export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
           .maybeSingle();
 
         if (repMembership) {
-          destination = "/rep/dashboard";
+          dest = { label: "Course Rep Portal", path: "/rep/dashboard" };
         }
       }
+
+      setAuthStage(`Connecting to ${dest.label}…`);
+
+      let destination = dest.path;
 
       if (p.must_change_password) {
         const encodedNext = encodeURIComponent(destination);
         destination = `/change-password?next=${encodedNext}`;
+        setAuthStage("Redirecting to password setup…");
+      } else {
+        setAuthStage(`Opening ${dest.label} dashboard…`);
       }
 
+      // Trigger navigation
       router.replace(destination);
       router.refresh();
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred. Please try again.");
-    } finally {
       setLoading(false);
     }
   };
 
   return (
     <>
+      {/* ── FULL-SCREEN STAGE-AWARE AUTH LOADER OVERLAY ── */}
+      {loading && (
+        <div className={styles.fullScreenLoader} role="dialog" aria-modal="true" aria-label="Authenticating">
+          <div className={styles.loaderContent}>
+            {/* Monochromatic Circular Progress Indicator */}
+            <div className={styles.circularSpinnerWrap}>
+              <svg className={styles.circularSpinnerSvg} viewBox="0 0 50 50">
+                <circle className={styles.spinnerTrack} cx="25" cy="25" r="20" />
+                <circle className={styles.spinnerHead} cx="25" cy="25" r="20" />
+              </svg>
+            </div>
+
+            <div className={styles.loaderTextWrap}>
+              <h2 className={styles.loaderStageTitle}>{authStage}</h2>
+              <p className={styles.loaderStageSub}>Takoradi Technical University Authentication</p>
+            </div>
+
+            <div className={styles.loaderTTUBadge}>
+              <Image
+                src="/ttu_logo.png"
+                alt="TTU Crest"
+                width={16}
+                height={16}
+                style={{ filter: "grayscale(100%)" }}
+              />
+              <span>Secured Session Access</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Floating Custom Toast Banner */}
-      {error && (
+      {error && !loading && (
         <div className={styles.toastContainer} role="alert" aria-live="assertive">
           <div className={`${styles.toastCard} ${styles.toastError}`}>
             <AlertCircle size={18} strokeWidth={1.75} style={{ flexShrink: 0 }} />

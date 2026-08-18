@@ -73,21 +73,21 @@ git push origin feat/<feature-name>
 - Each commit message must be meaningful and describe the exact change made to that file.
 - Push to the feature branch after every commit — no local-only commits during active development.
 
-### Branching & Merge Policy:
+### Branching, Build & Merge Policy:
 
+- **Do NOT run `npm run build` automatically.** Only run `npm run build` when the user explicitly asks you to run a build or test command.
 - **Do NOT merge to `main` unless explicitly requested by the user.** Keep active work on feature branches (`feat/<feature-name>`).
-- **Do NOT run `npm run build` automatically unless explicitly requested by the user.** This avoids long build wait times during development.
 
-### When explicitly asked to merge or validate:
+### When explicitly asked by the user to run build or merge:
 
-1. Run the build (only when requested):
+1. Run the build (ONLY when explicitly requested by user):
 ```bash
 npm run build
 ```
 
-2. Fix any build errors, committing and pushing fixes to the feature branch.
+2. Fix any build errors if requested, committing and pushing fixes to the feature branch.
 
-3. Merge into `main` (only when requested by user):
+3. Merge into `main` (ONLY when explicitly requested by user):
 ```bash
 git checkout main
 git merge feat/<feature-name>
@@ -105,7 +105,8 @@ git branch -d feat/<feature-name>
 |---|---|
 | Start of feature | Create feature branch |
 | Every file added or changed | Commit & push to feature branch |
-| Task complete | Keep on feature branch. **Do NOT run build or merge to main unless user asks.** |
+| Build execution | **NEVER run `npm run build` unless explicitly asked by the user.** |
+| Merge | Keep on feature branch. **Do NOT merge to main unless user asks.** |
 
 ---
 
