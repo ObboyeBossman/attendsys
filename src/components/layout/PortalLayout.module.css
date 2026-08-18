@@ -253,7 +253,7 @@
 /* ── Fixed bottom section & elevated profile tile ───────────────────────── */
 .sidebarFooter {
   padding: var(--space-3) var(--space-4);
-  border-top: 1px solid var(--color-border);
+  /* Divider removed — footer floats cleanly off the nav scroll area */
   flex-shrink: 0;
   background: inherit;
 }
@@ -273,8 +273,11 @@
   border-radius: 9999px;
   text-decoration: none;
   color: var(--color-text);
-  background: transparent;
-  transition: background 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+  /* White surface — mirrors backBtn so both pills are visually equal */
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: background 150ms ease, box-shadow 150ms ease;
   cursor: pointer;
   /* Grow to fill available space, leave room for backBtn */
   flex: 1;
@@ -282,10 +285,10 @@
 }
 
 .profileTile:hover {
-  background: var(--color-surface-2, #f1f5f9);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  /* Same grey as backBtn hover — consistent across both footer pills */
+  background: #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   text-decoration: none;
-  transform: translateY(-1px);
 }
 
 .profileAvatarContainer {
@@ -329,15 +332,10 @@
   letter-spacing: -0.01em;
 }
 
-/* Settings icon at the far end of the profile tile */
+/* Settings icon at the far end of the profile tile — same size/color as backBtn icon */
 .profileSettingsIcon {
-  color: var(--color-text-3, #64748b);
-  flex-shrink: 0;
-  transition: color 150ms ease;
-}
-
-.profileTile:hover .profileSettingsIcon {
   color: var(--color-text, #111827);
+  flex-shrink: 0;
 }
 
 /* Standalone close-drawer button */
@@ -353,15 +351,15 @@
   width: 46px;
   height: 46px;
   border-radius: 50%;
-  transition: background 150ms ease, color 150ms ease, transform 150ms ease;
+  transition: background 150ms ease, color 150ms ease;
   flex-shrink: 0;
 }
 
 .backBtn:hover {
+  /* Grey surface on hover — same tone as profileTile hover; no scale transform */
   background: #e2e8f0;
   color: var(--color-text);
   border-color: var(--color-border);
-  transform: scale(1.05);
 }
 
 /* ── Notice banner bar ──────────────────────────────────────────────────── */
