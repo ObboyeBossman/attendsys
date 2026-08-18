@@ -258,17 +258,27 @@
   background: inherit;
 }
 
+/* Row that holds the profileTile + backBtn side-by-side */
+.footerRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .profileTile {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: 8px 12px 8px 8px;
+  padding: 8px 10px 8px 8px;
   border-radius: 9999px;
   text-decoration: none;
   color: var(--color-text);
   background: transparent;
   transition: background 150ms ease, box-shadow 150ms ease, transform 150ms ease;
   cursor: pointer;
+  /* Grow to fill available space, leave room for backBtn */
+  flex: 1;
+  min-width: 0;
 }
 
 .profileTile:hover {
@@ -319,6 +329,18 @@
   letter-spacing: -0.01em;
 }
 
+/* Settings icon at the far end of the profile tile */
+.profileSettingsIcon {
+  color: var(--color-text-3, #64748b);
+  flex-shrink: 0;
+  transition: color 150ms ease;
+}
+
+.profileTile:hover .profileSettingsIcon {
+  color: var(--color-text, #111827);
+}
+
+/* Standalone close-drawer button */
 .backBtn {
   background: var(--color-surface, #ffffff);
   border: 1px solid var(--color-border);
@@ -331,7 +353,7 @@
   width: 46px;
   height: 46px;
   border-radius: 50%;
-  transition: all 150ms ease;
+  transition: background 150ms ease, color 150ms ease, transform 150ms ease;
   flex-shrink: 0;
 }
 
