@@ -261,10 +261,8 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
         <div className={styles.footerRow}>
           {/* Profile tile — navigates to settings */}
           <Link href={settingsHref} onClick={closeDrawer} className={styles.profileTile}>
-            <div className={styles.profileAvatarContainer}>
-              <div className={styles.profileAvatar} style={{ backgroundColor: "#b91c1c" }}>
-                {userInitial}
-              </div>
+            <div className={styles.profileAvatar} style={{ backgroundColor: "#b91c1c" }}>
+              {userInitial}
             </div>
             <div className={styles.profileInfo}>
               <span className={styles.profileName}>{userName || "User"}</span>
