@@ -3,7 +3,8 @@
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import styles from "../auth.module.css";
+import { Eye, EyeOff, CheckCircle2, AlertCircle } from "lucide-react";
+import styles from "@/components/auth/ChangePasswordForm.module.css";
 
 function ChangePasswordInner() {
   const router = useRouter();
@@ -16,6 +17,8 @@ function ChangePasswordInner() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -27,12 +30,10 @@ function ChangePasswordInner() {
       setError("New password must be at least 8 characters.");
       return;
     }
-
     if (newPassword !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
-
     if (newPassword === currentPassword) {
       setError("New password must be different from your current password.");
       return;
@@ -41,14 +42,16 @@ function ChangePasswordInner() {
     setLoading(true);
 
     try {
-      // Re-authenticate to verify current password
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user?.email) {
         setError("Session expired. Please sign in again.");
         router.replace("/login");
         return;
       }
 
+      // Re-authenticate to verify current password
       const { error: reAuthError } = await supabase.auth.signInWithPassword({
         email: user.email,
         password: currentPassword,
@@ -74,167 +77,187 @@ function ChangePasswordInner() {
         .update({ must_change_password: false })
         .eq("id", user.id);
 
-      // Redirect: honour the ?next param if present (handles rep portal),
-      // otherwise fall back to role-based routing.
-      if (nextUrl) {
-        router.replace(nextUrl);
-        router.refresh();
-        return;
-      }
+      setSuccess(true);
 
-      const { data: profile } = await supabase
-        .from("user_profiles")
-        .select("role")
-        .eq("id", user.id)
-        .single();
-
-      const role = (profile as any)?.role ?? "";
-
-      // Students who are course reps need special handling — check membership.
-      if (role === "student") {
-        const { data: repMembership } = await supabase
-          .from("group_memberships")
-          .select("id")
-          .eq("student_id", user.id)
-          .eq("is_course_rep", true)
-          .eq("status", "active")
-          .limit(1)
-          .maybeSingle();
-
-        if (repMembership) {
-          router.replace("/rep/dashboard");
+      setTimeout(async () => {
+        if (nextUrl) {
+          router.replace(nextUrl);
           router.refresh();
           return;
         }
-      }
 
-      const roleMap: Record<string, string> = {
-        super_admin: "/admin/dashboard",
-        lecturer: "/lecturer/dashboard",
-        student: "/student/dashboard",
-      };
+        const { data: profile } = await supabase
+          .from("user_profiles")
+          .select("role")
+          .eq("id", user.id)
+          .single();
 
-      router.replace(roleMap[role] ?? "/login");
-      router.refresh();
+        const role = (profile as any)?.role ?? "";
+
+        if (role === "student") {
+          const { data: repMembership } = await supabase
+            .from("group_memberships")
+            .select("id")
+            .eq("student_id", user.id)
+            .eq("is_course_rep", true)
+            .eq("status", "active")
+            .limit(1)
+            .maybeSingle();
+
+          if (repMembership) {
+            router.replace("/rep/dashboard");
+            router.refresh();
+            return;
+          }
+        }
+
+        const roleMap: Record<string, string> = {
+          super_admin: "/admin/dashboard",
+          lecturer: "/lecturer/dashboard",
+          student: "/student/dashboard",
+        };
+
+        router.replace(roleMap[role] ?? "/login");
+        router.refresh();
+      }, 1800);
     } finally {
       setLoading(false);
     }
   }
 
+  if (success) {
+    return (
+      <div className={styles.successBox}>
+        <div className={styles.successIcon}>
+          <CheckCircle2 size={28} strokeWidth={1.75} />
+        </div>
+        <h2 className={styles.successTitle}>Password Updated</h2>
+        <p className={styles.successText}>Redirecting you to your portal…</p>
+      </div>
+    );
+  }
+
   return (
-    <div className={styles.authCard}>
-      <h1 className={styles.authTitle}>Set a new password</h1>
-      <p className={styles.authSubtitle}>
-        You must change your password before continuing.
-      </p>
+    <form onSubmit={handleChangePassword} className={styles.form}>
+      {error && (
+        <div className={styles.errorBox} role="alert">
+          <AlertCircle size={18} strokeWidth={1.75} style={{ flexShrink: 0, marginTop: 2 }} />
+          <span>{error}</span>
+        </div>
+      )}
 
-      <form className={styles.form} onSubmit={handleChangePassword} noValidate>
-        {error && (
-          <div className={styles.errorMsg} role="alert">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 11a1 1 0 110-2 1 1 0 010 2zm.75-4.75a.75.75 0 01-1.5 0V5.25a.75.75 0 011.5 0v2z" />
-            </svg>
-            {error}
-          </div>
-        )}
-
-        <div className={styles.inputGroup}>
-          <label htmlFor="current-password" className={styles.label}>
-            Current password
-          </label>
+      {/* Current password */}
+      <div className={styles.inputGroup}>
+        <label className={styles.label} htmlFor="current-password">
+          Current Password
+        </label>
+        <div className={styles.inputWrap}>
           <input
             id="current-password"
-            type="password"
+            type={showCurrent ? "text" : "password"}
+            required
+            className={styles.input}
+            placeholder="Your current password"
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
-            className="input"
-            placeholder="Your current password"
-            autoComplete="current-password"
-            required
             disabled={loading}
+            autoComplete="current-password"
           />
+          <button
+            type="button"
+            className={styles.eyeToggle}
+            onClick={() => setShowCurrent(!showCurrent)}
+            aria-label={showCurrent ? "Hide password" : "Show password"}
+          >
+            {showCurrent ? <EyeOff size={18} strokeWidth={1.75} /> : <Eye size={18} strokeWidth={1.75} />}
+          </button>
         </div>
+      </div>
 
-        <div className={styles.inputGroup}>
-          <label htmlFor="new-password" className={styles.label}>
-            New password
-          </label>
-          <div className={styles.inputWrapper}>
-            <input
-              id="new-password"
-              type={showNew ? "text" : "password"}
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className="input"
-              placeholder="At least 8 characters"
-              autoComplete="new-password"
-              required
-              disabled={loading}
-              style={{ paddingRight: "2.75rem" }}
-            />
-            <button
-              type="button"
-              className={styles.passwordToggle}
-              onClick={() => setShowNew((v) => !v)}
-              aria-label={showNew ? "Hide password" : "Show password"}
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M2 8s2.5-5 6-5 6 5 6 5-2.5 5-6 5-6-5-6-5z" />
-                <circle cx="8" cy="8" r="2" />
-              </svg>
-            </button>
-          </div>
+      {/* New password */}
+      <div className={styles.inputGroup}>
+        <label className={styles.label} htmlFor="new-password">
+          New Password
+        </label>
+        <div className={styles.inputWrap}>
+          <input
+            id="new-password"
+            type={showNew ? "text" : "password"}
+            required
+            className={styles.input}
+            placeholder="At least 8 characters"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            disabled={loading}
+            minLength={8}
+            autoComplete="new-password"
+          />
+          <button
+            type="button"
+            className={styles.eyeToggle}
+            onClick={() => setShowNew(!showNew)}
+            aria-label={showNew ? "Hide password" : "Show password"}
+          >
+            {showNew ? <EyeOff size={18} strokeWidth={1.75} /> : <Eye size={18} strokeWidth={1.75} />}
+          </button>
         </div>
+      </div>
 
-        <div className={styles.inputGroup}>
-          <label htmlFor="confirm-password" className={styles.label}>
-            Confirm new password
-          </label>
-          <div className={styles.inputWrapper}>
-            <input
-              id="confirm-password"
-              type={showConfirm ? "text" : "password"}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className={`input ${confirmPassword && confirmPassword !== newPassword ? "input-error" : ""}`}
-              placeholder="Repeat your new password"
-              autoComplete="new-password"
-              required
-              disabled={loading}
-              style={{ paddingRight: "2.75rem" }}
-            />
-            <button
-              type="button"
-              className={styles.passwordToggle}
-              onClick={() => setShowConfirm((v) => !v)}
-              aria-label={showConfirm ? "Hide password" : "Show password"}
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M2 8s2.5-5 6-5 6 5 6 5-2.5 5-6 5-6-5-6-5z" />
-                <circle cx="8" cy="8" r="2" />
-              </svg>
-            </button>
-          </div>
+      {/* Confirm password */}
+      <div className={styles.inputGroup}>
+        <label className={styles.label} htmlFor="confirm-password">
+          Confirm New Password
+        </label>
+        <div className={styles.inputWrap}>
+          <input
+            id="confirm-password"
+            type={showConfirm ? "text" : "password"}
+            required
+            className={styles.input}
+            placeholder="Repeat your new password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            disabled={loading}
+            minLength={8}
+            autoComplete="new-password"
+          />
+          <button
+            type="button"
+            className={styles.eyeToggle}
+            onClick={() => setShowConfirm(!showConfirm)}
+            aria-label={showConfirm ? "Hide password" : "Show password"}
+          >
+            {showConfirm ? <EyeOff size={18} strokeWidth={1.75} /> : <Eye size={18} strokeWidth={1.75} />}
+          </button>
         </div>
+      </div>
 
-        <button
-          id="change-password-submit-btn"
-          type="submit"
-          className={styles.submitBtn}
-          disabled={loading || !currentPassword || !newPassword || !confirmPassword}
-        >
-          {loading ? "Updating…" : "Update Password"}
-        </button>
-      </form>
-    </div>
+      <button
+        id="change-password-submit-btn"
+        type="submit"
+        className={styles.submitBtn}
+        disabled={loading || !currentPassword || !newPassword || !confirmPassword}
+      >
+        {loading ? "Updating password…" : "Update Password"}
+      </button>
+    </form>
   );
 }
 
-
 export default function ChangePasswordPage() {
   return (
-    <Suspense>
-      <ChangePasswordInner />
-    </Suspense>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Set a New Password</h1>
+        <p className={styles.subtitle}>
+          You must change your password before continuing.
+        </p>
+      </div>
+      <div className={styles.card}>
+        <Suspense>
+          <ChangePasswordInner />
+        </Suspense>
+      </div>
+    </div>
   );
 }
