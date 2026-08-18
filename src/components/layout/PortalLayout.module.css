@@ -304,7 +304,7 @@
   left: 0;
   bottom: 0;
   width: min(320px, 85vw); /* overridden to 100vw on mobile — see media query below */
-  background: #FFFFFF;
+  background: var(--color-bg-secondary); /* #F5F5F7 — distinct from page canvas #FAFAFA */
   border-right: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 0 24px 24px 0;
   z-index: 200;
