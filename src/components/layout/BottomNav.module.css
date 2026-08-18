@@ -2,6 +2,7 @@
    Full-width glassmorphic bar, desktop hidden / mobile only.
    Provides generous safe area padding so touch targets never conflict
    with native device gesture bars (iOS Home Indicator / Android Nav Bar).
+   All colours driven by --glass-* tokens — zero hardcoded values.
    ────────────────────────────────────────────────────────────────────────── */
 
 .nav {
@@ -14,12 +15,12 @@
   right: 0;
   z-index: 100;
 
-  /* Glassmorphic surface */
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(24px) saturate(200%);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
-  border-top: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.05);
+  /* Glassmorphism — driven by theme tokens */
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-top: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow-up);
 
   /* Generous padding top & bottom with native device safe area fallback */
   padding: 12px 16px calc(14px + env(safe-area-inset-bottom, 16px));
@@ -53,7 +54,7 @@
   padding: 6px 4px;
   border-radius: 12px;
   text-decoration: none;
-  color: #94A3B8; /* slate-400 — inactive */
+  color: var(--glass-inactive);
   font-family: var(--font-body);
   font-size: 11px;
   font-weight: 500;
@@ -72,13 +73,13 @@
   transform: scale(0.96);
 }
 
-/* Active state — text turns #000000 */
+/* Active state */
 .itemActive {
-  color: #000000;
+  color: var(--glass-active);
 }
 
 .itemActive:hover {
-  color: #000000;
+  color: var(--glass-active);
   text-decoration: none;
 }
 
@@ -88,15 +89,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #94A3B8;
+  color: var(--glass-inactive);
   transform: scale(1);
   transition: transform 300ms ease-out, color 300ms ease-out;
 }
 
-/* Active icon gets scale(1.15) and #000000 color */
 .itemActive .iconWrap {
   transform: scale(1.15);
-  color: #000000;
+  color: var(--glass-active);
 }
 
 /* ── Label ─────────────────────────────────────────────────────────────────── */
@@ -104,7 +104,7 @@
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.01em;
-  color: #94A3B8;
+  color: var(--glass-inactive);
   opacity: 0.75;
   transform: translateY(1px);
   transition: color 300ms ease-out, font-weight 300ms ease-out, transform 300ms ease-out, opacity 300ms ease-out;
@@ -112,7 +112,7 @@
 
 .itemActive .label {
   font-weight: 700;
-  color: #000000;
+  color: var(--glass-active);
   opacity: 1;
   transform: translateY(0px);
 }
@@ -126,7 +126,7 @@
   height: 16px;
   border-radius: 9999px;
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-text-inverse);
   font-size: 10px;
   font-weight: 700;
   display: inline-flex;
