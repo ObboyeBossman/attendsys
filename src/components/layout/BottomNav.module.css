@@ -67,6 +67,10 @@
   user-select: none;
   outline: none;
   transition: color 200ms ease;
+  /* Button resets */
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .item:hover {

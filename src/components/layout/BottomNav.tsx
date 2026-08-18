@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Building2,
@@ -65,6 +65,7 @@ interface BottomNavProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export function BottomNav({ navItems, pathname, switchTo }: BottomNavProps) {
+  const router = useRouter();
   // Enforce maximum of 3 total items on bottom navigation
   const maxNavItems = switchTo ? 2 : 3;
   const displayedItems = navItems.slice(0, maxNavItems);
@@ -78,9 +79,10 @@ export function BottomNav({ navItems, pathname, switchTo }: BottomNavProps) {
             (item.href !== "/admin" && pathname.startsWith(item.href + "/"));
 
           return (
-            <Link
+            <button
               key={item.href}
-              href={item.href}
+              type="button"
+              onClick={() => router.push(item.href)}
               className={`${styles.item} ${isActive ? styles.itemActive : ""}`}
               aria-current={isActive ? "page" : undefined}
             >
@@ -96,12 +98,16 @@ export function BottomNav({ navItems, pathname, switchTo }: BottomNavProps) {
                 <NavIcon name={item.icon} active={isActive} />
               </span>
               <span className={styles.label}>{item.label}</span>
-            </Link>
+            </button>
           );
         })}
 
         {switchTo && (
-          <Link href={switchTo.href} className={styles.item}>
+          <button
+            type="button"
+            onClick={() => router.push(switchTo.href)}
+            className={styles.item}
+          >
             <span className={styles.iconWrap}>
               <svg
                 width="22"
@@ -118,10 +124,9 @@ export function BottomNav({ navItems, pathname, switchTo }: BottomNavProps) {
               </svg>
             </span>
             <span className={styles.label}>{switchTo.label}</span>
-          </Link>
+          </button>
         )}
       </div>
-
     </nav>
   );
 }
