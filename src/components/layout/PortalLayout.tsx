@@ -185,6 +185,7 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
               <div key={item.href} className={styles.navGroup}>
                 <button
                   type="button"
+                  data-href={item.href}
                   onClick={() => {
                     closeDrawer();
                     router.push(item.href);
@@ -228,6 +229,7 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
                         <button
                           key={child.href}
                           type="button"
+                          data-href={child.href}
                           onClick={() => {
                             closeDrawer();
                             router.push(child.href);
@@ -308,7 +310,7 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
 // ── Swipe gesture constants ───────────────────────────────────────────────────
 // On mobile the drawer is 100vw — we resolve the actual width at runtime in the handlers
 const DRAWER_WIDTH = 320;          // fallback for desktop (unused); mobile uses window.innerWidth
-const EDGE_ZONE = 200;             // px from left edge that initiates an open swipe
+const EDGE_ZONE = 80;              // px from left edge that initiates an open swipe
 const OPEN_THRESHOLD = 0.4;        // fraction of drawer width to commit open
 const CLOSE_THRESHOLD = 0.4;       // fraction of drawer width to commit closed
 const VELOCITY_THRESHOLD = 0.4;    // px/ms — fast flick overrides distance check

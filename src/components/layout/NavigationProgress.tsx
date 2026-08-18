@@ -3,15 +3,8 @@
 /**
  * NavigationProgress — global route-change detection
  *
- * Wraps the app in a context that fires on every Link click or programmatic
- * router.push so that any child (PortalLayout, AdminLayout, page skeletons)
- * can react immediately — before the server component even starts loading.
- *
- * Strategy:
- *  1. Intercept clicks on <a> elements via a document-level listener.
- *  2. Supplement with usePathname diffing so programmatic navigation
- *     (router.push, redirect) is also caught.
- *  3. A 120 ms micro-delay prevents flicker on instant cache hits.
+ * Intercepts all link clicks, button navigation, and programmatic router pushes
+ * to instantly trigger PageShimmer and NavProgressBar on user action.
  */
 
 import {
@@ -27,11 +20,15 @@ import { usePathname } from "next/navigation";
 interface NavigationState {
   navigating: boolean;
   targetHref: string | null;
+  startNavigation: (href: string) => void;
+  stopNavigation: () => void;
 }
 
 const NavigationContext = createContext<NavigationState>({
   navigating: false,
   targetHref: null,
+  startNavigation: () => {},
+  stopNavigation: () => {},
 });
 
 export function useNavigation() {
@@ -44,14 +41,12 @@ export function NavigationProgressProvider({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const [state, setState] = useState<NavigationState>({
+  const [state, setState] = useState<{ navigating: boolean; targetHref: string | null }>({
     navigating: false,
     targetHref: null,
   });
 
-  // Track last known pathname to detect when navigation resolves
   const prevPathname = useRef(pathname);
-  // Timer to cancel flicker on near-instant cache hits
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const startNavigation = useCallback((href: string) => {
@@ -64,21 +59,24 @@ export function NavigationProgressProvider({
     setState({ navigating: false, targetHref: null });
   }, []);
 
-  // Intercept anchor clicks (covers Link components)
+  // Intercept clicks on links and buttons with navigation targets
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      const anchor = (e.target as HTMLElement).closest("a");
-      if (!anchor) return;
+      const target = e.target as HTMLElement;
+      const clickable = target.closest("a, button, [data-href]");
+      if (!clickable) return;
 
-      const href = anchor.getAttribute("href");
+      const href =
+        clickable.getAttribute("href") ||
+        clickable.getAttribute("data-href");
       if (!href) return;
 
       // Only internal navigation
       const isInternal =
         href.startsWith("/") &&
         !href.startsWith("//") &&
-        anchor.target !== "_blank" &&
-        !anchor.hasAttribute("download");
+        clickable.getAttribute("target") !== "_blank" &&
+        !clickable.hasAttribute("download");
 
       if (!isInternal) return;
 
@@ -101,7 +99,13 @@ export function NavigationProgressProvider({
   }, [pathname, stopNavigation]);
 
   return (
-    <NavigationContext.Provider value={state}>
+    <NavigationContext.Provider
+      value={{
+        ...state,
+        startNavigation,
+        stopNavigation,
+      }}
+    >
       {children}
     </NavigationContext.Provider>
   );

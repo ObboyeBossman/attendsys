@@ -82,6 +82,7 @@ export function BottomNav({ navItems, pathname, switchTo }: BottomNavProps) {
             <button
               key={item.href}
               type="button"
+              data-href={item.href}
               onClick={() => router.push(item.href)}
               className={`${styles.item} ${isActive ? styles.itemActive : ""}`}
               aria-current={isActive ? "page" : undefined}
