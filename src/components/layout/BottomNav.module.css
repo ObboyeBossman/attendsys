@@ -13,12 +13,12 @@
   right: 0;
   z-index: 100;
 
-  /* Glass — driven entirely by theme tokens */
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border-top: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow-up);
+  /* Glass — dedicated bottom-nav tokens for stronger frosted effect */
+  background: var(--bottom-nav-bg);
+  backdrop-filter: var(--bottom-nav-blur);
+  -webkit-backdrop-filter: var(--bottom-nav-blur);
+  border-top: 1px solid var(--bottom-nav-border);
+  box-shadow: var(--bottom-nav-shadow);
 
   padding: 12px 24px calc(8px + env(safe-area-inset-bottom, 12px));
 }
