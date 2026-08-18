@@ -6,6 +6,10 @@
 /* ── CSS Custom Properties ───────────────────────────────── */
 
 :root {
+  /* --- BROWSER SYSTEM ACCENT COLOR (Monochromatic Structural Black) --- */
+  accent-color:           var(--color-primary);
+  caret-color:            var(--color-primary);
+
   /* --- DESIGN TOKENS (Monochromatic-First System) --- */
   --color-blue:           var(--color-primary);
   --color-blue-hover:     var(--color-primary-dark);

@@ -189,7 +189,7 @@
 }
 
 [data-portal="portal-light"] .badge-primary {
-  background: rgba(157, 10, 18, 0.10);
+  background: var(--color-primary-glow);
   color: var(--color-primary);
 }
 

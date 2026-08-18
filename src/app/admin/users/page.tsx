@@ -165,7 +165,7 @@ export default function UsersIndexPage() {
                   borderTop: "1px solid rgba(0, 0, 0, 0.04)",
                   fontSize: "0.875rem",
                   fontWeight: 600,
-                  color: "#1A42C2",
+                  color: "var(--color-primary)",
                 }}
               >
                 <span>Manage {section.title}</span>
