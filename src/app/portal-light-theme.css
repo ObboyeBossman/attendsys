@@ -83,16 +83,18 @@
   border-color: var(--color-border);
 }
 
-/* ── Mobile topbar ────────────────────────────────────────── */
-[data-portal="portal-light"] header {
-  background: var(--color-surface);
-  border-bottom-color: var(--color-border);
-}
-
-/* ── Bottom nav ───────────────────────────────────────────── */
-[data-portal="portal-light"] nav[aria-label="Mobile navigation"] {
-  background: var(--color-surface);
-  border-top-color: var(--color-border);
+/* ── Glassmorphism tokens — light portal ──────────────────── */
+[data-portal="portal-light"] {
+  --glass-bg:            rgba(255, 255, 255, 0.55);
+  --glass-border:        rgba(255, 255, 255, 0.65);
+  --glass-shadow-down:   0 8px 30px rgba(0, 0, 0, 0.05);
+  --glass-shadow-up:     0 -8px 30px rgba(0, 0, 0, 0.05);
+  --glass-blur:          blur(24px) saturate(180%);
+  --glass-icon-bg:       rgba(0, 0, 0, 0.06);
+  --glass-icon-bg-hover: rgba(0, 0, 0, 0.10);
+  --glass-icon-color:    var(--color-text);
+  --glass-inactive:      var(--color-text-3);
+  --glass-active:        var(--color-text);
 }
 
 /* ── Card ─────────────────────────────────────────────────── */
