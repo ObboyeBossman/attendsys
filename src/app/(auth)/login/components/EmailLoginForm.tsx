@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Eye, EyeOff, AlertCircle, RefreshCw, X } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { FullscreenLoader } from "@/components/layout/FullscreenLoader";
 import styles from "../LoginClient.module.css";
 
 interface EmailLoginFormProps {
@@ -133,24 +134,8 @@ export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
 
   return (
     <>
-      {/* ── FULL-SCREEN STAGE-AWARE AUTH LOADER OVERLAY ── */}
-      {loading && (
-        <div className={styles.fullScreenLoader} role="dialog" aria-modal="true" aria-label="Authenticating">
-          <div className={styles.loaderContent}>
-            {/* Monochromatic Circular Progress Indicator */}
-            <div className={styles.circularSpinnerWrap}>
-              <svg className={styles.circularSpinnerSvg} viewBox="0 0 50 50">
-                <circle className={styles.spinnerTrack} cx="25" cy="25" r="20" />
-                <circle className={styles.spinnerHead} cx="25" cy="25" r="20" />
-              </svg>
-            </div>
-
-            <div className={styles.loaderTextWrap}>
-              <h2 className={styles.loaderStageTitle}>{authStage}</h2>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Global Stage-Aware Fullscreen Loader */}
+      <FullscreenLoader visible={loading} message={authStage} />
 
       {/* Floating Custom Toast Banner */}
       {error && !loading && (

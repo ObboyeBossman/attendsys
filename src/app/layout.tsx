@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { NavigationProgressProvider } from "@/components/layout/NavigationProgress";
+import { FullscreenLoaderProvider } from "@/components/layout/FullscreenLoader";
 import { NavProgressBar } from "@/components/layout/PageTransition";
 
 // Google Fonts loaded via CSS @import in globals.css instead of next/font
@@ -70,8 +71,10 @@ export default function RootLayout({
       </head>
       <body style={{ backgroundColor: "#ffffff", position: "relative" }}>
         <NavigationProgressProvider>
-          <NavProgressBar />
-          {children}
+          <FullscreenLoaderProvider>
+            <NavProgressBar />
+            {children}
+          </FullscreenLoaderProvider>
         </NavigationProgressProvider>
       </body>
     </html>
