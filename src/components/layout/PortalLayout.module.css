@@ -60,10 +60,10 @@
 
 .brandName {
   font-family: 'MuseoModerno', sans-serif;
-  font-size: 17px;
+  font-size: 24px;
   font-weight: 500;
   color: var(--color-text);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   line-height: 1;
 }
