@@ -279,14 +279,22 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
   // ── Swipe gesture state (refs — no re-renders during drag) ───────────────
   const drawerRef = useRef<HTMLElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
-  const swipeState = useRef({
-    tracking: false,        // are we tracking a swipe?
+  const swipeState = useRef<{
+    tracking: boolean;
+    startX: number;
+    startY: number;
+    currentX: number;
+    startTime: number;
+    drawerOpenAtStart: boolean;
+    isHorizontal: boolean | null;  // null = direction not yet determined
+  }>({
+    tracking: false,
     startX: 0,
     startY: 0,
     currentX: 0,
     startTime: 0,
     drawerOpenAtStart: false,
-    isHorizontal: false | null,   // null = not yet determined
+    isHorizontal: null,
   });
   const prefersReducedMotion = useRef(false);
 
