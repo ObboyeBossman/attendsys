@@ -1,0 +1,398 @@
+/* ── Login Client Module Styles ─────────────────────────────────────────── */
+
+.root {
+  font-family: var(--font-body), 'Inter', sans-serif;
+  min-height: 100dvh;
+  background-color: #FFFFFF;
+  color: #111827;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  user-select: none;
+}
+
+.root ::selection {
+  background: #111827;
+  color: #FFFFFF;
+}
+
+/* ── Grid background pattern ──────────────────────────────────────────────── */
+.bgGrid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: #FFFFFF;
+}
+
+.gridPattern {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.045) 1px, transparent 1px);
+  background-size: 34px 34px;
+}
+
+.fadeTop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 160px;
+  background: linear-gradient(to bottom, #FFFFFF 20%, transparent);
+}
+
+.fadeBottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 160px;
+  background: linear-gradient(to top, #FFFFFF 20%, transparent);
+}
+
+.fadeLeft {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 64px;
+  background: linear-gradient(to right, #FFFFFF, transparent);
+}
+
+.fadeRight {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 64px;
+  background: linear-gradient(to left, #FFFFFF, transparent);
+}
+
+.spacer {
+  flex: 1;
+}
+
+/* ── Main card container ─────────────────────────────────────────────────── */
+.main {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 380px;
+  margin: auto;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* ── Brand Title (Sidebar Typography: MuseoModerno) ───────────────────────── */
+.brandTitle {
+  font-family: 'MuseoModerno', var(--font-heading), sans-serif;
+  font-size: 42px;
+  font-weight: 500;
+  color: #000000;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 40px;
+  line-height: 1;
+}
+
+/* ── Animation container ─────────────────────────────────────────────────── */
+.fadeIn {
+  width: 100%;
+  animation: fadeIn 250ms ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.subHeadingGroup {
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.subTitle {
+  font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+  font-size: 16px;
+  color: #111827;
+  font-weight: 500;
+}
+
+.subDesc {
+  font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+  font-size: 13px;
+  color: #64748B;
+  line-height: 1.5;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+/* ── Option buttons stack ────────────────────────────────────────────────── */
+.optionsStack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.optionBtn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 16px 24px;
+  border-radius: 9999px;
+  background: #F1F5F9;
+  color: #111827;
+  font-family: var(--font-body), sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 150ms ease, transform 150ms ease;
+  user-select: none;
+}
+
+.optionBtn:hover {
+  background: #E2E8F0;
+}
+
+.optionBtn:active {
+  transform: scale(0.98);
+}
+
+.optionIconLeft {
+  position: absolute;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* ── Back button ─────────────────────────────────────────────────────────── */
+.backBtn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: #94A3B8;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 20px;
+  transition: color 150ms ease;
+  padding: 0;
+}
+
+.backBtn:hover {
+  color: #111827;
+}
+
+.formHeader {
+  text-align: left;
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.formTitle {
+  font-family: 'MuseoModerno', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: #111827;
+  margin-bottom: 4px;
+  letter-spacing: 0.02em;
+}
+
+.formDesc {
+  font-family: 'JetBrains Mono', monospace;
+  color: #94A3B8;
+  font-size: 12px;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+/* ── Inputs & CTAs ───────────────────────────────────────────────────────── */
+.formBody {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.input {
+  width: 100%;
+  padding: 16px 20px;
+  border-radius: 16px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  outline: none;
+  color: #111827;
+  font-family: var(--font-body), sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: #111827;
+  box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 16px 24px;
+  border-radius: 9999px;
+  background: #111827;
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 150ms ease, transform 150ms ease;
+  outline: none;
+  user-select: none;
+}
+
+.submitBtn:hover {
+  background: #1F2937;
+}
+
+.submitBtn:active {
+  transform: scale(0.98);
+}
+
+.submitBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Spinner animation ──────────────────────────────────────────────────── */
+.spinIcon {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Success state ──────────────────────────────────────────────────────── */
+.successCard {
+  width: 100%;
+  padding: 24px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.successIconCircle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #ECFDF5;
+  color: #059669;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  border: 1px solid #A7F3D0;
+}
+
+.successTitle {
+  font-family: 'MuseoModerno', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.successMsg {
+  font-family: 'JetBrains Mono', monospace;
+  color: #64748B;
+  font-size: 12px;
+  margin-bottom: 24px;
+  max-width: 280px;
+  line-height: 1.5;
+}
+
+.signOutBtn {
+  padding: 12px 24px;
+  border-radius: 9999px;
+  background: #F1F5F9;
+  color: #111827;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.signOutBtn:hover {
+  background: #E2E8F0;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+.footer {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 0 24px 32px;
+  text-align: center;
+}
+
+.footerText {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: #94A3B8;
+  line-height: 1.5;
+}
+
+.footerLink {
+  color: #94A3B8;
+  text-decoration: underline;
+  transition: color 150ms ease;
+}
+
+.footerLink:hover {
+  color: #334155;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fadeIn {
+    animation: none;
+  }
+  .spinIcon {
+    animation: none;
+  }
+}
