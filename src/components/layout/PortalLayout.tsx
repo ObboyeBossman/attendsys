@@ -192,7 +192,7 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
                   className={`${styles.navItem} ${isActive || isChildActive ? styles.navItemActive : ""}`}
                 >
                   <span className={styles.navIcon} data-icon={item.icon} style={{ position: "relative" }}>
-                    <Icon name={item.icon} size={20} />
+                    <Icon name={item.icon} size={22} />
                     {!!item.badge && item.badge > 0 && (
                       <span
                         aria-label={`${item.badge} unread`}
@@ -253,7 +253,7 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
               }}
             >
               <span className={styles.navIcon}>
-                <ArrowRightLeft size={20} strokeWidth={1.75} />
+                <ArrowRightLeft size={22} strokeWidth={1.75} />
               </span>
               <span>{switchTo.label}</span>
             </button>
@@ -264,7 +264,7 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
             onClick={onSignOut}
           >
             <span className={styles.navIcon}>
-              <LogOut size={20} strokeWidth={1.75} />
+              <LogOut size={22} strokeWidth={1.75} />
             </span>
             <span>Sign out</span>
           </button>
