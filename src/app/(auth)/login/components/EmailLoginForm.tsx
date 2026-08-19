@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { Eye, EyeOff, AlertCircle, RefreshCw, X } from "lucide-react";
+import { AlertCircle, RefreshCw, X } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { FullscreenLoader } from "@/components/layout/FullscreenLoader";
+import { FullscreenLoader } from "@/components/layout";
+import { Input, Button, Toast } from "@/components/ui";
 import styles from "../LoginClient.module.css";
 
 interface EmailLoginFormProps {
@@ -26,7 +26,6 @@ export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [authStage, setAuthStage] = useState<string>("Checking credentials…");
   const [error, setError] = useState<string | null>(null);
@@ -147,88 +146,53 @@ export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
 
       {/* Floating Custom Toast Banner */}
       {error && !loading && (
-        <div className={styles.toastContainer} role="alert" aria-live="assertive">
-          <div className={`${styles.toastCard} ${styles.toastError}`}>
-            <AlertCircle size={18} strokeWidth={1.75} style={{ flexShrink: 0 }} />
-            <span>{error}</span>
-            <button
-              type="button"
-              className={styles.toastClose}
-              onClick={() => setError(null)}
-              aria-label="Dismiss notification"
-            >
-              <X size={14} strokeWidth={2} />
-            </button>
-          </div>
-        </div>
+        <Toast
+          message={error}
+          variant="error"
+          onDismiss={() => setError(null)}
+        />
       )}
 
       <form onSubmit={handlePasswordLogin} className={`${styles.fadeIn} ${styles.formBody}`}>
-        {/* Email Field with Floating Notch Label */}
-        <div className={styles.inputFieldGroup}>
-          <span className={styles.floatingLabel}>Email</span>
-          <div className={styles.inputWrap}>
-            <input
-              type="email"
-              required
-              placeholder="name@ttu.edu.gh"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                if (error) setError(null);
-              }}
-              className={styles.notchInput}
-              disabled={loading}
-            />
-          </div>
-        </div>
+        {/* Global Input Component for Email */}
+        <Input
+          label="Email"
+          type="email"
+          required
+          placeholder="name@ttu.edu.gh"
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (error) setError(null);
+          }}
+          disabled={loading}
+        />
 
-        {/* Password Field with Floating Notch Label & Eye Toggle */}
-        <div className={styles.inputFieldGroup}>
-          <span className={styles.floatingLabel}>Password</span>
-          <div className={styles.inputWrap}>
-            <input
-              type={showPassword ? "text" : "password"}
-              required
-              placeholder="••••••••••••"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                if (error) setError(null);
-              }}
-              className={styles.notchInput}
-              disabled={loading}
-            />
-            <button
-              type="button"
-              className={styles.eyeToggle}
-              onClick={() => setShowPassword(!showPassword)}
-              aria-label={showPassword ? "Hide password" : "Show password"}
-            >
-              {showPassword ? (
-                <EyeOff size={18} strokeWidth={1.75} />
-              ) : (
-                <Eye size={18} strokeWidth={1.75} />
-              )}
-            </button>
-          </div>
-        </div>
+        {/* Global Input Component for Password (includes built-in eye toggle) */}
+        <Input
+          label="Password"
+          type="password"
+          required
+          placeholder="••••••••••••"
+          value={password}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            if (error) setError(null);
+          }}
+          disabled={loading}
+        />
 
-        {/* Submit Button */}
-        <button
+        {/* Global Button Component for Submit */}
+        <Button
           type="submit"
-          disabled={loading || !email || !password}
-          className={styles.submitBtn}
+          variant="primary"
+          size="lg"
+          loading={loading}
+          disabled={!email || !password}
+          style={{ width: "100%", marginTop: 8 }}
         >
-          {loading ? (
-            <>
-              <RefreshCw size={16} className={styles.spinIcon} />
-              <span>SIGNING IN…</span>
-            </>
-          ) : (
-            <span>SIGN IN</span>
-          )}
-        </button>
+          {loading ? "SIGNING IN…" : "SIGN IN"}
+        </Button>
 
         {/* Forgot password link */}
         <div>
