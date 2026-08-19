@@ -6,7 +6,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import styles from "./PortalLayout.module.css";
 import { PageShimmer } from "./PageTransition";
 import { NoticeBanner } from "./NoticeBanner";
-import { BrandLogo } from "@/components/brand/BrandLogo";
+import { BrandLogo, BrandText } from "@/components/brand";
 import { BottomNav } from "./BottomNav";
 import { TopBar } from "./TopBar";
 
@@ -147,7 +147,7 @@ const ROLE_INITIALS: Record<string, string> = {
 function BrandMark({ roleLabel: _roleLabel }: { roleLabel: string }) {
   return (
     <>
-      <span className={styles.brandName}>AttendSys</span>
+      <BrandText size="lg" />
       <div className={styles.brandIconBtn} aria-label="AttendSys logo">
         <BrandLogo size="md" label="" />
       </div>

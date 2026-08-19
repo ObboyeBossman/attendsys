@@ -1,0 +1,33 @@
+/* ── Centralized AttendSys Brand Text & Wordmark Styling ───────────────── */
+
+.brandText {
+  font-family: 'MuseoModerno', var(--font-heading), sans-serif;
+  font-weight: 500;
+  color: var(--color-text);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  line-height: 1;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* ── Sizes ───────────────────────────────────────────────────────── */
+.sm {
+  font-size: var(--text-base);
+  letter-spacing: 0.12em;
+}
+
+.md {
+  font-size: var(--text-xl);
+  letter-spacing: 0.14em;
+}
+
+.lg {
+  font-size: var(--text-2xl); /* 24px */
+  letter-spacing: 0.15em;
+}
+
+.xl {
+  font-size: var(--text-3xl); /* 30px */
+  letter-spacing: 0.18em;
+}
