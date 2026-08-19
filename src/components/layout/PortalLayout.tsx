@@ -7,6 +7,7 @@ import styles from "./PortalLayout.module.css";
 import { PageShimmer } from "./PageTransition";
 import { NoticeBanner } from "./NoticeBanner";
 import { BrandLogo, BrandText } from "@/components/brand";
+import { Button } from "@/components/ui";
 import { BottomNav } from "./BottomNav";
 import { TopBar } from "./TopBar";
 
@@ -196,24 +197,8 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
                     <Icon name={item.icon} size={22} />
                     {!!item.badge && item.badge > 0 && (
                       <span
+                        className={styles.navBadge}
                         aria-label={`${item.badge} unread`}
-                        style={{
-                          position: "absolute",
-                          top: -4,
-                          right: -6,
-                          minWidth: 16,
-                          height: 16,
-                          borderRadius: "var(--radius-full)",
-                          background: "var(--color-primary)",
-                          color: "var(--color-text-inverse)",
-                          fontSize: "var(--text-xs)",
-                          fontWeight: 700,
-                          display: "inline-flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          padding: "0 4px",
-                          lineHeight: 1,
-                        }}
                       >
                         {item.badge > 99 ? "99+" : item.badge}
                       </span>
@@ -675,27 +660,22 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
               You&apos;ll be returned to the login screen. Any unsaved work will be lost.
             </p>
             <div className={styles.dialogActions}>
-              <button
-                className={styles.dialogCancel}
+              <Button
+                variant="secondary"
                 onClick={() => setConfirmSignOut(false)}
                 disabled={signingOut}
+                style={{ flex: 1 }}
               >
                 Cancel
-              </button>
-              <button
-                className={styles.dialogConfirm}
+              </Button>
+              <Button
+                variant="danger"
+                loading={signingOut}
                 onClick={handleLogout}
-                disabled={signingOut}
+                style={{ flex: 1 }}
               >
-                {signingOut ? (
-                  <>
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true" style={{ animation: "spin 0.6s linear infinite" }}>
-                      <path d="M7 1a6 6 0 1 0 6 6" />
-                    </svg>
-                    Signing out…
-                  </>
-                ) : "Sign out"}
-              </button>
+                {signingOut ? "Signing out…" : "Sign out"}
+              </Button>
             </div>
           </div>
         </div>
