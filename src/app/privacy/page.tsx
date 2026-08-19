@@ -1,8 +1,7 @@
 import React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
-import { BrandText } from "@/components/brand";
+import { BrandLogo, BrandText } from "@/components/brand";
 import styles from "./privacy.module.css";
 
 export const metadata = {
@@ -15,13 +14,7 @@ export default function PrivacyPage() {
     <div className={styles.container}>
       <header className={styles.header}>
         <div className={styles.brandGroup}>
-          <Image
-            src="/ttu_logo.png"
-            alt="Takoradi Technical University logo"
-            width={36}
-            height={36}
-            className={styles.institutionLogo}
-          />
+          <BrandLogo size={36} label="AttendSys" />
           <BrandText size="md" />
         </div>
         <Link
