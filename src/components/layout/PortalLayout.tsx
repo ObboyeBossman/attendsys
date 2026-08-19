@@ -534,13 +534,10 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
 
   async function handleLogout() {
     setSigningOut(true);
-    try {
-      await supabase.auth.signOut();
-    } catch {
-      // ignore signOut errors — still redirect
-    }
-    // Hard navigate to flush server session cache and middleware state
-    window.location.href = "/login";
+    // Navigate to the server-side sign-out handler.
+    // Client-side supabase.auth.signOut() cannot clear HttpOnly cookies
+    // set by SFR-AUTH-03 — the server route handles cookie deletion properly.
+    window.location.href = "/api/auth/signout";
   }
 
   // Derive pageTitle dynamically from pathname and navItems
