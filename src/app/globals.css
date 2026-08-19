@@ -175,6 +175,8 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
 
 html {
@@ -183,6 +185,7 @@ html {
   scroll-behavior: smooth;
   /* White base prevents any OS-level status bar or background flash on cold launch */
   background-color: #ffffff;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -194,6 +197,52 @@ body {
   -moz-osx-font-smoothing: grayscale;
   min-height: 100dvh;
   overflow-x: hidden; /* prevent horizontal bleed on mobile */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* App-wide PWA Native Reset: Prevent awkward text selection & highlight boxes on interactive UI elements */
+button,
+a,
+input[type="submit"],
+input[type="button"],
+input[type="reset"],
+[role="button"],
+[tabindex],
+label,
+nav,
+header,
+footer,
+summary,
+svg,
+img,
+.badge,
+.card,
+.statCard,
+.title,
+.btn,
+.label {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Allow normal text selection inside inputs, textareas, and content copy */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+textarea,
+[contenteditable="true"],
+.selectable-text {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
 }
 
 /* Scrollbar styling */
