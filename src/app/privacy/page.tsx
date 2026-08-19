@@ -123,9 +123,9 @@ export default function PrivacyPage() {
         </section>
 
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>5. Zero Third-Party Sharing</h2>
+          <h2 className={styles.sectionTitle}>5. Advertising & Third-Party Sharing</h2>
           <p className={styles.paragraph}>
-            Takoradi Technical University does <strong>NOT</strong> sell, rent, trade, or share student or staff personal data with third-party advertisers, commercial entities, or external data brokers. All data remains institutional property under the custody of the university.
+            AttendSys currently does not share student or staff personal data with external ad networks. For non-institutional tiers or free account tiers where sponsored announcements or ad placements may be introduced in future updates, advertising content will operate under strict anonymized guidelines, and personal identification data (such as selfies, index numbers, or exact GPS coordinates) will never be shared with advertisers.
           </p>
         </section>
 
