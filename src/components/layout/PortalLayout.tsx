@@ -274,7 +274,7 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
             <div className={styles.profileInfo}>
               <span className={styles.profileName}>{userName || "User"}</span>
             </div>
-            <Settings size={22} strokeWidth={2} className={styles.profileSettingsIcon} aria-hidden="true" />
+            <Settings size={24} strokeWidth={2} className={styles.profileSettingsIcon} aria-hidden="true" />
           </button>
 
           {/* Back / close-drawer button — separate pill */}
@@ -284,7 +284,7 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
             aria-label="Close menu"
             onClick={closeDrawer}
           >
-            <ChevronsRight size={22} strokeWidth={2} />
+            <ChevronsRight size={26} strokeWidth={2.25} />
           </button>
         </div>
       </div>
