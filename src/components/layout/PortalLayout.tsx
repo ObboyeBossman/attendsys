@@ -205,8 +205,8 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
                           height: 16,
                           borderRadius: "var(--radius-full)",
                           background: "var(--color-primary)",
-                          color: "#fff",
-                          fontSize: 10,
+                          color: "var(--color-text-inverse)",
+                          fontSize: "var(--text-xs)",
                           fontWeight: 700,
                           display: "inline-flex",
                           alignItems: "center",
@@ -283,7 +283,7 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
               router.push(settingsHref);
             }}
           >
-            <div className={styles.profileAvatar} style={{ backgroundColor: "#b91c1c" }}>
+            <div className={styles.profileAvatar}>
               {userInitial}
             </div>
             <div className={styles.profileInfo}>
