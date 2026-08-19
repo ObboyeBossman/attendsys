@@ -19,10 +19,28 @@ export async function submitAttendance({
 }) {
   const supabase = await createSupabaseServerClient();
 
-  // Validate the caller
+  // Validate caller authentication
   const { data: { user } } = await supabase.auth.getUser();
   if (!user || user.id !== studentId) {
     return { error: "Unauthorized" };
+  }
+
+  // Server-side enforcement (SFR-AUTH-19): One device per check-in per session
+  if (deviceToken) {
+    const { data: existingDeviceCheckin } = await supabase
+      .from("attendance")
+      .select("student_id")
+      .eq("session_id", sessionId)
+      .eq("device_token", deviceToken)
+      .neq("student_id", studentId)
+      .limit(1)
+      .maybeSingle();
+
+    if (existingDeviceCheckin) {
+      return {
+        error: "This device has already been used to check in another student for this session.",
+      };
+    }
   }
 
   try {

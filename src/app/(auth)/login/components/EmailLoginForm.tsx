@@ -10,6 +10,7 @@ import styles from "../LoginClient.module.css";
 
 interface EmailLoginFormProps {
   onBack: () => void;
+  onForgotPassword?: () => void;
 }
 
 function formatErrorMessage(err: any): string {
@@ -20,7 +21,7 @@ function formatErrorMessage(err: any): string {
   return "Invalid email or password. Please check your credentials.";
 }
 
-export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
+export function EmailLoginForm({ onBack, onForgotPassword }: EmailLoginFormProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
 
@@ -87,7 +88,7 @@ export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
 
       const p = profile as { role: string; is_active: boolean; must_change_password: boolean };
 
-      if (!p.is_active && p.role !== "student") {
+      if (!p.is_active) {
         await supabase.auth.signOut();
         setError("Your account has been deactivated. Contact admin.");
         setLoading(false);
@@ -200,9 +201,7 @@ export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
             type="button"
             variant="link"
             size="sm"
-            onClick={() =>
-              alert("To reset your password, contact your department administrator or the ICT Helpdesk.")
-            }
+            onClick={onForgotPassword || (() => alert("To reset your password, contact your department administrator or the ICT Helpdesk."))}
             style={{ color: "var(--color-text-3)", fontSize: "var(--text-xs)" }}
           >
             Forgot password?

@@ -5,9 +5,10 @@ import Image from "next/image";
 import { BrandText } from "@/components/brand";
 import { MethodSelection } from "./components/MethodSelection";
 import { EmailLoginForm } from "./components/EmailLoginForm";
+import { ForgotPasswordForm } from "./components/ForgotPasswordForm";
 import styles from "./LoginClient.module.css";
 
-type AuthView = "logout" | "email-form";
+type AuthView = "logout" | "email-form" | "forgot-password";
 
 export function LoginClient() {
   const [authView, setAuthView] = useState<AuthView>("logout");
@@ -42,10 +43,17 @@ export function LoginClient() {
         </h1>
 
         {/* ── VIEW SWITCHER ── */}
-        {authView === "logout" ? (
+        {authView === "logout" && (
           <MethodSelection onSelectEmail={() => setAuthView("email-form")} />
-        ) : (
-          <EmailLoginForm onBack={() => setAuthView("logout")} />
+        )}
+        {authView === "email-form" && (
+          <EmailLoginForm
+            onBack={() => setAuthView("logout")}
+            onForgotPassword={() => setAuthView("forgot-password")}
+          />
+        )}
+        {authView === "forgot-password" && (
+          <ForgotPasswordForm onBack={() => setAuthView("email-form")} />
         )}
       </main>
 

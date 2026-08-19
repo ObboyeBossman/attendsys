@@ -8,8 +8,8 @@ const PUBLIC_ROUTES = ["/login", "/change-password"];
 const PORTAL_GUARDS = [
   { prefix: "/admin", role: "super_admin", requireActive: true },
   { prefix: "/lecturer", role: "lecturer", requireActive: true },
-  { prefix: "/rep", role: "student", requireRep: true },
-  { prefix: "/student", role: "student" },
+  { prefix: "/rep", role: "student", requireRep: true, requireActive: true },
+  { prefix: "/student", role: "student", requireActive: true },
 ] as const;
 
 export async function proxy(request: NextRequest) {
