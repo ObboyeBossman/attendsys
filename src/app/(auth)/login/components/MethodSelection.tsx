@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Mail, Phone } from "lucide-react";
+import { Button, Badge } from "@/components/ui";
 import styles from "../LoginClient.module.css";
 
 interface MethodSelectionProps {
@@ -20,39 +21,38 @@ export function MethodSelection({ onSelectEmail }: MethodSelectionProps) {
 
       <div className={styles.optionsStack}>
         {/* Email — Enabled */}
-        <button
+        <Button
           type="button"
+          variant="secondary"
+          size="lg"
           onClick={onSelectEmail}
-          className={styles.optionBtn}
+          leftIcon={<Mail size={18} strokeWidth={1.75} />}
+          style={{ width: "100%", justifyContent: "flex-start", paddingLeft: 20 }}
         >
-          <span className={styles.optionIconLeft}>
-            <Mail size={18} strokeWidth={1.75} />
-          </span>
           Continue with Email
-        </button>
+        </Button>
 
         {/* Phone — Temporarily Disabled */}
-        <button
+        <Button
           type="button"
+          variant="secondary"
+          size="lg"
           disabled
-          className={`${styles.optionBtn} ${styles.disabledOptionBtn}`}
+          leftIcon={<Phone size={18} strokeWidth={1.75} />}
+          rightIcon={<Badge variant="neutral">Coming Soon</Badge>}
+          style={{ width: "100%", justifyContent: "space-between", paddingLeft: 20 }}
           title="Phone sign-in is temporarily disabled"
         >
-          <span className={styles.optionIconLeft}>
-            <Phone size={18} strokeWidth={1.75} />
-          </span>
-          <span>Continue with Phone</span>
-          <span className={styles.disabledBadge}>Coming Soon</span>
-        </button>
+          Continue with Phone
+        </Button>
 
         {/* Google — Temporarily Disabled */}
-        <button
+        <Button
           type="button"
+          variant="secondary"
+          size="lg"
           disabled
-          className={`${styles.optionBtn} ${styles.disabledOptionBtn}`}
-          title="Google sign-in is temporarily disabled"
-        >
-          <span className={styles.optionIconLeft}>
+          leftIcon={
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path
                 fill="currentColor"
@@ -71,10 +71,13 @@ export function MethodSelection({ onSelectEmail }: MethodSelectionProps) {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
               />
             </svg>
-          </span>
-          <span>Continue with Google</span>
-          <span className={styles.disabledBadge}>Coming Soon</span>
-        </button>
+          }
+          rightIcon={<Badge variant="neutral">Coming Soon</Badge>}
+          style={{ width: "100%", justifyContent: "space-between", paddingLeft: 20 }}
+          title="Google sign-in is temporarily disabled"
+        >
+          Continue with Google
+        </Button>
       </div>
     </div>
   );

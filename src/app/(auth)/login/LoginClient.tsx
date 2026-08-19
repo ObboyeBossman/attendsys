@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { BrandText } from "@/components/brand";
 import { MethodSelection } from "./components/MethodSelection";
 import { EmailLoginForm } from "./components/EmailLoginForm";
 import styles from "./LoginClient.module.css";
@@ -35,8 +36,10 @@ export function LoginClient() {
       </div>
 
       <main className={styles.main}>
-        {/* Wordmark using exact sidebar brand typography */}
-        <h1 className={styles.brandTitle}>ATTENDSYS</h1>
+        {/* Wordmark using central BrandText component */}
+        <h1 className={styles.brandTitle}>
+          <BrandText size="xl" />
+        </h1>
 
         {/* ── VIEW SWITCHER ── */}
         {authView === "logout" ? (
