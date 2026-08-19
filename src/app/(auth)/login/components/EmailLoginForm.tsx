@@ -196,26 +196,30 @@ export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
 
         {/* Forgot password link */}
         <div>
-          <button
+          <Button
             type="button"
+            variant="link"
+            size="sm"
             onClick={() =>
               alert("To reset your password, contact your department administrator or the ICT Helpdesk.")
             }
-            className={styles.forgotLink}
+            style={{ color: "var(--color-text-3)", fontSize: "var(--text-xs)" }}
           >
             Forgot password?
-          </button>
+          </Button>
         </div>
 
         {/* Back button to return to options */}
         <div className={styles.backBtnRow}>
-          <button
+          <Button
             type="button"
+            variant="text"
+            size="sm"
             onClick={onBack}
-            className={styles.backBtn}
+            style={{ color: "var(--color-text-2)", fontSize: "var(--text-sm)" }}
           >
             ← Back to options
-          </button>
+          </Button>
         </div>
       </form>
     </>
