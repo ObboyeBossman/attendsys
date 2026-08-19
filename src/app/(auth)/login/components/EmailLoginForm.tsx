@@ -12,6 +12,14 @@ interface EmailLoginFormProps {
   onBack: () => void;
 }
 
+function formatErrorMessage(err: any): string {
+  if (!err) return "Invalid email or password. Please try again.";
+  if (typeof err === "string" && err.trim() && err !== "{}") return err;
+  if (typeof err?.message === "string" && err.message.trim() && err.message !== "{}") return err.message;
+  if (typeof err?.error_description === "string") return err.error_description;
+  return "Invalid email or password. Please check your credentials.";
+}
+
 export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
@@ -47,7 +55,7 @@ export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
       });
 
       if (signInError) {
-        setError(signInError.message || "Invalid login credentials");
+        setError(formatErrorMessage(signInError));
         setLoading(false);
         return;
       }
@@ -127,7 +135,7 @@ export function EmailLoginForm({ onBack }: EmailLoginFormProps) {
       router.replace(destination);
       router.refresh();
     } catch (err: any) {
-      setError(err.message || "An unexpected error occurred. Please try again.");
+      setError(formatErrorMessage(err));
       setLoading(false);
     }
   };
