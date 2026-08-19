@@ -12,7 +12,7 @@ import React from "react";
 import { RefreshCw } from "lucide-react";
 import styles from "./Button.module.css";
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger";
+type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger" | "text" | "link";
 type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
