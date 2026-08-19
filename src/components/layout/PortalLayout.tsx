@@ -268,8 +268,10 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
               router.push(settingsHref);
             }}
           >
-            <div className={styles.profileAvatar}>
-              {userInitial}
+            <div className={styles.profileAvatarRing}>
+              <div className={styles.profileAvatar}>
+                {userInitial}
+              </div>
             </div>
             <div className={styles.profileInfo}>
               <span className={styles.profileName}>{userName || "User"}</span>
@@ -284,7 +286,7 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
             aria-label="Close menu"
             onClick={closeDrawer}
           >
-            <ChevronsRight size={26} strokeWidth={2.25} />
+            <ChevronsRight size={32} strokeWidth={2.25} />
           </button>
         </div>
       </div>
