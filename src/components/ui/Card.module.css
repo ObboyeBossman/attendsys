@@ -1,0 +1,95 @@
+/* ── Centralized AttendSys Card Component ─────────────────────────────────── */
+
+.card {
+  background: var(--color-surface, #FFFFFF);
+  border: 1px solid var(--color-border, rgba(0, 0, 0, 0.05));
+  border-radius: 20px; /* Signature squircle 20px radius */
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  overflow: hidden;
+}
+
+/* ── Padding sizes ─────────────────────────────────────────────── */
+.padNone { padding: 0; }
+.padSm   { padding: 16px; }
+.padMd   { padding: 24px; }
+.padLg   { padding: 32px; }
+
+/* ── Interactive / Clickable ───────────────────────────────────── */
+.clickable {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.clickable:hover {
+  border-color: var(--color-border-hover, rgba(0, 0, 0, 0.1));
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
+  transform: translateY(-1px);
+}
+
+.clickable:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* ── Section header area ───────────────────────────────────────── */
+.header {
+  padding: 20px 24px 0;
+}
+
+.title {
+  font-family: var(--font-heading), 'Plus Jakarta Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text, #111827);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.subtitle {
+  margin-top: 4px;
+  font-family: var(--font-body), 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--color-text-3, #64748B);
+  line-height: 1.5;
+}
+
+.divider {
+  margin: 16px 0;
+  border: none;
+  border-top: 1px solid var(--color-border, rgba(0, 0, 0, 0.05));
+}
+
+/* ── Stat card variant ─────────────────────────────────────────── */
+.statCard {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statValue {
+  font-family: var(--font-heading), 'Plus Jakarta Sans', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text, #111827);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.statLabel {
+  font-family: var(--font-body), 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-3, #64748B);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .clickable {
+    transition: none;
+  }
+}

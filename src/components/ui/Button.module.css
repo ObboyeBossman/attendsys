@@ -1,0 +1,122 @@
+/* ── Centralized AttendSys Button System ─────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-body), 'Inter', sans-serif;
+  font-weight: 600;
+  border-radius: 9999px; /* Signature full black pill shape */
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+.btn:focus-visible {
+  box-shadow: 0 0 0 3px var(--color-primary-glow);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* ── Sizes ───────────────────────────────────────────────────────── */
+.sm {
+  height: 36px;
+  padding: 0 16px;
+  font-size: 13px;
+}
+
+.md {
+  height: 46px;
+  padding: 0 22px;
+  font-size: 14px;
+}
+
+.lg {
+  height: 52px;
+  padding: 0 28px;
+  font-size: 15px;
+}
+
+/* ── Variants ────────────────────────────────────────────────────── */
+.primary {
+  background: #0A0A0A;
+  color: #FFFFFF;
+  border-color: #0A0A0A;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.primary:hover:not(:disabled) {
+  background: #111827;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+}
+
+.secondary {
+  background: var(--color-surface-2, #F5F5F7);
+  color: var(--color-text-2, #475569);
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
+.secondary:hover:not(:disabled) {
+  background: var(--color-surface-3, #EBECEF);
+  color: var(--color-text, #111827);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.outline {
+  background: transparent;
+  color: var(--color-text, #111827);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.outline:hover:not(:disabled) {
+  background: var(--color-surface-2, #F5F5F7);
+  border-color: var(--color-text, #111827);
+}
+
+.ghost {
+  background: transparent;
+  color: var(--color-text-3, #64748B);
+}
+
+.ghost:hover:not(:disabled) {
+  background: var(--color-surface-2, #F5F5F7);
+  color: var(--color-text, #111827);
+}
+
+.danger {
+  background: #E53935;
+  color: #FFFFFF;
+  border-color: #E53935;
+}
+
+.danger:hover:not(:disabled) {
+  background: #C62828;
+  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.25);
+}
+
+/* ── States ──────────────────────────────────────────────────────── */
+.disabled,
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.spinIcon {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
