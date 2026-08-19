@@ -534,8 +534,13 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
 
   async function handleLogout() {
     setSigningOut(true);
-    await supabase.auth.signOut();
-    router.replace("/login");
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      // ignore signOut errors — still redirect
+    }
+    // Hard navigate to flush server session cache and middleware state
+    window.location.href = "/login";
   }
 
   // Derive pageTitle dynamically from pathname and navItems
