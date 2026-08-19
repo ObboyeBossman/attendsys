@@ -19,9 +19,16 @@ export async function createSupabaseServerClient() {
         },
         setAll(cookiesToSet) {
           try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
+            cookiesToSet.forEach(({ name, value, options }) => {
+              const secureOptions = {
+                ...options,
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "lax" as const,
+                path: "/",
+              };
+              cookieStore.set(name, value, secureOptions);
+            });
           } catch {
             // setAll can be called from a Server Component where cookies
             // cannot be set. Safe to ignore — middleware handles refresh.
