@@ -1,0 +1,115 @@
+.container {
+  min-height: 100vh;
+  background-color: var(--color-bg, #fafafa);
+  color: var(--color-text, #111827);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-6) var(--space-4) var(--space-12);
+  position: relative;
+  overflow-x: hidden;
+}
+
+.header {
+  width: 100%;
+  max-width: 768px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.06));
+}
+
+.brandGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.institutionLogo {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.card {
+  width: 100%;
+  max-width: 768px;
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, rgba(0, 0, 0, 0.06));
+  border-radius: var(--radius-xl, 20px);
+  padding: var(--space-8) var(--space-8);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+@media (max-width: 640px) {
+  .card {
+    padding: var(--space-6) var(--space-5);
+  }
+}
+
+.title {
+  font-family: var(--font-heading), "Plus Jakarta Sans", sans-serif;
+  font-size: var(--text-2xl, 28px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text, #111827);
+  margin-bottom: var(--space-2);
+}
+
+.subtitle {
+  font-size: var(--text-sm, 14px);
+  color: var(--color-text-3, #64748b);
+  margin-bottom: var(--space-8);
+}
+
+.section {
+  margin-bottom: var(--space-8);
+}
+
+.sectionTitle {
+  font-family: var(--font-heading), "Plus Jakarta Sans", sans-serif;
+  font-size: var(--text-lg, 18px);
+  font-weight: 600;
+  color: var(--color-text, #111827);
+  margin-bottom: var(--space-3);
+  letter-spacing: -0.015em;
+}
+
+.paragraph {
+  font-family: var(--font-body), "Inter", sans-serif;
+  font-size: var(--text-base, 15px);
+  line-height: 1.65;
+  color: var(--color-text-2, #475569);
+  margin-bottom: var(--space-3);
+}
+
+.list {
+  padding-left: var(--space-5);
+  margin-bottom: var(--space-4);
+}
+
+.listItem {
+  font-family: var(--font-body), "Inter", sans-serif;
+  font-size: var(--text-base, 15px);
+  line-height: 1.65;
+  color: var(--color-text-2, #475569);
+  margin-bottom: var(--space-2);
+}
+
+.footerNote {
+  margin-top: var(--space-10);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border, rgba(0, 0, 0, 0.06));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.institutionText {
+  font-size: var(--text-xs, 12px);
+  color: var(--color-text-3, #64748b);
+}

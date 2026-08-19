@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
 // Routes that are always public
-const PUBLIC_ROUTES = ["/login", "/change-password"];
+const PUBLIC_ROUTES = ["/login", "/change-password", "/terms", "/privacy"];
 
 // Portal prefixes and their required roles/conditions
 const PORTAL_GUARDS = [

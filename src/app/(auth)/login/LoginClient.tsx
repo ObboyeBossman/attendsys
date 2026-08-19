@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { BrandText } from "@/components/brand";
 import { MethodSelection } from "./components/MethodSelection";
 import { EmailLoginForm } from "./components/EmailLoginForm";
@@ -60,21 +61,13 @@ export function LoginClient() {
       <footer className={styles.footer}>
         <p className={styles.footerText}>
           By continuing you agree to AttendSys{" "}
-          <a
-            href="#"
-            onClick={(e) => e.preventDefault()}
-            className={styles.footerLink}
-          >
+          <Link href="/terms" className={styles.footerLink}>
             Terms
-          </a>{" "}
+          </Link>{" "}
           and{" "}
-          <a
-            href="#"
-            onClick={(e) => e.preventDefault()}
-            className={styles.footerLink}
-          >
+          <Link href="/privacy" className={styles.footerLink}>
             Privacy Policy
-          </a>
+          </Link>
         </p>
       </footer>
     </div>
