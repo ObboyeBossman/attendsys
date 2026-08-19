@@ -11,8 +11,18 @@ import styles from "./LoginClient.module.css";
 
 type AuthView = "logout" | "email-form" | "forgot-password";
 
-export function LoginClient() {
-  const [authView, setAuthView] = useState<AuthView>("logout");
+interface LoginClientProps {
+  /** SFR-AUTH-10: pre-filled email from device trust cookie (server-read) */
+  rememberedEmail?: string;
+  /** SFR-AUTH-10: display name from device trust cookie for "Welcome back" */
+  rememberedName?: string;
+}
+
+export function LoginClient({ rememberedEmail = "", rememberedName = "" }: LoginClientProps) {
+  const [authView, setAuthView] = useState<AuthView>(
+    // If we have a remembered email, skip method selection and go straight to email form
+    rememberedEmail ? "email-form" : "logout"
+  );
 
   return (
     <div className={styles.root}>
@@ -51,6 +61,8 @@ export function LoginClient() {
           <EmailLoginForm
             onBack={() => setAuthView("logout")}
             onForgotPassword={() => setAuthView("forgot-password")}
+            rememberedEmail={rememberedEmail}
+            rememberedName={rememberedName}
           />
         )}
         {authView === "forgot-password" && (
