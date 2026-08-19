@@ -4,7 +4,7 @@
  * Import from "@/components/ui" to access all globally established primitives.
  *
  * Example:
- *   import { Button, Input, Toast, Card, StatCard } from "@/components/ui";
+ *   import { Button, Input, Toast, Card, StatCard, Badge } from "@/components/ui";
  */
 
 // Button
@@ -18,3 +18,6 @@ export { Toast } from "./Toast";
 
 // Card family
 export { Card, CardHeader, CardDivider, StatCard } from "./Card";
+
+// Status Badge
+export { Badge } from "./Badge";
