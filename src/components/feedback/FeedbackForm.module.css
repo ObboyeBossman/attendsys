@@ -151,7 +151,7 @@
 }
 
 .starFilled {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 
 /* signature move: morph to checkmark with green on submit */
@@ -341,7 +341,7 @@
   border-radius: 12px;
   border: none;
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-text-inverse);
   font-size: var(--text-base);
   font-weight: 600;
   cursor: pointer;
@@ -368,7 +368,7 @@
   width: 16px;
   height: 16px;
   border: 2px solid rgba(255,255,255,0.35);
-  border-top-color: #fff;
+  border-top-color: var(--color-text-inverse);
   border-radius: 50%;
   animation: spin 600ms linear infinite;
   flex-shrink: 0;

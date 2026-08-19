@@ -69,7 +69,7 @@
   padding: var(--space-3) var(--space-5);
   border-radius: var(--radius-lg);
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-text-inverse);
   font-size: var(--text-sm);
   font-weight: 600;
   border: none;
@@ -380,7 +380,7 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-text-inverse);
 }
 
 .elapsedTag {

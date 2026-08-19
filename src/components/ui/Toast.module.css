@@ -33,25 +33,25 @@
 .error {
   background: rgba(255, 240, 240, 0.75);
   border-color: rgba(229, 57, 53, 0.22);
-  color: #B71C1C;
+  color: var(--color-red-active);
 }
 
 .success {
   background: rgba(240, 255, 245, 0.75);
   border-color: rgba(22, 163, 74, 0.22);
-  color: #14532D;
+  color: var(--color-success);
 }
 
 .info {
   background: rgba(248, 250, 252, 0.80);
   border-color: rgba(0, 0, 0, 0.08);
-  color: #111827;
+  color: var(--color-text);
 }
 
 .warning {
   background: rgba(255, 251, 235, 0.80);
   border-color: rgba(217, 119, 6, 0.22);
-  color: #92400E;
+  color: var(--color-warning);
 }
 
 /* ── Icon ─────────────────────────────────────────────────────── */
