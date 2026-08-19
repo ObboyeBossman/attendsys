@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 20px;
+  padding: var(--space-3) var(--space-5);
 
   /* Glassmorphism — driven by theme tokens */
   background: var(--bottom-nav-bg);
@@ -38,7 +38,7 @@
 .menuBtn {
   width: 44px;
   height: 44px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   background: var(--glass-icon-bg);
   border: none;
   display: flex;
@@ -62,23 +62,23 @@
 /* ── Brand Title / Tabs (Center) ─────────────────────────────────────── */
 .brandTitle {
   font-family: var(--font-heading);
-  font-size: 18px;
-  font-weight: 800;
+  font-size: var(--text-lg);
+  font-weight: 700;
   color: var(--glass-active);
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing-heading);
   user-select: none;
 }
 
 .tabsContainer {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: var(--space-5);
 }
 
 .tabBtn {
   background: none;
   border: none;
-  padding: 4px 2px;
+  padding: var(--space-1) 2px;
   cursor: pointer;
   position: relative;
   -webkit-tap-highlight-color: transparent;
@@ -87,9 +87,9 @@
 
 .tabLabel {
   font-family: var(--font-body);
-  font-size: 17px;
+  font-size: var(--text-base);
   transition: color 200ms ease, font-weight 200ms ease;
-  letter-spacing: -0.01em;
+  letter-spacing: var(--letter-spacing-tight);
 }
 
 .tabLabelActive {
@@ -121,7 +121,7 @@
   cursor: pointer;
   flex-shrink: 0;
   -webkit-tap-highlight-color: transparent;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   transition: transform 150ms ease;
 }
 
@@ -132,12 +132,12 @@
 .profileAvatar {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   background: var(--glass-icon-bg);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px;
+  font-size: var(--text-base);
   font-weight: 600;
   color: var(--glass-icon-color);
   letter-spacing: 0.02em;

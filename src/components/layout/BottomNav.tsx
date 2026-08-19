@@ -18,17 +18,18 @@ import {
   Star,
   History,
   GraduationCap,
+  ArrowRightLeft,
 } from "lucide-react";
 import type { NavItem, NavIcon as NavIconName } from "./PortalLayout";
 import styles from "./BottomNav.module.css";
 
 // ── Icon renderer ─────────────────────────────────────────────────────────────
-// Active: prominent stroke accent (strokeWidth=2.25) + scale elevation.
+// Active: strokeWidth=2.0 + scale elevation.
 // Inactive: standard outline (strokeWidth=1.75) — recedes into the background.
 function NavIcon({ name, active }: { name: NavIconName; active: boolean }) {
   const p = {
     size: 22,
-    strokeWidth: active ? 2.25 : 1.75,
+    strokeWidth: active ? 2.0 : 1.75,
   };
 
   switch (name) {
@@ -110,19 +111,7 @@ export function BottomNav({ navItems, pathname, switchTo }: BottomNavProps) {
             className={styles.item}
           >
             <span className={styles.iconWrap}>
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 20 20"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.75"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M4 10h12M10 4l6 6-6 6" />
-              </svg>
+              <ArrowRightLeft size={22} strokeWidth={1.75} />
             </span>
             <span className={styles.label}>{switchTo.label}</span>
           </button>
