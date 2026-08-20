@@ -1,27 +1,38 @@
 import type { Metadata } from "next";
 import { getAllFeedback } from "@/actions/feedback";
-import { FeedbackInboxClient } from "./FeedbackInboxClient";
+import { getAllSupportRequests } from "@/actions/support-requests";
+import { FeedbackPageClient } from "./FeedbackPageClient";
 
-export const metadata: Metadata = { title: "Feedback Inbox" };
+export const metadata: Metadata = { title: "Feedback & Support" };
 export const revalidate = 0;
 
 export default async function AdminFeedbackPage() {
-  const items = await getAllFeedback();
-  const unreadCount = items.filter((f) => !f.isReadAdmin).length;
+  const [feedbackItems, supportItems] = await Promise.all([
+    getAllFeedback(),
+    getAllSupportRequests(),
+  ]);
+
+  const totalItems   = feedbackItems.length + supportItems.length;
+  const totalUnread  = feedbackItems.filter((f) => !f.isReadAdmin).length
+                     + supportItems.filter((r) => !r.isReadAdmin).length;
 
   return (
     <div>
       <div className="page-header">
         <div>
-          <h1 className="page-title">Feedback Inbox</h1>
+          <h1 className="page-title">Feedback &amp; Support</h1>
           <p className="page-subtitle">
-            {items.length === 0
-              ? "No feedback submitted yet."
-              : `${items.length} submission${items.length !== 1 ? "s" : ""}${unreadCount > 0 ? ` · ${unreadCount} unread` : " · all read"}`}
+            {totalItems === 0
+              ? "No submissions yet."
+              : `${feedbackItems.length} feedback · ${supportItems.length} support request${supportItems.length !== 1 ? "s" : ""}${totalUnread > 0 ? ` · ${totalUnread} unread` : " · all read"}`}
           </p>
         </div>
       </div>
-      <FeedbackInboxClient items={items} />
+
+      <FeedbackPageClient
+        feedbackItems={feedbackItems}
+        supportItems={supportItems}
+      />
     </div>
   );
 }
