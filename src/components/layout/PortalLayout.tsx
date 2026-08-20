@@ -10,6 +10,7 @@ import { BrandLogo, BrandText } from "@/components/brand";
 import { Button } from "@/components/ui";
 import { BottomNav } from "./BottomNav";
 import { TopBar } from "./TopBar";
+import { useFullscreenLoader } from "./FullscreenLoader";
 
 import {
   LayoutDashboard,
