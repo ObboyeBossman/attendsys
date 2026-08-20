@@ -1,0 +1,271 @@
+/* ── ContactAdminForm — SFR-AUTH-14 ──────────────────────────── */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+/* ── SLA notice banner ───────────────────────────────────────── */
+.slaBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: #F0F4FF;
+  border: 1px solid rgba(26, 66, 194, 0.12);
+  border-radius: 12px;
+}
+
+.slaIcon {
+  color: #1A42C2;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.slaText {
+  font-family: var(--font-body), 'Inter', sans-serif;
+  font-size: 13px;
+  color: #1e3a8a;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.slaText strong {
+  font-weight: 600;
+}
+
+/* ── Role selector ───────────────────────────────────────────── */
+.roleRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.roleBtn {
+  font-family: var(--font-body), 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
+  background: #F8FAFC;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background 160ms ease, color 160ms ease, border-color 160ms ease, transform 120ms ease;
+  min-height: 44px;
+}
+
+.roleBtn:hover {
+  background: #F1F5F9;
+  color: #111827;
+  border-color: rgba(0, 0, 0, 0.16);
+}
+
+.roleBtn:active {
+  transform: scale(0.97);
+}
+
+.roleBtnActive {
+  background: #111827;
+  color: #FFFFFF;
+  border-color: #111827;
+}
+
+.roleBtnActive:hover {
+  background: #1f2937;
+  color: #FFFFFF;
+  border-color: #1f2937;
+}
+
+/* ── Field ───────────────────────────────────────────────────── */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-family: var(--font-body), 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #111827;
+  letter-spacing: -0.01em;
+}
+
+.input,
+.textarea {
+  font-family: var(--font-body), 'Inter', sans-serif;
+  font-size: 14px;
+  color: #111827;
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+  width: 100%;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: #94a3b8;
+}
+
+.input:focus,
+.textarea:focus {
+  border-color: #111827;
+  box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.07);
+}
+
+.input:disabled,
+.textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 96px;
+  line-height: 1.55;
+}
+
+/* ── Error banner ────────────────────────────────────────────── */
+.errorBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #FEF2F2;
+  border: 1px solid rgba(229, 57, 53, 0.15);
+  border-radius: 10px;
+  font-family: var(--font-body), 'Inter', sans-serif;
+  font-size: 13px;
+  color: #b91c1c;
+  line-height: 1.45;
+}
+
+/* ── Submit button ───────────────────────────────────────────── */
+.submitBtn {
+  font-family: var(--font-body), 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #FFFFFF;
+  background: #111827;
+  border: none;
+  border-radius: 9999px;
+  padding: 13px 24px;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 160ms ease, transform 120ms ease, opacity 160ms ease;
+  min-height: 48px;
+  letter-spacing: -0.01em;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: #1f2937;
+  transform: translateY(-1px);
+}
+
+.submitBtn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Success state (morphs from button) ──────────────────────── */
+.successPill {
+  font-family: var(--font-body), 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #166534;
+  background: #F0FDF4;
+  border: 1px solid rgba(22, 101, 52, 0.15);
+  border-radius: 9999px;
+  padding: 13px 24px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  animation: pillIn 280ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  letter-spacing: -0.01em;
+}
+
+@keyframes pillIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.successDesc {
+  font-family: var(--font-body), 'Inter', sans-serif;
+  font-size: 13px;
+  color: #475569;
+  text-align: center;
+  line-height: 1.5;
+  margin: 0;
+  animation: fadeUp 300ms ease forwards;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Spinner ─────────────────────────────────────────────────── */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #FFFFFF;
+  border-radius: 50%;
+  animation: spin 600ms linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Back row ────────────────────────────────────────────────── */
+.backRow {
+  text-align: center;
+}
+
+/* ── Reduced motion ──────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .submitBtn,
+  .roleBtn,
+  .input,
+  .textarea {
+    transition: none;
+  }
+  .successPill,
+  .successDesc {
+    animation: none;
+  }
+  .spinner {
+    animation: none;
+  }
+}
