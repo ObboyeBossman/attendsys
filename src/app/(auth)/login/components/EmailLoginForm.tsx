@@ -11,6 +11,8 @@ import styles from "../LoginClient.module.css";
 interface EmailLoginFormProps {
   onBack: () => void;
   onForgotPassword?: () => void;
+  rememberedEmail?: string;
+  rememberedName?: string;
 }
 
 function formatErrorMessage(err: any): string {
@@ -21,11 +23,16 @@ function formatErrorMessage(err: any): string {
   return "Invalid email or password. Please check your credentials.";
 }
 
-export function EmailLoginForm({ onBack, onForgotPassword }: EmailLoginFormProps) {
+export function EmailLoginForm({
+  onBack,
+  onForgotPassword,
+  rememberedEmail = "",
+  rememberedName = "",
+}: EmailLoginFormProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(rememberedEmail);
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [authStage, setAuthStage] = useState<string>("Checking credentials…");
@@ -49,7 +56,7 @@ export function EmailLoginForm({ onBack, onForgotPassword }: EmailLoginFormProps
     setAuthStage("Checking credentials…");
 
     try {
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email: email.trim().toLowerCase(),
         password,
       });
@@ -63,9 +70,7 @@ export function EmailLoginForm({ onBack, onForgotPassword }: EmailLoginFormProps
       // Stage 2: Credentials verified, check user session & roles
       setAuthStage("Verifying account permissions…");
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const user = signInData?.user;
 
       if (!user) {
         setError("Authentication failed. Please try again.");
@@ -131,9 +136,19 @@ export function EmailLoginForm({ onBack, onForgotPassword }: EmailLoginFormProps
         setAuthStage(`Opening ${dest.label} dashboard…`);
       }
 
-      // Trigger navigation
-      router.replace(destination);
-      router.refresh();
+      // Sync session cookies server-side (SFR-AUTH-09)
+      try {
+        await fetch("/api/auth/set-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ persist: true }),
+        });
+      } catch {
+        // Silently ignore if set-session fails, fallback to navigation
+      }
+
+      // Perform clean location navigation to flush all server components and middleware state
+      window.location.href = destination;
     } catch (err: any) {
       setError(formatErrorMessage(err));
       setLoading(false);

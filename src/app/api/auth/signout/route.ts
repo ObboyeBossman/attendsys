@@ -26,6 +26,7 @@ export async function GET(request: NextRequest) {
     if (name.startsWith("sb-") || name.includes("supabase")) {
       response.cookies.set(name, "", {
         maxAge: 0,
+        expires: new Date(0),
         path: "/",
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
