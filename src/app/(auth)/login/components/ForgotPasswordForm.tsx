@@ -134,7 +134,7 @@ export function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) {
             variant="primary"
             size="lg"
             loading={loading}
-            disabled={!email}
+            disabled={true}
             style={{ width: "100%", marginTop: 8 }}
           >
             {loading ? "SENDING LINK…" : "SEND RESET LINK"}
