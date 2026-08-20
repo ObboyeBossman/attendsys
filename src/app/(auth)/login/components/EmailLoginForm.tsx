@@ -208,18 +208,24 @@ export function EmailLoginForm({
 
         // SFR-AUTH-09/10: if "Keep me signed in" is checked, set the 30-day device trust cookie
         if (keepSignedIn) {
-          const { data: profileData } = await supabase
-            .from("user_profiles")
-            .select("full_name")
-            .eq("id", user.id)
-            .single();
+          let displayName = "";
+          try {
+            const { data: profileData } = await supabase
+              .from("user_profiles")
+              .select("full_name")
+              .eq("id", user.id)
+              .single();
+            displayName = (profileData as { full_name?: string } | null)?.full_name ?? "";
+          } catch {
+            // Non-fatal — fall back to empty name
+          }
           try {
             await fetch("/api/auth/trust-device", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 email: user.email ?? email.trim().toLowerCase(),
-                name: profileData?.full_name ?? "",
+                name: displayName,
               }),
             });
           } catch {
