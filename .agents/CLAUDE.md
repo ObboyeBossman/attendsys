@@ -12,7 +12,7 @@
 1. Clone or pull the repository so the local copy is on the latest `main` commit.
 2. Read `.agents/AGENTS.md` in full.
 3. Read this file (`CLAUDE.md`) in full.
-4. Set git identity (see **Git Identity** below).
+4. Set **and verify** git identity (see **Git Identity** below) — this is a hard gate before any commit or push.
 5. Confirm the current branch and last commit before writing any code.
 6. Run `git log --oneline origin/main..HEAD` — if any unpushed commits exist from a previous session, push them immediately before starting new work.
 7. **Explicitly acknowledge the commit-and-push-after-every-file rule before beginning any task.**
@@ -21,12 +21,23 @@
 
 ## Git Identity
 
-Configure these values before the first commit of every session — never commit as Claude or any other identity:
+**This is a hard gate. No commit or push may occur until these values are confirmed correct.**
+
+Configure and verify these values at the start of every session, and re-verify before the very first `git push` of any session:
 
 ```bash
 git config user.name "Obboye Bossman"
 git config user.email "obboyebossman@gmail.com"
 ```
+
+After setting, always confirm with:
+
+```bash
+git config user.name   # must print: Obboye Bossman
+git config user.email  # must print: obboyebossman@gmail.com
+```
+
+If either value does not match exactly, fix it and re-verify before touching any file or running any git command. **Never commit as Claude, Gemini, Antigravity, or any other identity.** Commits authored under the wrong identity will misrepresent the repository history and are not acceptable.
 
 ---
 
@@ -69,6 +80,10 @@ This is the **primary workflow rule** for all development on this project. Viola
 The sequence is:
 
 ```
+0. Before the FIRST push of any session — verify git identity:
+     git config user.name   → must be: Obboye Bossman
+     git config user.email  → must be: obboyebossman@gmail.com
+   If wrong, fix and re-verify. Then continue.
 1. Write or modify ONE file
 2. git add <that file>
 3. git commit -m "<type>(<scope>): <description>"
