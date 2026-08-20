@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Eye, EyeOff, CheckCircle2, AlertCircle } from "lucide-react";
 import styles from "./ChangePasswordForm.module.css";
+import { PasswordStrengthIndicator } from "./PasswordStrengthIndicator";
 
 export function ChangePasswordForm({ portalPrefix }: { portalPrefix: string }) {
   const router = useRouter();
@@ -115,6 +116,7 @@ export function ChangePasswordForm({ portalPrefix }: { portalPrefix: string }) {
             )}
           </button>
         </div>
+        <PasswordStrengthIndicator password={password} />
       </div>
 
       <div className={styles.inputGroup}>
@@ -146,6 +148,10 @@ export function ChangePasswordForm({ portalPrefix }: { portalPrefix: string }) {
             )}
           </button>
         </div>
+        <PasswordStrengthIndicator
+          password={password}
+          confirmPassword={confirmPassword}
+        />
       </div>
 
       <button
