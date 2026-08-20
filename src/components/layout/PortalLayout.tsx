@@ -11,6 +11,7 @@ import { Button } from "@/components/ui";
 import { BottomNav } from "./BottomNav";
 import { TopBar } from "./TopBar";
 import { useFullscreenLoader } from "./FullscreenLoader";
+import { clearClientStorage } from "@/lib/clear-client-storage";
 
 import {
   LayoutDashboard,
@@ -547,6 +548,11 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
 
   async function handleLogout() {
     setSigningOut(true);
+    // SFR-AUTH-08: wipe all client-side storage (localStorage + sessionStorage)
+    // before handing off to the server. This ensures no session data (device
+    // tokens, rate-limit counters, dismissed banners) is left behind for the
+    // next person who opens the app on the same device.
+    clearClientStorage();
     // Navigate to the server-side sign-out handler.
     // Client-side supabase.auth.signOut() cannot clear HttpOnly cookies
     // set by SFR-AUTH-03 — the server route handles cookie deletion properly.
