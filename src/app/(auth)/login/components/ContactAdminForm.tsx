@@ -8,11 +8,13 @@ import loginStyles from "../LoginClient.module.css";
 
 interface ContactAdminFormProps {
   onBack: () => void;
+  /** SFR-AUTH-14: Callback when request is successfully sent */
+  onSuccess?: (submittedEmail: string) => void;
   /** Pre-fill email if available from the login form */
   prefillEmail?: string;
 }
 
-export function ContactAdminForm({ onBack, prefillEmail = "" }: ContactAdminFormProps) {
+export function ContactAdminForm({ onBack, onSuccess, prefillEmail = "" }: ContactAdminFormProps) {
   const [role, setRole] = useState<SupportRequestRole>("student");
   const [email, setEmail] = useState(prefillEmail);
   const [subject, setSubject] = useState("");
@@ -37,7 +39,11 @@ export function ContactAdminForm({ onBack, prefillEmail = "" }: ContactAdminForm
     }
 
     setLoading(false);
-    setSubmitted(true);
+    if (onSuccess) {
+      onSuccess(email);
+    } else {
+      setSubmitted(true);
+    }
   };
 
   return (

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { BrandText } from "@/components/brand";
+import { Toast } from "@/components/ui";
 import { MethodSelection } from "./components/MethodSelection";
 import { EmailLoginForm } from "./components/EmailLoginForm";
 import { ForgotPasswordForm } from "./components/ForgotPasswordForm";
@@ -29,9 +30,20 @@ export function LoginClient({ rememberedEmail = "", rememberedName = "" }: Login
   // SFR-AUTH-14: carry email across forgot-password → contact-admin so the
   // contact form can pre-fill it without the user retyping.
   const [carryEmail, setCarryEmail] = useState("");
+  const [toastInfo, setToastInfo] = useState<{ message: string; variant: "success" | "error" } | null>(null);
 
   return (
     <div className={styles.root}>
+      {/* Toast Notification */}
+      {toastInfo && (
+        <Toast
+          message={toastInfo.message}
+          variant={toastInfo.variant}
+          duration={6000}
+          onDismiss={() => setToastInfo(null)}
+        />
+      )}
+
       {/* Grid background */}
       <div className={styles.bgGrid} aria-hidden="true">
         <div className={styles.gridPattern} />
@@ -67,7 +79,7 @@ export function LoginClient({ rememberedEmail = "", rememberedName = "" }: Login
           <EmailLoginForm
             onBack={() => setAuthView("logout")}
             onForgotPassword={() => setAuthView("forgot-password")}
-            rememberedEmail={rememberedEmail}
+            rememberedEmail={carryEmail || rememberedEmail}
             rememberedName={rememberedName}
           />
         )}
@@ -82,6 +94,14 @@ export function LoginClient({ rememberedEmail = "", rememberedName = "" }: Login
         {authView === "contact-admin" && (
           <ContactAdminForm
             onBack={() => setAuthView("forgot-password")}
+            onSuccess={(submittedEmail) => {
+              setCarryEmail(submittedEmail);
+              setAuthView("email-form");
+              setToastInfo({
+                message: `Support request submitted! Administrator will reply to ${submittedEmail} within 3 working days.`,
+                variant: "success",
+              });
+            }}
             prefillEmail={carryEmail}
           />
         )}
