@@ -83,7 +83,12 @@ export function EmailLoginForm({
         const res = await fetch("/api/auth/set-session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ persist: true }),
+          body: JSON.stringify({
+            access_token: signInData.session?.access_token || "",
+            refresh_token: signInData.session?.refresh_token || "",
+            userId: user.id,
+            persist: true,
+          }),
         });
         if (res.ok) {
           const data = await res.json();
