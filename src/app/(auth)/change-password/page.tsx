@@ -6,6 +6,8 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Eye, EyeOff, CheckCircle2, AlertCircle } from "lucide-react";
 import styles from "@/components/auth/ChangePasswordForm.module.css";
 
+import { formatAuthErrorMessage } from "@/lib/auth-errors";
+
 function ChangePasswordInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -68,7 +70,7 @@ function ChangePasswordInner() {
       });
 
       if (updateError) {
-        setError(updateError.message ?? "Failed to update password.");
+        setError(formatAuthErrorMessage(updateError, "Failed to update password. Please try again."));
         return;
       }
 

@@ -6,6 +6,8 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Input, Button, Toast, Badge } from "@/components/ui";
 import styles from "../LoginClient.module.css";
 
+import { formatAuthErrorMessage } from "@/lib/auth-errors";
+
 interface ForgotPasswordFormProps {
   onBack: () => void;
 }
@@ -34,7 +36,7 @@ export function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) {
       );
 
       if (resetError) {
-        setError(resetError.message || "Failed to send reset link. Please try again.");
+        setError(formatAuthErrorMessage(resetError, "Failed to send reset link. Please try again."));
         setLoading(false);
         return;
       }
@@ -42,7 +44,7 @@ export function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) {
       setSent(true);
       setLoading(false);
     } catch (err: any) {
-      setError(err?.message || "An unexpected error occurred. Please try again.");
+      setError(formatAuthErrorMessage(err, "An unexpected error occurred. Please try again."));
       setLoading(false);
     }
   };

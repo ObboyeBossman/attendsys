@@ -6,6 +6,7 @@ import { AlertCircle, RefreshCw, X } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { FullscreenLoader } from "@/components/layout";
 import { Input, Button, Toast } from "@/components/ui";
+import { formatAuthErrorMessage } from "@/lib/auth-errors";
 import styles from "../LoginClient.module.css";
 
 interface EmailLoginFormProps {
@@ -13,14 +14,6 @@ interface EmailLoginFormProps {
   onForgotPassword?: () => void;
   rememberedEmail?: string;
   rememberedName?: string;
-}
-
-function formatErrorMessage(err: any): string {
-  if (!err) return "Invalid email or password. Please try again.";
-  if (typeof err === "string" && err.trim() && err !== "{}") return err;
-  if (typeof err?.message === "string" && err.message.trim() && err.message !== "{}") return err.message;
-  if (typeof err?.error_description === "string") return err.error_description;
-  return "Invalid email or password. Please check your credentials.";
 }
 
 export function EmailLoginForm({
@@ -62,7 +55,7 @@ export function EmailLoginForm({
       });
 
       if (signInError) {
-        setError(formatErrorMessage(signInError));
+        setError(formatAuthErrorMessage(signInError));
         setLoading(false);
         return;
       }
@@ -165,7 +158,7 @@ export function EmailLoginForm({
       // Perform clean location navigation to flush all server components and middleware state
       window.location.href = destination;
     } catch (err: any) {
-      setError(formatErrorMessage(err));
+      setError(formatAuthErrorMessage(err));
       setLoading(false);
     }
   };
