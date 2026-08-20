@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { updateProfile, changePassword } from "./actions";
+import { PasswordStrengthIndicator } from "@/components/auth/PasswordStrengthIndicator";
 
 type Props = {
   name: string;
@@ -414,32 +415,8 @@ export default function ProfileClient({ name, email, staffId, phone }: Props) {
               )}
             </button>
           </div>
-          {/* Strength indicator — signature micro-interaction */}
-          {newPw.length > 0 && (
-            <div style={{ marginTop: "var(--space-2)", display: "flex", gap: 4 }}>
-              {[1, 2, 3, 4].map((level) => {
-                const strength = newPw.length >= 12 ? 4 : newPw.length >= 10 ? 3 : newPw.length >= 8 ? 2 : 1;
-                const filled = level <= strength;
-                const color =
-                  strength === 1 ? "var(--color-danger)"
-                  : strength === 2 ? "var(--color-warning)"
-                  : strength === 3 ? "#f59e0b"
-                  : "var(--color-success)";
-                return (
-                  <div
-                    key={level}
-                    style={{
-                      flex: 1,
-                      height: 3,
-                      borderRadius: 2,
-                      background: filled ? color : "var(--color-border)",
-                      transition: "background 300ms ease",
-                    }}
-                  />
-                );
-              })}
-            </div>
-          )}
+          {/* Strength indicator — shared component (SFR-AUTH-05) */}
+          <PasswordStrengthIndicator password={newPw} />
         </div>
 
         {/* Confirm password */}
@@ -480,11 +457,10 @@ export default function ProfileClient({ name, email, staffId, phone }: Props) {
               fontFamily: "inherit",
             }}
           />
-          {confirmPw.length > 0 && confirmPw !== newPw && (
-            <p style={{ fontSize: 11, color: "var(--color-danger)", marginTop: "var(--space-1)" }}>
-              Passwords do not match
-            </p>
-          )}
+          <PasswordStrengthIndicator
+            password={newPw}
+            confirmPassword={confirmPw}
+          />
         </div>
 
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
