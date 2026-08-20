@@ -108,51 +108,56 @@ export function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) {
           </Button>
         </div>
       ) : (
-        <form onSubmit={handleResetPassword} className={`${styles.fadeIn} ${styles.formBody}`}>
+        <form onSubmit={(e) => e.preventDefault()} className={`${styles.fadeIn} ${styles.formBody}`}>
           <div className={styles.subHeadingGroup}>
-            <p className={styles.subTitle}>Reset your password</p>
+            <p className={styles.subTitle}>Password Reset Disabled</p>
             <p className={styles.subDesc}>
-              Enter your email address and we&apos;ll send you a link to reset your password.
+              Automated password reset links are disabled for institutional security.
             </p>
           </div>
 
           <Input
             label="Email"
             type="email"
-            required
             placeholder="name@ttu.edu.gh"
             value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              if (error) setError(null);
-            }}
-            disabled={loading}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={true}
           />
 
           <Button
-            type="submit"
-            variant="primary"
+            type="button"
+            variant="secondary"
             size="lg"
-            loading={loading}
             disabled={true}
-            style={{ width: "100%", marginTop: 8 }}
+            style={{ width: "100%", marginTop: 8, opacity: 0.5, cursor: "not-allowed" }}
           >
-            {loading ? "SENDING LINK…" : "SEND RESET LINK"}
+            SEND RESET LINK (DISABLED)
           </Button>
 
-          <p
+          <div
             style={{
-              fontSize: "var(--text-xs)",
-              color: "var(--color-text-3)",
+              padding: "12px 14px",
+              borderRadius: "var(--radius-md, 12px)",
+              background: "var(--color-surface-2, #F8FAFC)",
+              border: "1px solid rgba(0, 0, 0, 0.06)",
+              marginTop: 16,
               textAlign: "center",
-              lineHeight: 1.5,
-              marginTop: 12,
             }}
           >
-            For institutional assistance, contact your department administrator or the ICT Helpdesk.
-          </p>
+            <p
+              style={{
+                fontSize: "var(--text-xs)",
+                color: "var(--color-text-2)",
+                lineHeight: 1.5,
+                margin: 0,
+              }}
+            >
+              For assistance resetting your credentials, please contact your <strong>Department Administrator</strong> or the <strong>ICT Helpdesk</strong>.
+            </p>
+          </div>
 
-          <div className={styles.backBtnRow}>
+          <div className={styles.backBtnRow} style={{ marginTop: 16 }}>
             <Button
               type="button"
               variant="text"
@@ -160,7 +165,7 @@ export function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) {
               onClick={onBack}
               style={{ color: "var(--color-text-2)", fontSize: "var(--text-sm)" }}
             >
-              ← Back to options
+              ← Back to sign in
             </Button>
           </div>
         </form>
