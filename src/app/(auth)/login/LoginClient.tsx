@@ -7,9 +7,11 @@ import { BrandText } from "@/components/brand";
 import { MethodSelection } from "./components/MethodSelection";
 import { EmailLoginForm } from "./components/EmailLoginForm";
 import { ForgotPasswordForm } from "./components/ForgotPasswordForm";
+import { ContactAdminForm } from "./components/ContactAdminForm";
 import styles from "./LoginClient.module.css";
 
-type AuthView = "logout" | "email-form" | "forgot-password";
+// SFR-AUTH-14: "contact-admin" added to support pre-auth support requests
+type AuthView = "logout" | "email-form" | "forgot-password" | "contact-admin";
 
 interface LoginClientProps {
   /** SFR-AUTH-10: pre-filled email from device trust cookie (server-read) */
@@ -23,6 +25,10 @@ export function LoginClient({ rememberedEmail = "", rememberedName = "" }: Login
     // If we have a remembered email, skip method selection and go straight to email form
     rememberedEmail ? "email-form" : "logout"
   );
+
+  // SFR-AUTH-14: carry email across forgot-password → contact-admin so the
+  // contact form can pre-fill it without the user retyping.
+  const [carryEmail, setCarryEmail] = useState("");
 
   return (
     <div className={styles.root}>
@@ -66,7 +72,18 @@ export function LoginClient({ rememberedEmail = "", rememberedName = "" }: Login
           />
         )}
         {authView === "forgot-password" && (
-          <ForgotPasswordForm onBack={() => setAuthView("email-form")} />
+          <ForgotPasswordForm
+            onBack={() => setAuthView("email-form")}
+            onContactAdmin={() => setAuthView("contact-admin")}
+            prefillEmail={carryEmail}
+          />
+        )}
+        {/* SFR-AUTH-14: pre-auth contact form — no login required */}
+        {authView === "contact-admin" && (
+          <ContactAdminForm
+            onBack={() => setAuthView("forgot-password")}
+            prefillEmail={carryEmail}
+          />
         )}
       </main>
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ArrowLeft, CheckCircle2, Mail } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Mail, MessageSquare } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Input, Button, Toast, Badge } from "@/components/ui";
 import styles from "../LoginClient.module.css";
@@ -10,11 +10,15 @@ import { formatAuthErrorMessage } from "@/lib/auth-errors";
 
 interface ForgotPasswordFormProps {
   onBack: () => void;
+  /** SFR-AUTH-14: navigate to contact-admin view */
+  onContactAdmin?: () => void;
+  /** SFR-AUTH-14: pass typed email to pre-fill the contact form */
+  prefillEmail?: string;
 }
 
-export function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) {
+export function ForgotPasswordForm({ onBack, onContactAdmin, prefillEmail = "" }: ForgotPasswordFormProps) {
   const supabase = createSupabaseBrowserClient();
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(prefillEmail);
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -140,29 +144,60 @@ export function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) {
             Send Reset Link
           </Button>
 
+          {/* ── Divider ───────────────────────────────────────────── */}
           <div
             style={{
-              padding: "12px 14px",
-              borderRadius: "var(--radius-md, 12px)",
-              background: "var(--color-surface-2, #F8FAFC)",
-              border: "1px solid rgba(0, 0, 0, 0.06)",
-              marginTop: 16,
-              textAlign: "center",
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              margin: "4px 0",
             }}
           >
-            <p
+            <div style={{ flex: 1, height: 1, background: "rgba(0,0,0,0.08)" }} />
+            <span
               style={{
-                fontSize: "var(--text-xs)",
-                color: "var(--color-text-2)",
-                lineHeight: 1.5,
-                margin: 0,
+                fontFamily: "var(--font-mono, 'JetBrains Mono', monospace)",
+                fontSize: 11,
+                color: "#94A3B8",
+                fontWeight: 500,
+                letterSpacing: "0.05em",
               }}
             >
-              For assistance resetting your credentials, please contact your <strong>Department Administrator</strong> or the <strong>ICT Helpdesk</strong>.
-            </p>
+              OR
+            </span>
+            <div style={{ flex: 1, height: 1, background: "rgba(0,0,0,0.08)" }} />
           </div>
 
-          <div className={styles.backBtnRow} style={{ marginTop: 16 }}>
+          {/* ── SFR-AUTH-14: Contact Admin CTA ───────────────────── */}
+          <button
+            type="button"
+            className={styles.optionBtn}
+            onClick={onContactAdmin}
+            disabled={!onContactAdmin}
+            style={{ gap: 10 }}
+          >
+            <span className={styles.optionIconLeft}>
+              <MessageSquare size={18} strokeWidth={1.75} />
+            </span>
+            Contact Administrator
+          </button>
+
+          {/* SLA hint */}
+          <p
+            style={{
+              fontFamily: "var(--font-mono, 'JetBrains Mono', monospace)",
+              fontSize: 12,
+              color: "#94A3B8",
+              textAlign: "center",
+              lineHeight: 1.5,
+              margin: "0 auto",
+              maxWidth: 260,
+            }}
+          >
+            Submit your issue — we respond within 3 working days.
+          </p>
+
+          <div className={styles.backBtnRow} style={{ marginTop: 4 }}>
             <Button
               type="button"
               variant="text"
