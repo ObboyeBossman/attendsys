@@ -96,11 +96,12 @@ export async function POST(request: NextRequest) {
 
     // Clear lock state — login succeeded, so reset the failure counter and any active lock.
     // Fire-and-forget: a failure here must not block the login flow.
-    adminSupabase
+    // Cast required: generated types predate the 0009 migration columns.
+    (adminSupabase as any)
       .from("user_profiles")
       .update({ failed_login_count: 0, locked_until: null })
       .eq("id", userId)
-      .then(({ error }) => {
+      .then(({ error }: { error: unknown }) => {
         if (error) console.error("set-session: failed to clear lock state:", error);
       });
   } catch (err) {
