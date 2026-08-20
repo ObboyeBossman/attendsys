@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Eye, EyeOff, CheckCircle2, AlertCircle } from "lucide-react";
 import styles from "@/components/auth/ChangePasswordForm.module.css";
+import { PasswordStrengthIndicator } from "@/components/auth/PasswordStrengthIndicator";
 
 import { formatAuthErrorMessage } from "@/lib/auth-errors";
 
@@ -203,6 +204,7 @@ function ChangePasswordInner() {
             {showNew ? <EyeOff size={18} strokeWidth={1.75} /> : <Eye size={18} strokeWidth={1.75} />}
           </button>
         </div>
+        <PasswordStrengthIndicator password={newPassword} />
       </div>
 
       {/* Confirm password */}
@@ -232,6 +234,10 @@ function ChangePasswordInner() {
             {showConfirm ? <EyeOff size={18} strokeWidth={1.75} /> : <Eye size={18} strokeWidth={1.75} />}
           </button>
         </div>
+        <PasswordStrengthIndicator
+          password={newPassword}
+          confirmPassword={confirmPassword}
+        />
       </div>
 
       <button
