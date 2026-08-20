@@ -129,10 +129,13 @@ export async function resetStudentPassword(
     return { error: "Failed to reset password. Please try again." };
   }
 
-   
+  // Force password change on next login and set notification flag
   const { error: flagError } = await (ctx.supabase as any)
     .from("user_profiles")
-    .update({ must_change_password: true })
+    .update({
+      must_change_password: true,
+      password_reset_by_admin_at: new Date().toISOString(),
+    })
     .eq("id", studentId);
 
   if (flagError) {

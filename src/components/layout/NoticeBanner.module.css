@@ -79,6 +79,14 @@
   border-bottom-color: rgba(59, 130, 246, 0.18);
 }
 
+/* ── Kind: security_password ──────────────────────────────────────────────── */
+
+.kind_security_password {
+  background: rgba(225, 29, 72, 0.12);
+  color: var(--color-red-light, #fda4af);
+  border-bottom-color: rgba(225, 29, 72, 0.22);
+}
+
 /* ── Action button ────────────────────────────────────────────────────────── */
 
 .bannerAction {
@@ -152,6 +160,12 @@
   background: rgba(59, 130, 246, 0.08);
   color: var(--color-info);
   border-bottom-color: rgba(59, 130, 246, 0.15);
+}
+
+[data-portal="portal-light"] .kind_security_password {
+  background: rgba(225, 29, 72, 0.08);
+  color: var(--color-danger);
+  border-bottom-color: rgba(225, 29, 72, 0.15);
 }
 
 /* ── Reduced motion ───────────────────────────────────────────────────────── */

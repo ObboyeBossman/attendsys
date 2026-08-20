@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { checkAndClearPasswordResetNotification } from "@/actions/notifications";
 import styles from "./NoticeBanner.module.css";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type BannerKind = "offline" | "notifications" | "pwa";
+type BannerKind = "offline" | "notifications" | "pwa" | "security_password";
 
 interface Banner {
   kind: BannerKind;
@@ -15,6 +17,14 @@ interface Banner {
 }
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
+
+function ShieldIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </svg>
+  );
+}
 
 function OfflineIcon() {
   return (
@@ -89,13 +99,25 @@ interface BeforeInstallPromptEvent extends Event {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function NoticeBanner() {
+  const router = useRouter();
   const [dismissed, setDismissed] = useState<Set<BannerKind>>(new Set());
   const [isOffline, setIsOffline] = useState(false);
   const [notifBlocked, setNotifBlocked] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isPwaInstallable, setIsPwaInstallable] = useState(false);
+  const [passwordResetNotice, setPasswordResetNotice] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const stackRef = useRef<HTMLDivElement>(null);
+
+  // Check for admin password reset notification flag (SFR-AUTH-15)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    checkAndClearPasswordResetNotification()
+      .then((res) => {
+        if (res.resetAt) setPasswordResetNotice(res.resetAt);
+      })
+      .catch(() => {});
+  }, []);
 
   // Hydrate dismissed set from sessionStorage after mount.
   // setState here is safe: this effect runs once to sync server→client state
@@ -257,6 +279,22 @@ export function NoticeBanner() {
       icon: <DownloadIcon />,
       message: "Install AttendSys for faster access and offline support.",
       action: { label: "Install app", onClick: handleInstall },
+    });
+  }
+
+  if (passwordResetNotice && !dismissed.has("security_password")) {
+    const resetDate = new Date(passwordResetNotice).toLocaleString("en-GH", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
+    banners.push({
+      kind: "security_password",
+      icon: <ShieldIcon />,
+      message: `Security Notice: Your password was reset by an administrator on ${resetDate}. If you didn't request this, change your password immediately.`,
+      action: {
+        label: "Change Password",
+        onClick: () => router.push("/change-password"),
+      },
     });
   }
 
