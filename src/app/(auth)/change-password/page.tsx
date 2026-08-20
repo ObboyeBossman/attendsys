@@ -217,7 +217,7 @@ function ChangePasswordInner() {
             id="confirm-password"
             type={showConfirm ? "text" : "password"}
             required
-            className={styles.input}
+            className={`${styles.input}${confirmPassword && confirmPassword === newPassword ? ` ${styles.inputMatchOk}` : ""}`}
             placeholder="Repeat your new password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
