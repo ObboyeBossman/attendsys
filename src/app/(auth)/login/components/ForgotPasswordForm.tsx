@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Mail } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { Input, Button, Toast } from "@/components/ui";
+import { Input, Button, Toast, Badge } from "@/components/ui";
 import styles from "../LoginClient.module.css";
 
 interface ForgotPasswordFormProps {
@@ -130,9 +130,12 @@ export function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) {
             variant="secondary"
             size="lg"
             disabled={true}
-            style={{ width: "100%", marginTop: 8, opacity: 0.5, cursor: "not-allowed" }}
+            leftIcon={<Mail size={18} strokeWidth={1.75} />}
+            rightIcon={<Badge variant="neutral">Disabled</Badge>}
+            style={{ width: "100%", justifyContent: "space-between", paddingLeft: 20, marginTop: 8 }}
+            title="Password reset link is disabled"
           >
-            SEND RESET LINK (DISABLED)
+            Send Reset Link
           </Button>
 
           <div
