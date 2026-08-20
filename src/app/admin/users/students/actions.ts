@@ -65,6 +65,26 @@ export async function reactivateStudent(studentId: string): Promise<ActionResult
   return { success: true };
 }
 
+/* ── Unlock account (SFR-AUTH-07) ───────────────────────────────────────── */
+export async function unlockStudentAccount(studentId: string): Promise<ActionResult> {
+  const ctx = await getAdminContext();
+  if (!ctx) return { error: "Unauthorized." };
+
+   
+  const { error: dbError } = await (ctx.supabase as any)
+    .from("user_profiles")
+    .update({ failed_login_count: 0, locked_until: null })
+    .eq("id", studentId);
+
+  if (dbError) {
+    console.error("Unlock account error:", dbError);
+    return { error: "Failed to unlock account. Please try again." };
+  }
+
+  revalidatePath("/admin/users/students");
+  return { success: true };
+}
+
 /* ── Reset password ─────────────────────────────────────────────────────── */
 export async function resetStudentPassword(
   studentId: string,
