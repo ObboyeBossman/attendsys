@@ -39,9 +39,9 @@ create table if not exists feedback (
 );
 
 -- index for admin view (unread first, newest first)
-create index feedback_admin_idx on feedback (is_read_admin, created_at desc);
+create index if not exists feedback_admin_idx on feedback (is_read_admin, created_at desc);
 -- index for per-author history
-create index feedback_author_idx on feedback (author_id, created_at desc);
+create index if not exists feedback_author_idx on feedback (author_id, created_at desc);
 
 -- updated_at trigger
 create or replace function set_feedback_updated_at()
@@ -52,26 +52,34 @@ begin
 end;
 $$;
 
-create trigger feedback_updated_at
-  before update on feedback
-  for each row execute procedure set_feedback_updated_at();
+do $$ begin
+  create trigger feedback_updated_at
+    before update on feedback
+    for each row execute procedure set_feedback_updated_at();
+exception when duplicate_object then null; end $$;
 
 -- ── RLS ──────────────────────────────────────────────────────
 alter table feedback enable row level security;
 
 -- Authors can insert their own feedback
-create policy "feedback_insert_own"
-  on feedback for insert
-  with check (auth.uid() = author_id);
+do $$ begin
+  create policy "feedback_insert_own"
+    on feedback for insert
+    with check (auth.uid() = author_id);
+exception when duplicate_object then null; end $$;
 
 -- Authors can read their own feedback
-create policy "feedback_select_own"
-  on feedback for select
-  using (auth.uid() = author_id);
+do $$ begin
+  create policy "feedback_select_own"
+    on feedback for select
+    using (auth.uid() = author_id);
+exception when duplicate_object then null; end $$;
 
 -- Authors can update their own feedback (within cooldown — enforced in app)
-create policy "feedback_update_own"
-  on feedback for update
-  using (auth.uid() = author_id);
+do $$ begin
+  create policy "feedback_update_own"
+    on feedback for update
+    using (auth.uid() = author_id);
+exception when duplicate_object then null; end $$;
 
 -- Admins (service role) can read everything — handled via service client
