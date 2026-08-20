@@ -30,6 +30,8 @@ export function EmailLoginForm({
   const [loading, setLoading] = useState(false);
   const [authStage, setAuthStage] = useState<string>("Checking credentials…");
   const [error, setError] = useState<string | null>(null);
+  // SFR-AUTH-07: track local lock expiry so we can disable the form until the lock clears
+  const [lockedUntil, setLockedUntil] = useState<Date | null>(null);
 
   // Auto-dismiss toast after 4 seconds
   useEffect(() => {
@@ -40,9 +42,23 @@ export function EmailLoginForm({
     return () => clearTimeout(timer);
   }, [error]);
 
+  // Auto-clear client-side lock once the lock expiry time passes
+  useEffect(() => {
+    if (!lockedUntil) return;
+    const remaining = lockedUntil.getTime() - Date.now();
+    if (remaining <= 0) { setLockedUntil(null); return; }
+    const timer = setTimeout(() => setLockedUntil(null), remaining);
+    return () => clearTimeout(timer);
+  }, [lockedUntil]);
+
   const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password || loading) return;
+    if (lockedUntil && lockedUntil > new Date()) {
+      const until = lockedUntil.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      setError(`Account locked. Try again after ${until}.`);
+      return;
+    }
 
     setError(null);
     setLoading(true);
@@ -55,6 +71,33 @@ export function EmailLoginForm({
       });
 
       if (signInError) {
+        // SFR-AUTH-07: record failure server-side; check if account is now locked
+        try {
+          const failRes = await fetch("/api/auth/record-failure", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: email.trim().toLowerCase() }),
+          });
+          if (failRes.ok) {
+            const failData = await failRes.json();
+            if (failData?.locked) {
+              const lockDate = failData.lockedUntil ? new Date(failData.lockedUntil) : null;
+              if (lockDate) setLockedUntil(lockDate);
+              const until = lockDate
+                ? lockDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+                : "";
+              setError(
+                `Account temporarily locked due to too many failed attempts.${until ? ` Try again after ${until}.` : " Please wait 30 minutes or contact an admin."}`
+              );
+              setLoading(false);
+              return;
+            }
+          }
+        } catch (failErr) {
+          // Non-fatal — proceed to show the normal error
+          console.error("record-failure call failed:", failErr);
+        }
+
         setError(formatAuthErrorMessage(signInError));
         setLoading(false);
         return;
@@ -212,7 +255,7 @@ export function EmailLoginForm({
           variant="primary"
           size="lg"
           loading={loading}
-          disabled={!email || !password}
+          disabled={!email || !password || (!!lockedUntil && lockedUntil > new Date())}
           style={{ width: "100%", marginTop: 8 }}
         >
           {loading ? "SIGNING IN…" : "SIGN IN"}
