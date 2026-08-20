@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle, RefreshCw, X } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { FullscreenLoader } from "@/components/layout";
 import { Input, Button, Toast } from "@/components/ui";
@@ -11,6 +10,7 @@ import {
   getRemainingCooldown,
   recordFailedAttempt,
   clearAttempts,
+  getAttemptCount,
 } from "@/lib/login-rate-limit";
 import styles from "../LoginClient.module.css";
 
@@ -32,161 +32,118 @@ export function EmailLoginForm({
 
   const [email, setEmail] = useState(rememberedEmail);
   const [password, setPassword] = useState("");
-  const [keepSignedIn, setKeepSignedIn] = useState(false);
   const [loading, setLoading] = useState(false);
   const [authStage, setAuthStage] = useState<string>("Checking credentials…");
   const [error, setError] = useState<string | null>(null);
-  // SFR-AUTH-07: server-side account lock expiry
-  const [lockedUntil, setLockedUntil] = useState<Date | null>(null);
-  // SFR-AUTH-06: client-side progressive cooldown
-  const [cooldown, setCooldown] = useState<number>(0); // seconds remaining
-  const tickerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Auto-dismiss toast after 4 seconds
-  useEffect(() => {
-    if (!error) return;
-    const timer = setTimeout(() => {
-      setError(null);
-    }, 4000);
-    return () => clearTimeout(timer);
-  }, [error]);
+  // ── Rate limiting state ──────────────────────────────────
+  const [cooldown, setCooldown] = useState(0); // seconds remaining
+  const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Auto-clear client-side lock once the lock expiry time passes (SFR-AUTH-07)
-  useEffect(() => {
-    if (!lockedUntil) return;
-    const remaining = lockedUntil.getTime() - Date.now();
-    if (remaining <= 0) { setLockedUntil(null); return; }
-    const timer = setTimeout(() => setLockedUntil(null), remaining);
-    return () => clearTimeout(timer);
-  }, [lockedUntil]);
-
-  // Hydrate cooldown from sessionStorage on mount (SFR-AUTH-06)
-  useEffect(() => {
-    if (!email) return;
-    const remaining = getRemainingCooldown(email);
-    if (remaining > 0) startTicker(remaining);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Re-check cooldown whenever email changes (SFR-AUTH-06)
-  useEffect(() => {
-    if (!email) return;
-    const remaining = getRemainingCooldown(email);
-    if (remaining > 0) {
-      startTicker(remaining);
-    } else {
-      stopTicker();
-      setCooldown(0);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [email]);
-
-  function startTicker(initialSeconds: number) {
-    stopTicker();
-    setCooldown(initialSeconds);
-    tickerRef.current = setInterval(() => {
+  const startCooldownTimer = useCallback((seconds: number) => {
+    setCooldown(seconds);
+    if (cooldownRef.current) clearInterval(cooldownRef.current);
+    cooldownRef.current = setInterval(() => {
       setCooldown((prev) => {
         if (prev <= 1) {
-          stopTicker();
+          clearInterval(cooldownRef.current!);
+          cooldownRef.current = null;
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
-  }
+  }, []);
 
-  function stopTicker() {
-    if (tickerRef.current) {
-      clearInterval(tickerRef.current);
-      tickerRef.current = null;
+  // Restore cooldown on mount (e.g. page refresh mid-cooldown)
+  useEffect(() => {
+    if (!email) return;
+    const remaining = getRemainingCooldown(email);
+    if (remaining > 0) startCooldownTimer(remaining);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Also restore whenever email changes (user types a different address)
+  useEffect(() => {
+    if (!email) return;
+    const remaining = getRemainingCooldown(email);
+    if (remaining > 0) {
+      startCooldownTimer(remaining);
+    } else {
+      setCooldown(0);
     }
-  }
+  }, [email, startCooldownTimer]);
 
-  // Cleanup ticker on unmount
-  useEffect(() => () => stopTicker(), []);
+  // Auto-dismiss error toast after 5 s
+  useEffect(() => {
+    if (!error) return;
+    const timer = setTimeout(() => setError(null), 5000);
+    return () => clearTimeout(timer);
+  }, [error]);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (cooldownRef.current) clearInterval(cooldownRef.current);
+    };
+  }, []);
 
   const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password || loading) return;
 
-    // SFR-AUTH-07: block if account is server-side locked
-    if (lockedUntil && lockedUntil > new Date()) {
-      const until = lockedUntil.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-      setError(`Account locked. Try again after ${until}.`);
-      return;
-    }
-
-    // SFR-AUTH-06: block submission during active client-side cooldown
-    const remaining = getRemainingCooldown(email);
-    if (remaining > 0) {
-      startTicker(remaining);
-      setError(`Too many failed attempts. Please wait ${remaining}s before trying again.`);
-      return;
-    }
+    // Block if still cooling down
+    if (cooldown > 0) return;
 
     setError(null);
     setLoading(true);
     setAuthStage("Checking credentials…");
 
     try {
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-        email: email.trim().toLowerCase(),
-        password,
-      });
+      const { data: signInData, error: signInError } =
+        await supabase.auth.signInWithPassword({
+          email: email.trim().toLowerCase(),
+          password,
+        });
 
       if (signInError) {
-        // SFR-AUTH-06: record client-side failure, start cooldown if threshold crossed
-        const cooldownSecs = recordFailedAttempt(email);
+        // Record the failure and apply cooldown
+        const newCooldown = recordFailedAttempt(email);
+        const count = getAttemptCount(email);
 
-        // SFR-AUTH-07: record failure server-side; check if account is now locked
-        try {
-          const failRes = await fetch("/api/auth/record-failure", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: email.trim().toLowerCase() }),
-          });
-          if (failRes.ok) {
-            const failData = await failRes.json();
-            if (failData?.locked) {
-              const lockDate = failData.lockedUntil ? new Date(failData.lockedUntil) : null;
-              if (lockDate) setLockedUntil(lockDate);
-              const until = lockDate
-                ? lockDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-                : "";
-              setError(
-                `Account temporarily locked due to too many failed attempts.${until ? ` Try again after ${until}.` : " Please wait 30 minutes or contact an admin."}`
-              );
-              setLoading(false);
-              return;
-            }
-          }
-        } catch (failErr) {
-          // Non-fatal — proceed to show the normal error
-          console.error("record-failure call failed:", failErr);
+        // Build error message with attempt context after 2+ failures
+        let msg = formatAuthErrorMessage(signInError);
+        if (count >= 3 && newCooldown > 0) {
+          msg = `${msg} Please wait ${newCooldown}s before trying again.`;
+        } else if (count === 2) {
+          msg = `${msg} One more failed attempt will trigger a cooldown.`;
         }
 
-        setError(formatAuthErrorMessage(signInError));
+        setError(msg);
+        if (newCooldown > 0) startCooldownTimer(newCooldown);
         setLoading(false);
-        if (cooldownSecs > 0) startTicker(cooldownSecs);
         return;
       }
 
       const user = signInData?.user;
       if (!user) {
-        const cooldownSecs = recordFailedAttempt(email);
+        const newCooldown = recordFailedAttempt(email);
         setError("Authentication failed. Please try again.");
+        if (newCooldown > 0) startCooldownTimer(newCooldown);
         setLoading(false);
-        if (cooldownSecs > 0) startTicker(cooldownSecs);
         return;
       }
 
-      // SFR-AUTH-06: successful sign-in — clear attempt counter
+      // Success — clear attempt counter
       clearAttempts(email);
 
-      // Stage 2: Credentials verified, sync session & verify account permissions server-side
+      // Stage 2: Sync session server-side
       setAuthStage("Verifying account permissions…");
 
-      let profile: { role: string; is_active: boolean; must_change_password: boolean } | null = null;
+      let profile: {
+        role: string;
+        is_active: boolean;
+        must_change_password: boolean;
+      } | null = null;
 
       try {
         const res = await fetch("/api/auth/set-session", {
@@ -196,47 +153,18 @@ export function EmailLoginForm({
             access_token: signInData.session?.access_token || "",
             refresh_token: signInData.session?.refresh_token || "",
             userId: user.id,
-            persist: keepSignedIn,
+            persist: true,
           }),
         });
         if (res.ok) {
           const data = await res.json();
-          if (data?.profile) {
-            profile = data.profile;
-          }
-        }
-
-        // SFR-AUTH-09/10: if "Keep me signed in" is checked, set the 30-day device trust cookie
-        if (keepSignedIn) {
-          let displayName = "";
-          try {
-            const { data: profileData } = await supabase
-              .from("user_profiles")
-              .select("full_name")
-              .eq("id", user.id)
-              .single();
-            displayName = (profileData as { full_name?: string } | null)?.full_name ?? "";
-          } catch {
-            // Non-fatal — fall back to empty name
-          }
-          try {
-            await fetch("/api/auth/trust-device", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                email: user.email ?? email.trim().toLowerCase(),
-                name: displayName,
-              }),
-            });
-          } catch {
-            // Non-fatal — device trust is a UX convenience, not auth-critical
-          }
+          if (data?.profile) profile = data.profile;
         }
       } catch (err) {
         console.error("set-session error:", err);
       }
 
-      // Fallback: fetch user profile client-side if server response didn't contain profile
+      // Fallback: fetch profile client-side
       if (!profile) {
         const { data: clientProfile, error: profileError } = await supabase
           .from("user_profiles")
@@ -245,12 +173,15 @@ export function EmailLoginForm({
           .single();
 
         if (profileError || !clientProfile) {
-          console.error("Profile fetch error:", profileError);
           setError("Could not load account details. Contact support.");
           setLoading(false);
           return;
         }
-        profile = clientProfile as { role: string; is_active: boolean; must_change_password: boolean };
+        profile = clientProfile as {
+          role: string;
+          is_active: boolean;
+          must_change_password: boolean;
+        };
       }
 
       const p = profile;
@@ -269,7 +200,11 @@ export function EmailLoginForm({
         student: { label: "Student Portal", path: "/student/dashboard" },
       };
 
-      let dest = portalMap[p.role] ?? { label: "Student Portal", path: "/student/dashboard" };
+      let dest =
+        portalMap[p.role] ?? {
+          label: "Student Portal",
+          path: "/student/dashboard",
+        };
 
       if (p.role === "student") {
         const { data: repMembership } = await supabase
@@ -298,23 +233,22 @@ export function EmailLoginForm({
         setAuthStage(`Opening ${dest.label} dashboard…`);
       }
 
-      // Perform clean location navigation to flush all server components and middleware state
       window.location.href = destination;
     } catch (err: any) {
+      const newCooldown = recordFailedAttempt(email);
       setError(formatAuthErrorMessage(err));
+      if (newCooldown > 0) startCooldownTimer(newCooldown);
       setLoading(false);
     }
   };
 
-  const isCoolingDown = cooldown > 0;
-  const isLocked = !!(lockedUntil && lockedUntil > new Date());
+  const isBlocked = cooldown > 0;
+  const attemptCount = email ? getAttemptCount(email) : 0;
 
   return (
     <>
-      {/* Global Stage-Aware Fullscreen Loader */}
       <FullscreenLoader visible={loading} message={authStage} />
 
-      {/* Floating Custom Toast Banner */}
       {error && !loading && (
         <Toast
           message={error}
@@ -323,8 +257,10 @@ export function EmailLoginForm({
         />
       )}
 
-      <form onSubmit={handlePasswordLogin} className={`${styles.fadeIn} ${styles.formBody}`}>
-        {/* Global Input Component for Email */}
+      <form
+        onSubmit={handlePasswordLogin}
+        className={`${styles.fadeIn} ${styles.formBody}`}
+      >
         <Input
           label="Email"
           type="email"
@@ -338,7 +274,6 @@ export function EmailLoginForm({
           disabled={loading}
         />
 
-        {/* Global Input Component for Password (includes built-in eye toggle) */}
         <Input
           label="Password"
           type="password"
@@ -349,93 +284,130 @@ export function EmailLoginForm({
             setPassword(e.target.value);
             if (error) setError(null);
           }}
-          disabled={loading || isCoolingDown || isLocked}
+          disabled={loading || isBlocked}
         />
 
-        {/* SFR-AUTH-09: Keep me signed in — remembers device for 30 days */}
-        <label
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            cursor: loading ? "not-allowed" : "pointer",
-            opacity: loading ? 0.5 : 1,
-            fontSize: "var(--text-sm)",
-            color: "var(--color-text-2)",
-            userSelect: "none",
-            marginTop: 4,
-          }}
-        >
-          <input
-            type="checkbox"
-            checked={keepSignedIn}
-            onChange={(e) => setKeepSignedIn(e.target.checked)}
-            disabled={loading}
+        {/* ── Cooldown banner ── */}
+        {isBlocked && (
+          <div
             style={{
-              width: 16,
-              height: 16,
-              accentColor: "var(--color-primary, #4f46e5)",
-              cursor: loading ? "not-allowed" : "pointer",
-              flexShrink: 0,
-            }}
-          />
-          Keep me signed in for 30 days
-        </label>
-
-        {/* SFR-AUTH-06: Cooldown countdown banner */}
-        {isCoolingDown && (
-          <p
-            style={{
-              fontSize: "var(--text-xs)",
-              color: "var(--color-warning, #f59e0b)",
-              textAlign: "center",
-              marginTop: 4,
+              display: "flex",
+              alignItems: "center",
+              gap: "var(--space-3)",
+              padding: "10px 14px",
+              borderRadius: "var(--radius-lg)",
+              background: "var(--color-surface-2)",
+              border: "1px solid var(--color-border-hover)",
             }}
           >
-            Too many failed attempts — try again in{" "}
-            <strong>{cooldown}s</strong>
-          </p>
+            {/* Animated countdown ring */}
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              style={{ flexShrink: 0 }}
+            >
+              <circle
+                cx="10"
+                cy="10"
+                r="8"
+                fill="none"
+                stroke="var(--color-surface-3)"
+                strokeWidth="2"
+              />
+              <circle
+                cx="10"
+                cy="10"
+                r="8"
+                fill="none"
+                stroke="var(--color-text)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeDasharray={`${2 * Math.PI * 8}`}
+                strokeDashoffset={`${2 * Math.PI * 8 * (cooldown / (attemptCount <= 3 ? 15 : attemptCount === 4 ? 30 : 60))}`}
+                transform="rotate(-90 10 10)"
+                style={{ transition: "stroke-dashoffset 1s linear" }}
+              />
+            </svg>
+            <div>
+              <p
+                style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "var(--text-sm)",
+                  fontWeight: 600,
+                  color: "var(--color-text)",
+                  margin: 0,
+                  lineHeight: 1.3,
+                }}
+              >
+                Too many failed attempts
+              </p>
+              <p
+                style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "var(--text-xs)",
+                  color: "var(--color-text-3)",
+                  margin: 0,
+                  marginTop: 2,
+                }}
+              >
+                Try again in{" "}
+                <span
+                  style={{
+                    fontWeight: 700,
+                    color: "var(--color-text)",
+                    fontVariantNumeric: "tabular-nums",
+                  }}
+                >
+                  {cooldown}s
+                </span>
+              </p>
+            </div>
+          </div>
         )}
 
-        {/* Global Button Component for Submit */}
         <Button
           type="submit"
           variant="primary"
           size="lg"
           loading={loading}
-          disabled={!email || !password || isCoolingDown || isLocked}
+          disabled={!email || !password || isBlocked}
           style={{ width: "100%", marginTop: 8 }}
         >
-          {loading
-            ? "SIGNING IN…"
-            : isCoolingDown
-            ? `WAIT ${cooldown}s…`
-            : isLocked
-            ? "ACCOUNT LOCKED"
-            : "SIGN IN"}
+          {loading ? "SIGNING IN…" : isBlocked ? `WAIT ${cooldown}s` : "SIGN IN"}
         </Button>
 
-        {/* Forgot password link */}
         <div>
           <Button
             type="button"
             variant="link"
             size="sm"
-            onClick={onForgotPassword || (() => alert("To reset your password, contact your department administrator or the ICT Helpdesk."))}
-            style={{ color: "var(--color-text-3)", fontSize: "var(--text-xs)" }}
+            onClick={
+              onForgotPassword ||
+              (() =>
+                alert(
+                  "To reset your password, contact your department administrator or the ICT Helpdesk."
+                ))
+            }
+            style={{
+              color: "var(--color-text-3)",
+              fontSize: "var(--text-xs)",
+            }}
           >
             Forgot password?
           </Button>
         </div>
 
-        {/* Back button to return to options */}
         <div className={styles.backBtnRow}>
           <Button
             type="button"
             variant="text"
             size="sm"
             onClick={onBack}
-            style={{ color: "var(--color-text-2)", fontSize: "var(--text-sm)" }}
+            style={{
+              color: "var(--color-text-2)",
+              fontSize: "var(--text-sm)",
+            }}
           >
             ← Back to options
           </Button>
