@@ -10,6 +10,9 @@ const hanken = { variable: "" };
 const jetbrains = { variable: "" };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL ?? "https://attendsystem.vercel.app"
+  ),
   title: {
     default: "AttendSys",
     template: "%s | AttendSys",
