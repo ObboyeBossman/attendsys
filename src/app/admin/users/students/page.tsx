@@ -99,9 +99,10 @@ async function getData(params: Awaited<SearchParams>) {
   }
 
   // Step 2: query user_profiles filtered by role=student + status
+  // SFR-AUTH-07: also fetch locked_until to show lock state in admin UI
   let profileQuery = supabase
     .from("user_profiles")
-    .select("id, is_active", { count: "exact" })
+    .select("id, is_active, locked_until", { count: "exact" })
     .eq("role", "student");
 
   if (status === "active") profileQuery = profileQuery.eq("is_active", true);
@@ -201,20 +202,22 @@ async function getData(params: Awaited<SearchParams>) {
     }
   });
 
-  // Build profile map for is_active
-  const profileMap: Record<string, boolean> = {};
-  (allProfiles ?? []).forEach((p: { id: string; is_active: boolean }) => {
-    profileMap[p.id] = p.is_active;
+  // Build profile map for is_active + locked_until (SFR-AUTH-07)
+  const profileMap: Record<string, { is_active: boolean; locked_until: string | null }> = {};
+  (allProfiles ?? []).forEach((p: { id: string; is_active: boolean; locked_until: string | null }) => {
+    profileMap[p.id] = { is_active: p.is_active, locked_until: p.locked_until ?? null };
   });
 
   const students: StudentRow[] = (studentsData ?? []).map((s: { id: string; name: string; index_number: string }) => {
     const mem = membershipMap[s.id];
+    const prof = profileMap[s.id];
     return {
       id: s.id,
       name: s.name,
       index_number: s.index_number,
       email: `${s.index_number.toLowerCase()}@${domain}`,
-      is_active: profileMap[s.id] ?? true,
+      is_active: prof?.is_active ?? true,
+      locked_until: prof?.locked_until ?? null,
       current_group: mem?.group_name ?? null,
       academic_year: mem?.year_name ?? null,
       group_id: null,
