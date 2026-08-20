@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useCallback } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { deactivateStudent, reactivateStudent, resetStudentPassword } from "./actions";
+import { deactivateStudent, reactivateStudent, resetStudentPassword, unlockStudentAccount } from "./actions";
 
 /* ── Types ───────────────────────────────────────────────────────────────── */
 export type StudentRow = {
@@ -11,6 +11,7 @@ export type StudentRow = {
   index_number: string;
   email: string;
   is_active: boolean;
+  locked_until: string | null;   // SFR-AUTH-07: ISO timestamp or null
   current_group: string | null;
   academic_year: string | null;
   group_id: string | null;
@@ -34,7 +35,8 @@ type Props = {
 type Modal =
   | { type: "deactivate"; student: StudentRow }
   | { type: "reactivate"; student: StudentRow }
-  | { type: "reset_password"; student: StudentRow };
+  | { type: "reset_password"; student: StudentRow }
+  | { type: "unlock"; student: StudentRow };
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
 function StatusBadge({ active }: { active: boolean }) {
@@ -62,6 +64,43 @@ function StatusBadge({ active }: { active: boolean }) {
         }}
       />
       {active ? "Active" : "Inactive"}
+    </span>
+  );
+}
+
+/* ── Locked badge (SFR-AUTH-07) ─────────────────────────────────────────── */
+// Signature move: the badge pulses (opacity keyframe) to signal "active security event" —
+// distinct from the static Inactive badge which reflects an admin decision.
+function LockedBadge({ lockedUntil }: { lockedUntil: string }) {
+  const until = new Date(lockedUntil);
+  const isStillLocked = until > new Date();
+  if (!isStillLocked) return null;
+
+  const timeStr = until.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+  return (
+    <span
+      title={`Locked until ${timeStr}`}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 4,
+        fontSize: 11,
+        fontWeight: 600,
+        padding: "2px 8px",
+        borderRadius: "var(--radius-full)",
+        background: "rgba(234,179,8,0.12)",
+        color: "#b45309",
+        border: "1px solid rgba(234,179,8,0.3)",
+        animation: "locked-pulse 2.4s ease-in-out infinite",
+        cursor: "default",
+      }}
+    >
+      <svg width="9" height="9" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <rect x="2" y="5" width="8" height="6" rx="1" />
+        <path d="M4 5V3.5a2 2 0 0 1 4 0V5" />
+      </svg>
+      Locked · {timeStr}
     </span>
   );
 }
@@ -322,6 +361,79 @@ function ResetPasswordModal({
   );
 }
 
+/* ── Unlock modal (SFR-AUTH-07) ─────────────────────────────────────────── */
+function UnlockModal({
+  student,
+  onClose,
+  onDone,
+}: {
+  student: StudentRow;
+  onClose: () => void;
+  onDone: () => void;
+}) {
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+
+  const lockedUntil = student.locked_until ? new Date(student.locked_until) : null;
+  const timeStr = lockedUntil
+    ? lockedUntil.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    : "—";
+
+  function handleConfirm() {
+    setError(null);
+    startTransition(async () => {
+      const result = await unlockStudentAccount(student.id);
+      if ("error" in result) setError(result.error);
+      else onDone();
+    });
+  }
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal" onClick={(e: { stopPropagation: () => void }) => e.stopPropagation()} style={{ maxWidth: 420 }}>
+        <div className="modal-header">
+          <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: "var(--radius-lg)",
+              background: "rgba(234,179,8,0.12)", display: "flex",
+              alignItems: "center", justifyContent: "center", color: "#b45309", flexShrink: 0,
+            }}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
+                <rect x="3" y="7" width="10" height="8" rx="1.5" />
+                <path d="M5 7V5a3 3 0 0 1 6 0" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="modal-title">Unlock Account</h3>
+              <p style={{ fontSize: "var(--text-xs)", color: "var(--color-text-3)", margin: 0 }}>
+                Account is locked until {timeStr}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="modal-body">
+          <p style={{ fontSize: "var(--text-sm)", color: "var(--color-text-2)", margin: 0 }}>
+            Manually unlock <strong style={{ color: "var(--color-text)" }}>{student.name}</strong>?
+            This clears all failed attempt counters and lets them log in immediately.
+            Consider resetting their password if you suspect a breach.
+          </p>
+          {error && (
+            <div className="alert alert-danger" style={{ marginTop: "var(--space-3)", fontSize: "var(--text-xs)" }}>
+              {error}
+            </div>
+          )}
+        </div>
+        <div className="modal-footer">
+          <button onClick={onClose} className="btn btn-ghost btn-sm" disabled={isPending}>Cancel</button>
+          <button onClick={handleConfirm} className="btn btn-primary btn-sm" disabled={isPending}>
+            {isPending ? "Unlocking…" : "Unlock Account"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ── Main component ─────────────────────────────────────────────────────── */
 export function StudentsClient({
   students,
@@ -451,6 +563,14 @@ export function StudentsClient({
         }
         .empty-state svg { margin-bottom: var(--space-3); opacity: 0.4; }
         .empty-state p { font-size: var(--text-sm); margin: 0; }
+
+        @keyframes locked-pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.55; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          @keyframes locked-pulse { 0%, 100% { opacity: 1; } }
+        }
       `}</style>
 
       {/* Toolbar */}
@@ -564,7 +684,10 @@ export function StudentsClient({
                         )}
                       </td>
                       <td>
-                        <StatusBadge active={s.is_active} />
+                        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                          <StatusBadge active={s.is_active} />
+                          {s.locked_until && <LockedBadge lockedUntil={s.locked_until} />}
+                        </div>
                       </td>
                       <td>
                         <div className="row-actions">
@@ -580,6 +703,27 @@ export function StudentsClient({
                             </svg>
                             Reset
                           </button>
+
+                          {s.locked_until && new Date(s.locked_until) > new Date() && (
+                            <button
+                              className="btn btn-sm"
+                              title="Unlock account"
+                              onClick={() => setModal({ type: "unlock", student: s })}
+                              style={{
+                                padding: "4px 8px",
+                                display: "flex", alignItems: "center", gap: 4,
+                                background: "rgba(234,179,8,0.12)",
+                                color: "#b45309",
+                                border: "1px solid rgba(234,179,8,0.3)",
+                              }}
+                            >
+                              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
+                                <rect x="3" y="7" width="10" height="8" rx="1.5" />
+                                <path d="M5 7V5a3 3 0 0 1 6 0" />
+                              </svg>
+                              Unlock
+                            </button>
+                          )}
 
                           {s.is_active ? (
                             <button
@@ -679,6 +823,14 @@ export function StudentsClient({
           student={modal.student}
           onClose={closeModal}
           onDone={() => handleDone(`Password reset for ${modal.student.name}.`)}
+        />
+      )}
+
+      {modal?.type === "unlock" && (
+        <UnlockModal
+          student={modal.student}
+          onClose={closeModal}
+          onDone={() => handleDone(`${modal.student.name}'s account has been unlocked.`)}
         />
       )}
 
