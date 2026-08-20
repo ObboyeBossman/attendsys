@@ -1,5 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createSupabaseServerClient, createSupabaseAdminClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
+import { createServerClient } from "@supabase/ssr";
+import { createSupabaseAdminClient } from "@/lib/supabase/server";
+import type { Database } from "@/lib/database.types";
 
 /**
  * POST /api/auth/set-session
@@ -27,9 +30,41 @@ export async function POST(request: NextRequest) {
     // malformed body — fall back to defaults
   }
 
-  const supabase = await createSupabaseServerClient();
+  const cookieStore = await cookies();
+  const THIRTY_DAYS = 60 * 60 * 24 * 30; // seconds
 
-  // If tokens were explicitly passed in request body, set session on server client
+  const response = NextResponse.json({ ok: true });
+
+  const supabase = createServerClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co",
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder",
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            const cookieOpts = {
+              ...options,
+              httpOnly: true,
+              secure: process.env.NODE_ENV === "production",
+              sameSite: "lax" as const,
+              path: "/",
+              ...(persist ? { maxAge: THIRTY_DAYS } : {}),
+            };
+            try {
+              cookieStore.set(name, value, cookieOpts);
+            } catch {
+              // Ignore if called from context where cookieStore cannot set
+            }
+            response.cookies.set(name, value, cookieOpts);
+          });
+        },
+      },
+    }
+  );
+
   if (accessToken && refreshToken) {
     await supabase.auth.setSession({
       access_token: accessToken,
@@ -37,8 +72,7 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  // Get active session
-  let {
+  const {
     data: { session },
   } = await supabase.auth.getSession();
 
@@ -72,25 +106,9 @@ export async function POST(request: NextRequest) {
     profile = p;
   }
 
-  const response = NextResponse.json({ ok: true, profile });
-
-  // Re-set all sb-* cookies with the desired maxAge (HttpOnly + Secure + Lax)
-  const THIRTY_DAYS = 60 * 60 * 24 * 30; // seconds
-
-  const cookieOptions = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax" as const,
-    path: "/",
-    ...(persist ? { maxAge: THIRTY_DAYS } : {}),
-  };
-
-  const incomingCookies = request.cookies.getAll();
-  for (const { name, value } of incomingCookies) {
-    if (name.startsWith("sb-") || name.includes("supabase")) {
-      response.cookies.set(name, value, cookieOptions);
-    }
-  }
-
-  return response;
+  const payload = { ok: true, profile };
+  return new NextResponse(JSON.stringify(payload), {
+    status: 200,
+    headers: response.headers,
+  });
 }
