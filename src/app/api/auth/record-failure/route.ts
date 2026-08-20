@@ -87,6 +87,20 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ locked: false, attempts: newCount });
       }
 
+      // Record account lockout in audit_log (SFR-AUTH-18)
+      (adminClient as any)
+        .from("audit_log")
+        .insert({
+          actor_id: p.id,
+          action: "user.account_locked",
+          table_name: "user_profiles",
+          record_id: p.id,
+          new_data: { failed_attempts: newCount, locked_until: lockedUntil },
+        })
+        .then(({ error }: { error: unknown }) => {
+          if (error) console.error("record-failure: audit_log lockout error:", error);
+        });
+
       return NextResponse.json({ locked: true, lockedUntil });
     }
 
@@ -99,6 +113,20 @@ export async function POST(request: NextRequest) {
     if (updateError) {
       console.error("record-failure: increment error:", updateError);
     }
+
+    // Record login failure in audit_log (SFR-AUTH-18)
+    (adminClient as any)
+      .from("audit_log")
+      .insert({
+        actor_id: p.id,
+        action: "user.login_failed",
+        table_name: "user_profiles",
+        record_id: p.id,
+        new_data: { failed_attempts: newCount },
+      })
+      .then(({ error }: { error: unknown }) => {
+        if (error) console.error("record-failure: audit_log failure error:", error);
+      });
 
     return NextResponse.json({ locked: false, attempts: newCount });
   } catch (err) {

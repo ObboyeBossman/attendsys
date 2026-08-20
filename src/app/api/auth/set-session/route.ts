@@ -104,6 +104,20 @@ export async function POST(request: NextRequest) {
       .then(({ error }: { error: unknown }) => {
         if (error) console.error("set-session: failed to clear lock state:", error);
       });
+
+    // Record successful login in audit_log (SFR-AUTH-18)
+    (adminSupabase as any)
+      .from("audit_log")
+      .insert({
+        actor_id: userId,
+        action: "user.login",
+        table_name: "user_profiles",
+        record_id: userId,
+        new_data: { login_time: new Date().toISOString() },
+      })
+      .then(({ error }: { error: unknown }) => {
+        if (error) console.error("set-session: audit_log error:", error);
+      });
   } catch (err) {
     console.error("Admin profile fetch error:", err);
   }

@@ -9,6 +9,7 @@ import {
   reactivateLecturer,
   resetLecturerPassword,
 } from "./actions";
+import { LoginHistoryModal } from "@/components/admin/LoginHistoryModal";
 
 /* ── Types ───────────────────────────────────────────────────────────────── */
 export type LecturerRow = {
@@ -517,6 +518,7 @@ export function LecturersClient({
   const searchParams = useSearchParams();
 
   const [modal, setModal] = useState<Modal | null>(null);
+  const [historyLecturer, setHistoryLecturer] = useState<LecturerRow | null>(null);
   const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
 
   const totalPages = Math.ceil(total / perPage);
@@ -745,6 +747,19 @@ export function LecturersClient({
                             Reset
                           </button>
 
+                          <button
+                            className="btn btn-ghost btn-sm"
+                            title="View login history"
+                            onClick={() => setHistoryLecturer(l)}
+                            style={{ padding: "4px 8px", display: "flex", alignItems: "center", gap: 4 }}
+                          >
+                            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
+                              <circle cx="8" cy="8" r="7" />
+                              <path d="M8 4v4l2.5 2.5" />
+                            </svg>
+                            History
+                          </button>
+
                           {l.is_active ? (
                             <button
                               className="btn btn-danger btn-sm"
@@ -823,6 +838,16 @@ export function LecturersClient({
       </div>
 
       {/* Modals */}
+      {historyLecturer && (
+        <LoginHistoryModal
+          isOpen={!!historyLecturer}
+          onClose={() => setHistoryLecturer(null)}
+          userId={historyLecturer.id}
+          userName={historyLecturer.name}
+          userEmail={historyLecturer.email}
+          userRole="Lecturer"
+        />
+      )}
       {modal?.type === "create" && (
         <LecturerFormModal
           mode="create"

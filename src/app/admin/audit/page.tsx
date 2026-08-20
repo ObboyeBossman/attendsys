@@ -7,6 +7,8 @@ export const revalidate = 15;
 // ── Human-readable labels for action codes ───────────────────────────────────
 const ACTION_LABELS: Record<string, { label: string; category: string; color: string }> = {
   "user.login":                   { label: "User logged in",           category: "Auth",       color: "var(--color-info)" },
+  "user.login_failed":            { label: "Failed login attempt",     category: "Auth",       color: "var(--color-danger)" },
+  "user.account_locked":          { label: "Account locked (failed attempts)", category: "Auth", color: "var(--color-danger)" },
   "user.logout":                  { label: "User logged out",          category: "Auth",       color: "var(--color-text-3)" },
   "user.password_changed":        { label: "Password changed",         category: "Auth",       color: "var(--color-warning)" },
   "student.created":              { label: "Student account created",  category: "Users",      color: "var(--color-success)" },

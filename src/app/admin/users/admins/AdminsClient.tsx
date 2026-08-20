@@ -8,6 +8,7 @@ import {
   reactivateSuperAdmin,
   resetSuperAdminPassword,
 } from "./actions";
+import { LoginHistoryModal } from "@/components/admin/LoginHistoryModal";
 
 /* ── Types ───────────────────────────────────────────────────────────────── */
 export type AdminRow = {
@@ -28,7 +29,8 @@ type Modal =
   | { type: "edit"; admin: AdminRow }
   | { type: "deactivate"; admin: AdminRow }
   | { type: "reactivate"; admin: AdminRow }
-  | { type: "reset_password"; admin: AdminRow };
+  | { type: "reset_password"; admin: AdminRow }
+  | { type: "history"; admin: AdminRow };
 
 /* ── Status badge ────────────────────────────────────────────────────────── */
 function StatusBadge({ active }: { active: boolean }) {
@@ -504,6 +506,17 @@ function AdminActions({
               </svg>
               Reset password
             </button>
+            <button
+              className="btn btn-ghost btn-sm"
+              onClick={() => { setOpen(false); onAction({ type: "history", admin }); }}
+              style={{ width: "100%", justifyContent: "flex-start", borderRadius: 0, padding: "8px 14px" }}
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ marginRight: 8 }}>
+                <circle cx="7" cy="7" r="6" />
+                <path d="M7 4v3.5l2 2" />
+              </svg>
+              Login history
+            </button>
             {!admin.is_self && (
               <>
                 <div style={{ height: 1, background: "var(--color-border)", margin: "4px 0" }} />
@@ -706,6 +719,16 @@ export function AdminsClient({ admins }: Props) {
       )}
       {modal?.type === "reset_password" && (
         <ResetPasswordModal admin={modal.admin} onClose={() => setModal(null)} onDone={showToast} />
+      )}
+      {modal?.type === "history" && (
+        <LoginHistoryModal
+          isOpen={true}
+          onClose={() => setModal(null)}
+          userId={modal.admin.id}
+          userName={modal.admin.name}
+          userEmail={modal.admin.email}
+          userRole="Super Admin"
+        />
       )}
     </>
   );

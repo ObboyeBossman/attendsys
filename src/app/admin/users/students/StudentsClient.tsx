@@ -3,6 +3,7 @@
 import { useState, useTransition, useCallback } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { deactivateStudent, reactivateStudent, resetStudentPassword, unlockStudentAccount } from "./actions";
+import { LoginHistoryModal } from "@/components/admin/LoginHistoryModal";
 
 /* ── Types ───────────────────────────────────────────────────────────────── */
 export type StudentRow = {
@@ -452,6 +453,7 @@ export function StudentsClient({
   const searchParams = useSearchParams();
 
   const [modal, setModal] = useState<Modal | null>(null);
+  const [historyStudent, setHistoryStudent] = useState<StudentRow | null>(null);
   const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
 
   const totalPages = Math.ceil(total / perPage);
@@ -725,6 +727,19 @@ export function StudentsClient({
                             </button>
                           )}
 
+                          <button
+                            className="btn btn-ghost btn-sm"
+                            title="View login history"
+                            onClick={() => setHistoryStudent(s)}
+                            style={{ padding: "4px 8px", display: "flex", alignItems: "center", gap: 4 }}
+                          >
+                            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
+                              <circle cx="8" cy="8" r="7" />
+                              <path d="M8 4v4l2.5 2.5" />
+                            </svg>
+                            History
+                          </button>
+
                           {s.is_active ? (
                             <button
                               className="btn btn-danger btn-sm"
@@ -804,6 +819,16 @@ export function StudentsClient({
       </div>
 
       {/* Modals */}
+      {historyStudent && (
+        <LoginHistoryModal
+          isOpen={!!historyStudent}
+          onClose={() => setHistoryStudent(null)}
+          userId={historyStudent.id}
+          userName={historyStudent.name}
+          userEmail={historyStudent.email}
+          userRole="Student"
+        />
+      )}
       {modal?.type === "deactivate" && (
         <DeactivateModal
           student={modal.student}
