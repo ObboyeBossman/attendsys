@@ -32,6 +32,7 @@ export function EmailLoginForm({
 
   const [email, setEmail] = useState(rememberedEmail);
   const [password, setPassword] = useState("");
+  const [keepSignedIn, setKeepSignedIn] = useState(false);
   const [loading, setLoading] = useState(false);
   const [authStage, setAuthStage] = useState<string>("Checking credentials…");
   const [error, setError] = useState<string | null>(null);
@@ -195,13 +196,34 @@ export function EmailLoginForm({
             access_token: signInData.session?.access_token || "",
             refresh_token: signInData.session?.refresh_token || "",
             userId: user.id,
-            persist: true,
+            persist: keepSignedIn,
           }),
         });
         if (res.ok) {
           const data = await res.json();
           if (data?.profile) {
             profile = data.profile;
+          }
+        }
+
+        // SFR-AUTH-09/10: if "Keep me signed in" is checked, set the 30-day device trust cookie
+        if (keepSignedIn) {
+          const { data: profileData } = await supabase
+            .from("user_profiles")
+            .select("full_name")
+            .eq("id", user.id)
+            .single();
+          try {
+            await fetch("/api/auth/trust-device", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                email: user.email ?? email.trim().toLowerCase(),
+                name: profileData?.full_name ?? "",
+              }),
+            });
+          } catch {
+            // Non-fatal — device trust is a UX convenience, not auth-critical
           }
         }
       } catch (err) {
@@ -323,6 +345,36 @@ export function EmailLoginForm({
           }}
           disabled={loading || isCoolingDown || isLocked}
         />
+
+        {/* SFR-AUTH-09: Keep me signed in — remembers device for 30 days */}
+        <label
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            cursor: loading ? "not-allowed" : "pointer",
+            opacity: loading ? 0.5 : 1,
+            fontSize: "var(--text-sm)",
+            color: "var(--color-text-2)",
+            userSelect: "none",
+            marginTop: 4,
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={keepSignedIn}
+            onChange={(e) => setKeepSignedIn(e.target.checked)}
+            disabled={loading}
+            style={{
+              width: 16,
+              height: 16,
+              accentColor: "var(--color-primary, #4f46e5)",
+              cursor: loading ? "not-allowed" : "pointer",
+              flexShrink: 0,
+            }}
+          />
+          Keep me signed in for 30 days
+        </label>
 
         {/* SFR-AUTH-06: Cooldown countdown banner */}
         {isCoolingDown && (
