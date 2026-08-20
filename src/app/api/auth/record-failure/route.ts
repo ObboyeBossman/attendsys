@@ -8,7 +8,7 @@ import { createSupabaseAdminClient } from "@/lib/supabase/server";
  *
  * Called from EmailLoginForm on every failed signInWithPassword().
  * Uses the service-role admin client because the user is not authenticated
- * at this point — we look up the profile by email via admin.getUserByEmail().
+ * at this point — we look up the profile by email directly in user_profiles.
  *
  * Lock policy:
  *   Threshold : LOCK_THRESHOLD failed attempts (10)
@@ -43,26 +43,16 @@ export async function POST(request: NextRequest) {
   try {
     const adminClient = await createSupabaseAdminClient();
 
-    // Resolve auth user by email — admin-only operation
-    const { data: authUserData, error: authUserError } =
-      await adminClient.auth.admin.getUserByEmail(email);
-
-    if (authUserError || !authUserData?.user) {
-      // Email not in the system — respond silently to avoid email enumeration
-      return NextResponse.json({ locked: false, notFound: true });
-    }
-
-    const userId = authUserData.user.id;
-
-    // Fetch current failure state
+    // Look up the profile directly by email — avoids the unavailable getUserByEmail admin method
+    // and is a single round-trip. Fail silently if email not found (avoid enumeration).
     const { data: profile, error: fetchError } = await adminClient
       .from("user_profiles")
       .select("id, failed_login_count, locked_until")
-      .eq("id", userId)
+      .eq("email", email)
       .single();
 
     if (fetchError || !profile) {
-      console.error("record-failure: profile fetch error:", fetchError);
+      // Email not in the system — respond silently to avoid email enumeration
       return NextResponse.json({ locked: false, notFound: true });
     }
 
@@ -85,7 +75,8 @@ export async function POST(request: NextRequest) {
         Date.now() + LOCK_DURATION_MINUTES * 60 * 1000
       ).toISOString();
 
-      const { error: lockError } = await adminClient
+      // Cast required: generated types predate the 0009 migration columns (matches pattern in student actions.ts)
+      const { error: lockError } = await (adminClient as any)
         .from("user_profiles")
         .update({ failed_login_count: newCount, locked_until: lockedUntil })
         .eq("id", p.id);
@@ -99,8 +90,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ locked: true, lockedUntil });
     }
 
-    // Below threshold — increment only
-    const { error: updateError } = await adminClient
+    // Below threshold — increment only; same cast reason as above
+    const { error: updateError } = await (adminClient as any)
       .from("user_profiles")
       .update({ failed_login_count: newCount })
       .eq("id", p.id);
