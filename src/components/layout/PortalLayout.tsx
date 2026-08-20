@@ -165,11 +165,12 @@ interface NavLinksProps {
   switchTo?: SwitchTarget;
   closeDrawer: () => void;
   onSignOut: () => void;
+  onSwitchPortal: (target: SwitchTarget) => void;
   userInitial: string;
   userName: string;
 }
 
-function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, closeDrawer, onSignOut, userInitial, userName }: NavLinksProps) {
+function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, closeDrawer, onSignOut, onSwitchPortal, userInitial, userName }: NavLinksProps) {
   const router = useRouter();
   const settingsHref = navItems.find((item) => item.icon === "settings" || item.icon === "user")?.href || `/${role}/profile`;
 
@@ -236,7 +237,7 @@ function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, cl
               className={styles.navItem}
               onClick={() => {
                 closeDrawer();
-                router.push(switchTo.href);
+                onSwitchPortal(switchTo);
               }}
             >
               <span className={styles.navIcon}>
@@ -306,10 +307,21 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
+  const { showLoader } = useFullscreenLoader();
   const roleColor = ROLE_COLORS[role];
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [userInitial, setUserInitial] = useState(ROLE_INITIALS[role]);
   const [userName, setUserName] = useState<string>("");
+
+  const handleSwitchPortal = useCallback(
+    (target: SwitchTarget) => {
+      showLoader(`Connecting to ${target.label}…`);
+      setTimeout(() => {
+        window.location.href = target.href;
+      }, 750);
+    },
+    [showLoader]
+  );
 
   // ── Swipe gesture state (refs — no re-renders during drag) ───────────────
   const drawerRef = useRef<HTMLElement>(null);
@@ -581,6 +593,7 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
           switchTo={switchTo}
           closeDrawer={closeDrawer}
           onSignOut={openSignOut}
+          onSwitchPortal={handleSwitchPortal}
           userInitial={userInitial}
           userName={userName}
         />
@@ -623,6 +636,7 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
           switchTo={switchTo}
           closeDrawer={closeDrawer}
           onSignOut={openSignOut}
+          onSwitchPortal={handleSwitchPortal}
           userInitial={userInitial}
           userName={userName}
         />

@@ -57,16 +57,32 @@ function NavIcon({ name, active }: { name: NavIconName; active: boolean }) {
   }
 }
 
+import { useFullscreenLoader } from "./FullscreenLoader";
+
 // ── Props ─────────────────────────────────────────────────────────────────────
 interface BottomNavProps {
   navItems: readonly NavItem[];
   pathname: string;
   switchTo?: { label: string; href: string };
+  onSwitchPortal?: (target: { label: string; href: string }) => void;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
-export function BottomNav({ navItems, pathname, switchTo }: BottomNavProps) {
+export function BottomNav({ navItems, pathname, switchTo, onSwitchPortal }: BottomNavProps) {
   const router = useRouter();
+  const { showLoader } = useFullscreenLoader();
+
+  const handleSwitch = (target: { label: string; href: string }) => {
+    if (onSwitchPortal) {
+      onSwitchPortal(target);
+    } else {
+      showLoader(`Connecting to ${target.label}…`);
+      setTimeout(() => {
+        window.location.href = target.href;
+      }, 750);
+    }
+  };
+
   // Enforce maximum of 3 total items on bottom navigation
   const maxNavItems = switchTo ? 2 : 3;
   const displayedItems = navItems.slice(0, maxNavItems);
@@ -107,7 +123,7 @@ export function BottomNav({ navItems, pathname, switchTo }: BottomNavProps) {
         {switchTo && (
           <button
             type="button"
-            onClick={() => router.push(switchTo.href)}
+            onClick={() => handleSwitch(switchTo)}
             className={styles.item}
           >
             <span className={styles.iconWrap}>
