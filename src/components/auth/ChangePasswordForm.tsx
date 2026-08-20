@@ -128,7 +128,7 @@ export function ChangePasswordForm({ portalPrefix }: { portalPrefix: string }) {
             id="confirm-password"
             type={showConfirmPassword ? "text" : "password"}
             required
-            className={styles.input}
+            className={`${styles.input}${confirmPassword && confirmPassword === password ? ` ${styles.inputMatchOk}` : ""}`}
             placeholder="Confirm new password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
