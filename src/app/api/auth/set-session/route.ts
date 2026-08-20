@@ -35,7 +35,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "No active session" }, { status: 401 });
   }
 
-  const response = NextResponse.json({ ok: true });
+  // Fetch user profile server-side using the server client
+  const { data: profile } = await supabase
+    .from("user_profiles")
+    .select("role, is_active, must_change_password")
+    .eq("id", session.user.id)
+    .single();
+
+  const response = NextResponse.json({ ok: true, profile });
 
   // Re-set all sb-* cookies with the desired maxAge.
   // The browser client sets them as non-httpOnly on sign-in;

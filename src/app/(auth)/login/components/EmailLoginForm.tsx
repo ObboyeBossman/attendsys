@@ -67,31 +67,52 @@ export function EmailLoginForm({
         return;
       }
 
-      // Stage 2: Credentials verified, check user session & roles
-      setAuthStage("Verifying account permissions…");
-
       const user = signInData?.user;
-
       if (!user) {
         setError("Authentication failed. Please try again.");
         setLoading(false);
         return;
       }
 
-      // Fetch user profile role
-      const { data: profile, error: profileError } = await supabase
-        .from("user_profiles")
-        .select("role, is_active, must_change_password")
-        .eq("id", user.id)
-        .single();
+      // Stage 2: Credentials verified, sync session & verify account permissions server-side
+      setAuthStage("Verifying account permissions…");
 
-      if (profileError || !profile) {
-        setError("Could not load account details. Contact support.");
-        setLoading(false);
-        return;
+      let profile: { role: string; is_active: boolean; must_change_password: boolean } | null = null;
+
+      try {
+        const res = await fetch("/api/auth/set-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ persist: true }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data?.profile) {
+            profile = data.profile;
+          }
+        }
+      } catch (err) {
+        console.error("set-session error:", err);
       }
 
-      const p = profile as { role: string; is_active: boolean; must_change_password: boolean };
+      // Fallback: fetch user profile client-side if server response didn't contain profile
+      if (!profile) {
+        const { data: clientProfile, error: profileError } = await supabase
+          .from("user_profiles")
+          .select("role, is_active, must_change_password")
+          .eq("id", user.id)
+          .single();
+
+        if (profileError || !clientProfile) {
+          console.error("Profile fetch error:", profileError);
+          setError("Could not load account details. Contact support.");
+          setLoading(false);
+          return;
+        }
+        profile = clientProfile as { role: string; is_active: boolean; must_change_password: boolean };
+      }
+
+      const p = profile;
 
       if (!p.is_active) {
         await supabase.auth.signOut();
@@ -134,17 +155,6 @@ export function EmailLoginForm({
         setAuthStage("Redirecting to password setup…");
       } else {
         setAuthStage(`Opening ${dest.label} dashboard…`);
-      }
-
-      // Sync session cookies server-side (SFR-AUTH-09)
-      try {
-        await fetch("/api/auth/set-session", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ persist: true }),
-        });
-      } catch {
-        // Silently ignore if set-session fails, fallback to navigation
       }
 
       // Perform clean location navigation to flush all server components and middleware state
