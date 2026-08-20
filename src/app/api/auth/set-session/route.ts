@@ -82,7 +82,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "No active session" }, { status: 401 });
   }
 
-  // Fetch profile via admin client to ensure 100% reliable read regardless of RLS timing
+  // Fetch profile via admin client to ensure 100% reliable read regardless of RLS timing.
+  // SFR-AUTH-07: also clear any login failure state on successful authentication.
   let profile = null;
   try {
     const adminSupabase = await createSupabaseAdminClient();
@@ -92,6 +93,16 @@ export async function POST(request: NextRequest) {
       .eq("id", userId)
       .single();
     profile = p;
+
+    // Clear lock state — login succeeded, so reset the failure counter and any active lock.
+    // Fire-and-forget: a failure here must not block the login flow.
+    adminSupabase
+      .from("user_profiles")
+      .update({ failed_login_count: 0, locked_until: null })
+      .eq("id", userId)
+      .then(({ error }) => {
+        if (error) console.error("set-session: failed to clear lock state:", error);
+      });
   } catch (err) {
     console.error("Admin profile fetch error:", err);
   }
