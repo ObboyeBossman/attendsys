@@ -1,12 +1,17 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle, RefreshCw, X } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { FullscreenLoader } from "@/components/layout";
 import { Input, Button, Toast } from "@/components/ui";
 import { formatAuthErrorMessage } from "@/lib/auth-errors";
+import {
+  getRemainingCooldown,
+  recordFailedAttempt,
+  clearAttempts,
+  getAttemptCount,
+} from "@/lib/login-rate-limit";
 import styles from "../LoginClient.module.css";
 
 interface EmailLoginFormProps {
@@ -31,46 +36,114 @@ export function EmailLoginForm({
   const [authStage, setAuthStage] = useState<string>("Checking credentials…");
   const [error, setError] = useState<string | null>(null);
 
-  // Auto-dismiss toast after 4 seconds
+  // ── Rate limiting state ──────────────────────────────────
+  const [cooldown, setCooldown] = useState(0); // seconds remaining
+  const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const startCooldownTimer = useCallback((seconds: number) => {
+    setCooldown(seconds);
+    if (cooldownRef.current) clearInterval(cooldownRef.current);
+    cooldownRef.current = setInterval(() => {
+      setCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(cooldownRef.current!);
+          cooldownRef.current = null;
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }, []);
+
+  // Restore cooldown on mount (e.g. page refresh mid-cooldown)
+  useEffect(() => {
+    if (!email) return;
+    const remaining = getRemainingCooldown(email);
+    if (remaining > 0) startCooldownTimer(remaining);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Also restore whenever email changes (user types a different address)
+  useEffect(() => {
+    if (!email) return;
+    const remaining = getRemainingCooldown(email);
+    if (remaining > 0) {
+      startCooldownTimer(remaining);
+    } else {
+      setCooldown(0);
+    }
+  }, [email, startCooldownTimer]);
+
+  // Auto-dismiss error toast after 5 s
   useEffect(() => {
     if (!error) return;
-    const timer = setTimeout(() => {
-      setError(null);
-    }, 4000);
+    const timer = setTimeout(() => setError(null), 5000);
     return () => clearTimeout(timer);
   }, [error]);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (cooldownRef.current) clearInterval(cooldownRef.current);
+    };
+  }, []);
 
   const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password || loading) return;
+
+    // Block if still cooling down
+    if (cooldown > 0) return;
 
     setError(null);
     setLoading(true);
     setAuthStage("Checking credentials…");
 
     try {
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-        email: email.trim().toLowerCase(),
-        password,
-      });
+      const { data: signInData, error: signInError } =
+        await supabase.auth.signInWithPassword({
+          email: email.trim().toLowerCase(),
+          password,
+        });
 
       if (signInError) {
-        setError(formatAuthErrorMessage(signInError));
+        // Record the failure and apply cooldown
+        const newCooldown = recordFailedAttempt(email);
+        const count = getAttemptCount(email);
+
+        // Build error message with attempt context after 2+ failures
+        let msg = formatAuthErrorMessage(signInError);
+        if (count >= 3 && newCooldown > 0) {
+          msg = `${msg} Please wait ${newCooldown}s before trying again.`;
+        } else if (count === 2) {
+          msg = `${msg} One more failed attempt will trigger a cooldown.`;
+        }
+
+        setError(msg);
+        if (newCooldown > 0) startCooldownTimer(newCooldown);
         setLoading(false);
         return;
       }
 
       const user = signInData?.user;
       if (!user) {
+        const newCooldown = recordFailedAttempt(email);
         setError("Authentication failed. Please try again.");
+        if (newCooldown > 0) startCooldownTimer(newCooldown);
         setLoading(false);
         return;
       }
 
-      // Stage 2: Credentials verified, sync session & verify account permissions server-side
+      // Success — clear attempt counter
+      clearAttempts(email);
+
+      // Stage 2: Sync session server-side
       setAuthStage("Verifying account permissions…");
 
-      let profile: { role: string; is_active: boolean; must_change_password: boolean } | null = null;
+      let profile: {
+        role: string;
+        is_active: boolean;
+        must_change_password: boolean;
+      } | null = null;
 
       try {
         const res = await fetch("/api/auth/set-session", {
@@ -85,15 +158,13 @@ export function EmailLoginForm({
         });
         if (res.ok) {
           const data = await res.json();
-          if (data?.profile) {
-            profile = data.profile;
-          }
+          if (data?.profile) profile = data.profile;
         }
       } catch (err) {
         console.error("set-session error:", err);
       }
 
-      // Fallback: fetch user profile client-side if server response didn't contain profile
+      // Fallback: fetch profile client-side
       if (!profile) {
         const { data: clientProfile, error: profileError } = await supabase
           .from("user_profiles")
@@ -102,12 +173,15 @@ export function EmailLoginForm({
           .single();
 
         if (profileError || !clientProfile) {
-          console.error("Profile fetch error:", profileError);
           setError("Could not load account details. Contact support.");
           setLoading(false);
           return;
         }
-        profile = clientProfile as { role: string; is_active: boolean; must_change_password: boolean };
+        profile = clientProfile as {
+          role: string;
+          is_active: boolean;
+          must_change_password: boolean;
+        };
       }
 
       const p = profile;
@@ -126,7 +200,11 @@ export function EmailLoginForm({
         student: { label: "Student Portal", path: "/student/dashboard" },
       };
 
-      let dest = portalMap[p.role] ?? { label: "Student Portal", path: "/student/dashboard" };
+      let dest =
+        portalMap[p.role] ?? {
+          label: "Student Portal",
+          path: "/student/dashboard",
+        };
 
       if (p.role === "student") {
         const { data: repMembership } = await supabase
@@ -155,20 +233,22 @@ export function EmailLoginForm({
         setAuthStage(`Opening ${dest.label} dashboard…`);
       }
 
-      // Perform clean location navigation to flush all server components and middleware state
       window.location.href = destination;
     } catch (err: any) {
+      const newCooldown = recordFailedAttempt(email);
       setError(formatAuthErrorMessage(err));
+      if (newCooldown > 0) startCooldownTimer(newCooldown);
       setLoading(false);
     }
   };
 
+  const isBlocked = cooldown > 0;
+  const attemptCount = email ? getAttemptCount(email) : 0;
+
   return (
     <>
-      {/* Global Stage-Aware Fullscreen Loader */}
       <FullscreenLoader visible={loading} message={authStage} />
 
-      {/* Floating Custom Toast Banner */}
       {error && !loading && (
         <Toast
           message={error}
@@ -177,8 +257,10 @@ export function EmailLoginForm({
         />
       )}
 
-      <form onSubmit={handlePasswordLogin} className={`${styles.fadeIn} ${styles.formBody}`}>
-        {/* Global Input Component for Email */}
+      <form
+        onSubmit={handlePasswordLogin}
+        className={`${styles.fadeIn} ${styles.formBody}`}
+      >
         <Input
           label="Email"
           type="email"
@@ -192,7 +274,6 @@ export function EmailLoginForm({
           disabled={loading}
         />
 
-        {/* Global Input Component for Password (includes built-in eye toggle) */}
         <Input
           label="Password"
           type="password"
@@ -203,42 +284,130 @@ export function EmailLoginForm({
             setPassword(e.target.value);
             if (error) setError(null);
           }}
-          disabled={loading}
+          disabled={loading || isBlocked}
         />
 
-        {/* Global Button Component for Submit */}
+        {/* ── Cooldown banner ── */}
+        {isBlocked && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "var(--space-3)",
+              padding: "10px 14px",
+              borderRadius: "var(--radius-lg)",
+              background: "var(--color-surface-2)",
+              border: "1px solid var(--color-border-hover)",
+            }}
+          >
+            {/* Animated countdown ring */}
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              style={{ flexShrink: 0 }}
+            >
+              <circle
+                cx="10"
+                cy="10"
+                r="8"
+                fill="none"
+                stroke="var(--color-surface-3)"
+                strokeWidth="2"
+              />
+              <circle
+                cx="10"
+                cy="10"
+                r="8"
+                fill="none"
+                stroke="var(--color-text)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeDasharray={`${2 * Math.PI * 8}`}
+                strokeDashoffset={`${2 * Math.PI * 8 * (cooldown / (attemptCount <= 3 ? 15 : attemptCount === 4 ? 30 : 60))}`}
+                transform="rotate(-90 10 10)"
+                style={{ transition: "stroke-dashoffset 1s linear" }}
+              />
+            </svg>
+            <div>
+              <p
+                style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "var(--text-sm)",
+                  fontWeight: 600,
+                  color: "var(--color-text)",
+                  margin: 0,
+                  lineHeight: 1.3,
+                }}
+              >
+                Too many failed attempts
+              </p>
+              <p
+                style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "var(--text-xs)",
+                  color: "var(--color-text-3)",
+                  margin: 0,
+                  marginTop: 2,
+                }}
+              >
+                Try again in{" "}
+                <span
+                  style={{
+                    fontWeight: 700,
+                    color: "var(--color-text)",
+                    fontVariantNumeric: "tabular-nums",
+                  }}
+                >
+                  {cooldown}s
+                </span>
+              </p>
+            </div>
+          </div>
+        )}
+
         <Button
           type="submit"
           variant="primary"
           size="lg"
           loading={loading}
-          disabled={!email || !password}
+          disabled={!email || !password || isBlocked}
           style={{ width: "100%", marginTop: 8 }}
         >
-          {loading ? "SIGNING IN…" : "SIGN IN"}
+          {loading ? "SIGNING IN…" : isBlocked ? `WAIT ${cooldown}s` : "SIGN IN"}
         </Button>
 
-        {/* Forgot password link */}
         <div>
           <Button
             type="button"
             variant="link"
             size="sm"
-            onClick={onForgotPassword || (() => alert("To reset your password, contact your department administrator or the ICT Helpdesk."))}
-            style={{ color: "var(--color-text-3)", fontSize: "var(--text-xs)" }}
+            onClick={
+              onForgotPassword ||
+              (() =>
+                alert(
+                  "To reset your password, contact your department administrator or the ICT Helpdesk."
+                ))
+            }
+            style={{
+              color: "var(--color-text-3)",
+              fontSize: "var(--text-xs)",
+            }}
           >
             Forgot password?
           </Button>
         </div>
 
-        {/* Back button to return to options */}
         <div className={styles.backBtnRow}>
           <Button
             type="button"
             variant="text"
             size="sm"
             onClick={onBack}
-            style={{ color: "var(--color-text-2)", fontSize: "var(--text-sm)" }}
+            style={{
+              color: "var(--color-text-2)",
+              fontSize: "var(--text-sm)",
+            }}
           >
             ← Back to options
           </Button>
