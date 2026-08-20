@@ -3,17 +3,25 @@
 -- Feedback / reviews / recommendations from students & lecturers
 -- ============================================================
 
-create type feedback_author_role as enum ('student', 'lecturer');
-create type feedback_category as enum (
-  'general',
-  'attendance_system',
-  'course_experience',
-  'lecturer_feedback',
-  'platform_suggestion',
-  'technical_issue',
-  'other'
-);
-create type feedback_sentiment as enum ('positive', 'neutral', 'negative');
+do $$ begin
+  create type feedback_author_role as enum ('student', 'lecturer');
+exception when duplicate_object then null; end $$;
+
+do $$ begin
+  create type feedback_category as enum (
+    'general',
+    'attendance_system',
+    'course_experience',
+    'lecturer_feedback',
+    'platform_suggestion',
+    'technical_issue',
+    'other'
+  );
+exception when duplicate_object then null; end $$;
+
+do $$ begin
+  create type feedback_sentiment as enum ('positive', 'neutral', 'negative');
+exception when duplicate_object then null; end $$;
 
 create table if not exists feedback (
   id              uuid primary key default gen_random_uuid(),
