@@ -1,12 +1,17 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { AlertCircle, RefreshCw, X } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { FullscreenLoader } from "@/components/layout";
 import { Input, Button, Toast } from "@/components/ui";
 import { formatAuthErrorMessage } from "@/lib/auth-errors";
+import {
+  getRemainingCooldown,
+  recordFailedAttempt,
+  clearAttempts,
+} from "@/lib/login-rate-limit";
 import styles from "../LoginClient.module.css";
 
 interface EmailLoginFormProps {
@@ -30,8 +35,11 @@ export function EmailLoginForm({
   const [loading, setLoading] = useState(false);
   const [authStage, setAuthStage] = useState<string>("Checking credentials…");
   const [error, setError] = useState<string | null>(null);
-  // SFR-AUTH-07: track local lock expiry so we can disable the form until the lock clears
+  // SFR-AUTH-07: server-side account lock expiry
   const [lockedUntil, setLockedUntil] = useState<Date | null>(null);
+  // SFR-AUTH-06: client-side progressive cooldown
+  const [cooldown, setCooldown] = useState<number>(0); // seconds remaining
+  const tickerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Auto-dismiss toast after 4 seconds
   useEffect(() => {
@@ -42,7 +50,7 @@ export function EmailLoginForm({
     return () => clearTimeout(timer);
   }, [error]);
 
-  // Auto-clear client-side lock once the lock expiry time passes
+  // Auto-clear client-side lock once the lock expiry time passes (SFR-AUTH-07)
   useEffect(() => {
     if (!lockedUntil) return;
     const remaining = lockedUntil.getTime() - Date.now();
@@ -51,12 +59,67 @@ export function EmailLoginForm({
     return () => clearTimeout(timer);
   }, [lockedUntil]);
 
+  // Hydrate cooldown from sessionStorage on mount (SFR-AUTH-06)
+  useEffect(() => {
+    if (!email) return;
+    const remaining = getRemainingCooldown(email);
+    if (remaining > 0) startTicker(remaining);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Re-check cooldown whenever email changes (SFR-AUTH-06)
+  useEffect(() => {
+    if (!email) return;
+    const remaining = getRemainingCooldown(email);
+    if (remaining > 0) {
+      startTicker(remaining);
+    } else {
+      stopTicker();
+      setCooldown(0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [email]);
+
+  function startTicker(initialSeconds: number) {
+    stopTicker();
+    setCooldown(initialSeconds);
+    tickerRef.current = setInterval(() => {
+      setCooldown((prev) => {
+        if (prev <= 1) {
+          stopTicker();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }
+
+  function stopTicker() {
+    if (tickerRef.current) {
+      clearInterval(tickerRef.current);
+      tickerRef.current = null;
+    }
+  }
+
+  // Cleanup ticker on unmount
+  useEffect(() => () => stopTicker(), []);
+
   const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password || loading) return;
+
+    // SFR-AUTH-07: block if account is server-side locked
     if (lockedUntil && lockedUntil > new Date()) {
       const until = lockedUntil.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
       setError(`Account locked. Try again after ${until}.`);
+      return;
+    }
+
+    // SFR-AUTH-06: block submission during active client-side cooldown
+    const remaining = getRemainingCooldown(email);
+    if (remaining > 0) {
+      startTicker(remaining);
+      setError(`Too many failed attempts. Please wait ${remaining}s before trying again.`);
       return;
     }
 
@@ -71,6 +134,9 @@ export function EmailLoginForm({
       });
 
       if (signInError) {
+        // SFR-AUTH-06: record client-side failure, start cooldown if threshold crossed
+        const cooldownSecs = recordFailedAttempt(email);
+
         // SFR-AUTH-07: record failure server-side; check if account is now locked
         try {
           const failRes = await fetch("/api/auth/record-failure", {
@@ -100,15 +166,21 @@ export function EmailLoginForm({
 
         setError(formatAuthErrorMessage(signInError));
         setLoading(false);
+        if (cooldownSecs > 0) startTicker(cooldownSecs);
         return;
       }
 
       const user = signInData?.user;
       if (!user) {
+        const cooldownSecs = recordFailedAttempt(email);
         setError("Authentication failed. Please try again.");
         setLoading(false);
+        if (cooldownSecs > 0) startTicker(cooldownSecs);
         return;
       }
+
+      // SFR-AUTH-06: successful sign-in — clear attempt counter
+      clearAttempts(email);
 
       // Stage 2: Credentials verified, sync session & verify account permissions server-side
       setAuthStage("Verifying account permissions…");
@@ -206,6 +278,9 @@ export function EmailLoginForm({
     }
   };
 
+  const isCoolingDown = cooldown > 0;
+  const isLocked = !!(lockedUntil && lockedUntil > new Date());
+
   return (
     <>
       {/* Global Stage-Aware Fullscreen Loader */}
@@ -246,8 +321,23 @@ export function EmailLoginForm({
             setPassword(e.target.value);
             if (error) setError(null);
           }}
-          disabled={loading}
+          disabled={loading || isCoolingDown || isLocked}
         />
+
+        {/* SFR-AUTH-06: Cooldown countdown banner */}
+        {isCoolingDown && (
+          <p
+            style={{
+              fontSize: "var(--text-xs)",
+              color: "var(--color-warning, #f59e0b)",
+              textAlign: "center",
+              marginTop: 4,
+            }}
+          >
+            Too many failed attempts — try again in{" "}
+            <strong>{cooldown}s</strong>
+          </p>
+        )}
 
         {/* Global Button Component for Submit */}
         <Button
@@ -255,10 +345,16 @@ export function EmailLoginForm({
           variant="primary"
           size="lg"
           loading={loading}
-          disabled={!email || !password || (!!lockedUntil && lockedUntil > new Date())}
+          disabled={!email || !password || isCoolingDown || isLocked}
           style={{ width: "100%", marginTop: 8 }}
         >
-          {loading ? "SIGNING IN…" : "SIGN IN"}
+          {loading
+            ? "SIGNING IN…"
+            : isCoolingDown
+            ? `WAIT ${cooldown}s…`
+            : isLocked
+            ? "ACCOUNT LOCKED"
+            : "SIGN IN"}
         </Button>
 
         {/* Forgot password link */}
