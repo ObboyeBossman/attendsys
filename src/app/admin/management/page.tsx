@@ -6,7 +6,6 @@ import {
   CalendarDays,
   Users,
   BookOpen,
-  ChevronRight,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -15,223 +14,106 @@ export const metadata: Metadata = {
 };
 
 const MANAGEMENT_SECTIONS = [
-  {
-    title: "Institution",
-    description: "Faculties, departments, programmes, and qualification types.",
-    href: "/admin/institution",
-    icon: Building2,
-    day: "Structure",
-  },
-  {
-    title: "Academic Years",
-    description: "Define and manage academic year cycles.",
-    href: "/admin/academic-years",
-    icon: GraduationCap,
-    day: "Academic",
-  },
-  {
-    title: "Semesters",
-    description: "Set up semester periods within each academic year.",
-    href: "/admin/semesters",
-    icon: CalendarDays,
-    day: "Academic",
-  },
-  {
-    title: "Groups",
-    description: "Organise students into class groups and cohorts.",
-    href: "/admin/groups",
-    icon: Users,
-    day: "Students",
-  },
-  {
-    title: "Courses",
-    description: "Create and assign courses to programmes and lecturers.",
-    href: "/admin/courses",
-    icon: BookOpen,
-    day: "Academic",
-  },
+  { title: "Institution",     subtitle: "Structure",     href: "/admin/institution",    icon: Building2   },
+  { title: "Academic Years",  subtitle: "Academic",      href: "/admin/academic-years", icon: GraduationCap },
+  { title: "Semesters",       subtitle: "Academic",      href: "/admin/semesters",      icon: CalendarDays },
+  { title: "Groups",          subtitle: "Students",      href: "/admin/groups",         icon: Users        },
+  { title: "Courses",         subtitle: "Academic",      href: "/admin/courses",        icon: BookOpen     },
 ] as const;
 
 export default function ManagementPage() {
   return (
-    <div style={{ maxWidth: "900px", margin: "0 auto", paddingBottom: "2rem" }}>
-      {/* Page Header */}
-      <div style={{ marginBottom: "2rem" }}>
-        <h1
-          style={{
-            fontSize: "1.75rem",
-            fontWeight: 700,
-            color: "#111827",
-            letterSpacing: "-0.02em",
-            marginBottom: "0.5rem",
-            fontFamily: "var(--font-plus-jakarta-sans, inherit)",
-          }}
-        >
+    <div style={{ maxWidth: "800px", margin: "0 auto", paddingBottom: "2rem" }}>
+      <div style={{ marginBottom: "1.5rem" }}>
+        <h1 style={{ fontSize: "1.75rem", fontWeight: 700, color: "#111827", letterSpacing: "-0.02em", marginBottom: "0.25rem" }}>
           Management
         </h1>
-        <p
-          style={{
-            fontSize: "0.9375rem",
-            color: "#64748B",
-            lineHeight: 1.55,
-            margin: 0,
-          }}
-        >
-          Configure your institution, academic structure, and course setup from one place.
+        <p style={{ fontSize: "0.9375rem", color: "#64748B", margin: 0 }}>
+          Configure your institution and academic structure.
         </p>
       </div>
 
-      {/* Card Grid */}
       <div
-        className="management-grid"
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(2, 1fr)",
-          gap: "1rem",
-        }}
+        className="mgmt-grid"
+        style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "0.75rem" }}
       >
         {MANAGEMENT_SECTIONS.map((section, index) => {
           const IconComponent = section.icon;
-
           return (
             <Link
               key={section.href}
               href={section.href}
+              className="mgmt-card"
               style={{
                 display: "flex",
                 flexDirection: "column",
-                padding: "1.5rem",
+                padding: "1.25rem",
                 borderRadius: "20px",
                 background: "#ffffff",
-                border: "1px solid rgba(0, 0, 0, 0.05)",
-                boxShadow: "0 2px 12px rgba(0, 0, 0, 0.03)",
+                border: "1px solid rgba(0,0,0,0.05)",
+                boxShadow: "0 2px 12px rgba(0,0,0,0.03)",
                 textDecoration: "none",
                 color: "inherit",
                 transition: "all 180ms cubic-bezier(0.22, 1, 0.36, 1)",
                 animationDelay: `${index * 40}ms`,
               }}
-              className="management-card"
             >
-              {/* Icon pill + label row — matches reference image exactly */}
+              {/* Dark pill icon */}
               <div
+                className="mgmt-icon"
                 style={{
+                  width: "48px",
+                  height: "48px",
+                  borderRadius: "14px",
+                  background: "#0A0A0A",
                   display: "flex",
-                  alignItems: "flex-start",
-                  justifyContent: "space-between",
-                  marginBottom: "1rem",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#ffffff",
+                  marginBottom: "0.875rem",
                 }}
               >
-                {/* Dark pill icon — the signature detail */}
-                <div
-                  className="management-card-icon"
-                  style={{
-                    width: "52px",
-                    height: "52px",
-                    borderRadius: "14px",
-                    background: "#0A0A0A",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#ffffff",
-                    flexShrink: 0,
-                  }}
-                >
-                  <IconComponent size={22} strokeWidth={1.75} />
-                </div>
-
-                {/* Category badge */}
-                <span
-                  style={{
-                    fontSize: "0.6875rem",
-                    fontWeight: 600,
-                    color: "#64748B",
-                    background: "#F1F5F9",
-                    padding: "0.25rem 0.5rem",
-                    borderRadius: "9999px",
-                    letterSpacing: "0.04em",
-                    textTransform: "uppercase",
-                    alignSelf: "center",
-                  }}
-                >
-                  {section.day}
-                </span>
+                <IconComponent size={22} strokeWidth={1.75} />
               </div>
 
               {/* Title */}
-              <h2
-                style={{
-                  fontSize: "1rem",
-                  fontWeight: 700,
-                  color: "#111827",
-                  letterSpacing: "-0.015em",
-                  marginBottom: "0.375rem",
-                  fontFamily: "var(--font-plus-jakarta-sans, inherit)",
-                }}
+              <span
+                className="mgmt-title"
+                style={{ fontSize: "0.9375rem", fontWeight: 700, color: "#111827", letterSpacing: "-0.015em", display: "block", marginBottom: "0.25rem" }}
               >
                 {section.title}
-              </h2>
+              </span>
 
-              {/* Description */}
-              <p
-                style={{
-                  fontSize: "0.8125rem",
-                  color: "#64748B",
-                  lineHeight: 1.55,
-                  margin: "0 0 1.25rem 0",
-                  flexGrow: 1,
-                }}
-              >
-                {section.description}
-              </p>
-
-              {/* Footer CTA */}
-              <div
-                className="management-card-footer"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  paddingTop: "0.875rem",
-                  borderTop: "1px solid rgba(0, 0, 0, 0.04)",
-                  fontSize: "0.8125rem",
-                  fontWeight: 600,
-                  color: "#111827",
-                }}
-              >
-                <span>Open {section.title}</span>
-                <ChevronRight size={16} strokeWidth={2.25} />
-              </div>
+              {/* Subtitle */}
+              <span style={{ fontSize: "0.8125rem", color: "#64748B" }}>
+                {section.subtitle}
+              </span>
             </Link>
           );
         })}
       </div>
 
-      {/* Hover + stagger styles */}
       <style>{`
-        .management-card {
-          animation: mgmt-card-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+        .mgmt-card {
+          animation: mgmt-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
         }
-        @keyframes mgmt-card-in {
-          from { opacity: 0; transform: translateY(10px); }
+        @keyframes mgmt-in {
+          from { opacity: 0; transform: translateY(8px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        .management-card:hover {
+        .mgmt-card:hover {
           transform: translateY(-2px);
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
-          border-color: rgba(0, 0, 0, 0.08);
+          box-shadow: 0 8px 24px rgba(0,0,0,0.07);
         }
         @media (prefers-reduced-motion: reduce) {
-          .management-card { animation: none; }
-          .management-card:hover { transform: none; }
+          .mgmt-card { animation: none; }
+          .mgmt-card:hover { transform: none; }
         }
         @media (max-width: 480px) {
-          .management-card:hover { transform: none; }
-          .management-card { padding: 1rem !important; }
-          .management-card h2 { font-size: 0.875rem !important; }
-          .management-card p { font-size: 0.75rem !important; }
-          .management-card-icon { width: 40px !important; height: 40px !important; border-radius: 10px !important; }
-          .management-card-icon svg { width: 18px !important; height: 18px !important; }
-          .management-card-footer { font-size: 0.75rem !important; margin-top: 0.75rem !important; padding-top: 0.625rem !important; }
+          .mgmt-card { padding: 1rem !important; }
+          .mgmt-card:hover { transform: none; }
+          .mgmt-icon { width: 40px !important; height: 40px !important; border-radius: 11px !important; margin-bottom: 0.75rem !important; }
+          .mgmt-title { font-size: 0.875rem !important; }
         }
       `}</style>
     </div>
