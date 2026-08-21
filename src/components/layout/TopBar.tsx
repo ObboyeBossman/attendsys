@@ -49,6 +49,12 @@ export function TopBar({
   // isDragging (state) is derived from it solely for render-time style decisions.
   const isDraggingRef = useRef(false);
   const [isDragging, setIsDragging] = useState(false);
+  // Ref mirror of isDragging for synchronous reads inside event handlers.
+  // React state updates are async — reading isDragging directly in handleMove/
+  // handleEnd would always see the stale pre-drag value (false), causing the
+  // drag to abort on the very first move event. The ref is set in lock-step
+  // with the state setter so handlers always get the current value.
+  const isDraggingRef = useRef(false);
   const [dragOffset, setDragOffset] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const startX = useRef(0);
@@ -207,9 +213,9 @@ export function TopBar({
           onTouchMove={(e) => handleMove(e.touches[0].clientX)}
           onTouchEnd={handleEnd}
           onMouseDown={(e) => handleStart(e.clientX)}
-          onMouseMove={(e) => { if (isDragging) handleMove(e.clientX); }}
+          onMouseMove={(e) => { if (isDraggingRef.current) handleMove(e.clientX); }}
           onMouseUp={handleEnd}
-          onMouseLeave={() => { if (isDragging) handleEnd(); }}
+          onMouseLeave={() => { if (isDraggingRef.current) handleEnd(); }}
         >
           <div className={styles.tabRow}>
             {tabList.map(({ id, label }) => {
