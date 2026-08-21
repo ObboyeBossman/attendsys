@@ -1115,16 +1115,9 @@ export function LecturerDashboardClient({ data }: { data: DashboardData }) {
 
   return (
     <>
-      {/* Page header */}
-      <div className="page-header" style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
-        <div>
-          <h1 className="page-title">Dashboard</h1>
-          <p className="page-subtitle">
-            {data.lecturerName}
-            {data.semesterName ? ` · ${data.semesterName}` : ""}
-          </p>
-        </div>
-        {data.pendingDisputes > 0 && (
+      {/* Disputes badge — floated above reel, only shown when pending */}
+      {data.pendingDisputes > 0 && (
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "var(--space-3)" }}>
           <Link
             href="/lecturer/disputes"
             className="btn btn-danger btn-sm dashboard-disputes-btn"
@@ -1134,8 +1127,8 @@ export function LecturerDashboardClient({ data }: { data: DashboardData }) {
             </svg>
             {data.pendingDisputes} dispute{data.pendingDisputes !== 1 ? "s" : ""}
           </Link>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* ── Drag-synced content reel ──────────────────────────────── */}
       <div ref={reelRef} style={{ overflow: "hidden", position: "relative" }}>
