@@ -11,35 +11,75 @@ import {
   Users,
   Library,
 } from "lucide-react";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Management | Admin",
 };
 
-const MANAGEMENT_SECTIONS = [
-  { title: "Faculties",           subtitle: "Structure", href: "/admin/institution/faculties",           icon: Building2,     tier: "structure" },
-  { title: "Departments",         subtitle: "Structure", href: "/admin/institution/departments",         icon: Building,      tier: "structure" },
-  { title: "Programmes",          subtitle: "Academic",  href: "/admin/institution/programmes",          icon: Library,       tier: "academic"  },
-  { title: "Qualification Types", subtitle: "Academic",  href: "/admin/institution/qualification-types", icon: Award,         tier: "academic"  },
-  { title: "Levels",              subtitle: "Academic",  href: "/admin/institution/levels",              icon: Layers,        tier: "academic"  },
-  { title: "Academic Years",      subtitle: "Academic",  href: "/admin/academic-years",                  icon: GraduationCap, tier: "academic"  },
-  { title: "Semesters",           subtitle: "Academic",  href: "/admin/semesters",                       icon: CalendarDays,  tier: "academic"  },
-  { title: "Groups",              subtitle: "Students",  href: "/admin/groups",                          icon: Users,         tier: "students"  },
-  { title: "Courses",             subtitle: "Academic",  href: "/admin/courses",                         icon: BookOpen,      tier: "academic"  },
-] as const;
+type Section = {
+  title:    string;
+  subtitle: string;
+  href:     string;
+  icon:     React.ElementType;
+  tier:     "structure" | "academic" | "students";
+  count:    number | null;
+};
 
-// Tier icon backgrounds map to existing token surfaces:
-//   structure → --color-surface-2 (neutral slate fill)
-//   academic  → --color-brand-subtle (indigo tint)
-//   students  → a green-tinted surface (no token exists yet; closest is surface-2)
-// We use CSS custom properties so these stay in the token layer.
+async function getCounts(): Promise<Record<string, number>> {
+  try {
+    const supabase = await createSupabaseServerClient();
+
+    const results = await Promise.all([
+      (supabase as any).from("faculties")         .select("id", { count: "exact", head: true }),
+      (supabase as any).from("departments")        .select("id", { count: "exact", head: true }),
+      (supabase as any).from("programmes")         .select("id", { count: "exact", head: true }),
+      (supabase as any).from("qualification_types").select("id", { count: "exact", head: true }),
+      (supabase as any).from("levels")             .select("id", { count: "exact", head: true }),
+      (supabase as any).from("academic_years")     .select("id", { count: "exact", head: true }),
+      (supabase as any).from("app_semesters")      .select("id", { count: "exact", head: true }),
+      (supabase as any).from("groups")             .select("id", { count: "exact", head: true }),
+      (supabase as any).from("courses")            .select("id", { count: "exact", head: true }),
+    ]);
+
+    const [fac, dept, prog, qual, lvl, yr, sem, grp, crs] = results;
+    return {
+      faculties:          fac.count  ?? 0,
+      departments:        dept.count ?? 0,
+      programmes:         prog.count ?? 0,
+      qualification_types:qual.count ?? 0,
+      levels:             lvl.count  ?? 0,
+      academic_years:     yr.count   ?? 0,
+      app_semesters:      sem.count  ?? 0,
+      groups:             grp.count  ?? 0,
+      courses:            crs.count  ?? 0,
+    };
+  } catch {
+    return {};
+  }
+}
+
 const TIER_ICON_VAR: Record<string, string> = {
   structure: "var(--color-surface-2)",
   academic:  "var(--color-brand-subtle)",
   students:  "var(--color-surface-2)",
 };
 
-export default function ManagementPage() {
+export default async function ManagementPage() {
+  const counts = await getCounts();
+
+  const SECTIONS: Section[] = [
+    { title: "Faculties",           subtitle: "Structure", href: "/admin/institution/faculties",           icon: Building2,     tier: "structure", count: counts.faculties           ?? null },
+    { title: "Departments",         subtitle: "Structure", href: "/admin/institution/departments",         icon: Building,      tier: "structure", count: counts.departments         ?? null },
+    { title: "Programmes",          subtitle: "Academic",  href: "/admin/institution/programmes",          icon: Library,       tier: "academic",  count: counts.programmes          ?? null },
+    { title: "Qualification Types", subtitle: "Academic",  href: "/admin/institution/qualification-types", icon: Award,         tier: "academic",  count: counts.qualification_types ?? null },
+    { title: "Levels",              subtitle: "Academic",  href: "/admin/institution/levels",              icon: Layers,        tier: "academic",  count: counts.levels              ?? null },
+    { title: "Academic Years",      subtitle: "Academic",  href: "/admin/academic-years",                  icon: GraduationCap, tier: "academic",  count: counts.academic_years      ?? null },
+    { title: "Semesters",           subtitle: "Academic",  href: "/admin/semesters",                       icon: CalendarDays,  tier: "academic",  count: counts.app_semesters       ?? null },
+    { title: "Groups",              subtitle: "Students",  href: "/admin/groups",                          icon: Users,         tier: "students",  count: counts.groups              ?? null },
+    { title: "Courses",             subtitle: "Academic",  href: "/admin/courses",                         icon: BookOpen,      tier: "academic",  count: counts.courses             ?? null },
+  ];
+
   return (
     <div style={{ maxWidth: "800px", margin: "0 auto", paddingBottom: "var(--space-8)" }}>
       <div
@@ -50,7 +90,7 @@ export default function ManagementPage() {
         }}
         className="mgmt-grid"
       >
-        {MANAGEMENT_SECTIONS.map((section, index) => {
+        {SECTIONS.map((section, index) => {
           const IconComponent = section.icon;
           return (
             <Link
@@ -69,20 +109,44 @@ export default function ManagementPage() {
                 color:          "inherit",
                 transition:     "all 180ms var(--ease-out)",
                 animationDelay: `${index * 35}ms`,
+                position:       "relative",
               }}
             >
+              {/* Count badge — top-right */}
+              {section.count !== null && (
+                <span
+                  className="mgmt-count"
+                  style={{
+                    position:      "absolute",
+                    top:           "var(--space-4)",
+                    right:         "var(--space-4)",
+                    fontSize:      "var(--text-xs)",
+                    fontWeight:    "var(--font-semibold)",
+                    color:         "var(--color-text-secondary)",
+                    background:    "var(--color-surface-2)",
+                    borderRadius:  "var(--radius-full)",
+                    padding:       "2px 8px",
+                    lineHeight:    1.5,
+                    fontVariantNumeric: "tabular-nums",
+                  }}
+                >
+                  {section.count}
+                </span>
+              )}
+
+              {/* Icon */}
               <div
                 className="mgmt-icon"
                 style={{
-                  width:           "48px",
-                  height:          "48px",
-                  borderRadius:    "var(--radius-lg)",
-                  background:      TIER_ICON_VAR[section.tier],
-                  display:         "flex",
-                  alignItems:      "center",
-                  justifyContent:  "center",
-                  color:           "var(--color-text-primary)",
-                  marginBottom:    "var(--space-3)",
+                  width:          "48px",
+                  height:         "48px",
+                  borderRadius:   "var(--radius-lg)",
+                  background:     TIER_ICON_VAR[section.tier],
+                  display:        "flex",
+                  alignItems:     "center",
+                  justifyContent: "center",
+                  color:          "var(--color-text-primary)",
+                  marginBottom:   "var(--space-3)",
                 }}
               >
                 <IconComponent size={22} strokeWidth={1.75} />
