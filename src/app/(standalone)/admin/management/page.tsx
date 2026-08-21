@@ -23,15 +23,6 @@ const MANAGEMENT_SECTIONS = [
 export default function ManagementPage() {
   return (
     <div style={{ maxWidth: "800px", margin: "0 auto", paddingBottom: "2rem" }}>
-      <div style={{ marginBottom: "1.5rem" }}>
-        <h1 style={{ fontSize: "1.75rem", fontWeight: 700, color: "#111827", letterSpacing: "-0.02em", marginBottom: "0.25rem" }}>
-          Management
-        </h1>
-        <p style={{ fontSize: "0.9375rem", color: "#64748B", margin: 0 }}>
-          Configure your institution and academic structure.
-        </p>
-      </div>
-
       <div
         style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "0.75rem" }}
       >
