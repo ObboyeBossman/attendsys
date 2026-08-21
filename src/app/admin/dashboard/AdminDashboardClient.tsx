@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Activity, History, Clock, AlertTriangle, CalendarClock } from "lucide-react";
 import { DashboardStats } from "./DashboardStats";
+import { usePageSwipe } from "@/hooks/usePageSwipe";
 
 /* ── Types ─────────────────────────────────────────────────────────────── */
 
@@ -71,6 +72,21 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
   const reelRef = useRef<HTMLDivElement>(null);
 
   const totalAlerts = data.longRunningSessions.length + data.staleSemesters.length;
+
+  // Page-body swipe handler — dispatches the same topbar events so the
+  // TopBar indicator and content reel follow in real time.
+  const { containerRef: swipeRef } = usePageSwipe({
+    activeIndex,
+    tabCount: tabs.length,
+    tabIds: tabs,
+    onTabChange: (tabId) => {
+      const newTab: Tab =
+        tabId === "oversight" || tabId === "calendar" ? "oversight" : "live";
+      setActiveTab(newTab);
+      setDragOffset(0);
+      setIsDragging(false);
+    },
+  });
 
   // Measure the reel container width once on mount
   useEffect(() => {
@@ -199,9 +215,13 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
   return (
     <div style={{ position: "relative" }}>
       {/* ── Drag-synced content reel ────────────────────────────────────── */}
+      {/* swipeRef adds page-body swipe; reelRef measures width for translation */}
       <div
-        ref={reelRef}
-        style={{ overflow: "hidden", position: "relative" }}
+        ref={(el) => {
+          (reelRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+          (swipeRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+        }}
+        style={{ overflow: "hidden", position: "relative", touchAction: "pan-y" }}
       >
         <div
           style={{
