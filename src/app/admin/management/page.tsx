@@ -83,9 +83,10 @@ export default function ManagementPage() {
 
       {/* Card Grid */}
       <div
+        className="management-grid"
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+          gridTemplateColumns: "repeat(2, 1fr)",
           gap: "1rem",
         }}
       >
@@ -223,6 +224,7 @@ export default function ManagementPage() {
         }
         @media (max-width: 480px) {
           .management-card:hover { transform: none; }
+          .management-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </div>
