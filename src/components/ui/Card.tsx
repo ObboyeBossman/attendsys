@@ -33,9 +33,10 @@ export function Card({
   clickable = false,
   onClick,
   className = '',
-  as: Component = 'div',
+  as = 'div',
   ...props
 }: CardProps) {
+  const Component = as as keyof React.JSX.IntrinsicElements
   return (
     <Component
       className={`rounded-xl transition-all duration-base ${variantStyles[variant]} ${paddingStyles[padding]} ${
@@ -43,12 +44,12 @@ export function Card({
           ? 'cursor-pointer hover:shadow-raised hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta'
           : ''
       } ${className}`}
-      onClick={onClick}
+      onClick={onClick as React.MouseEventHandler<any>}
       role={clickable ? 'button' : undefined}
       tabIndex={clickable ? 0 : undefined}
       onKeyDown={
         clickable
-          ? (e: React.KeyboardEvent<HTMLDivElement>) => {
+          ? (e: React.KeyboardEvent<any>) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault()
                 onClick?.(e as unknown as React.MouseEvent<HTMLDivElement>)
