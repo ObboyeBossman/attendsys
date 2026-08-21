@@ -12,6 +12,11 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
     icon: "monitor",
   },
   {
+    label: "Users",
+    href: "/admin/users",
+    icon: "users",
+  },
+  {
     label: "Institution",
     href: "/admin/institution",
     icon: "institution",
@@ -30,11 +35,6 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
     label: "Groups",
     href: "/admin/groups",
     icon: "groups",
-  },
-  {
-    label: "Users",
-    href: "/admin/users",
-    icon: "users",
   },
   {
     label: "Courses",
