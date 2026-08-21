@@ -231,12 +231,6 @@ export default function ProgrammesPage() {
   return (
     <div>
       <div className="page-header">
-        <div>
-          <h1 className="page-title">Programmes</h1>
-          <p className="page-subtitle">
-            {loading ? "Loading…" : programmes.length === 0 ? "No programmes yet — add one below" : `${programmes.length} programme${programmes.length === 1 ? "" : "s"} across ${departments.length} department${departments.length === 1 ? "" : "s"}`}
-          </p>
-        </div>
         <button className="btn btn-primary" onClick={openAdd} disabled={loading || departments.length === 0}>
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M7 1v12M1 7h12" /></svg>
           Add Programme
