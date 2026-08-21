@@ -563,6 +563,12 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
   }
 
   // Derive pageTitle dynamically from pathname and navItems
+  // ── Sidebar / drawer items: everything NOT shown on the bottom nav ────────
+  // BottomNav slices navItems[0..maxNavItems-1]. The sidebar shows the rest,
+  // avoiding duplication between the two navigation surfaces.
+  const bottomNavMax = switchTo ? 2 : 3;
+  const sidebarItems = navItems.slice(bottomNavMax);
+
   const activeNavItem = navItems.find(
     (item) =>
       pathname === item.href ||
@@ -595,7 +601,7 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
           <BrandMark roleLabel={roleLabel} />
         </div>
         <NavLinks
-          navItems={navItems}
+          navItems={sidebarItems}
           pathname={pathname}
           roleColor={roleColor}
           roleLabel={roleLabel}
@@ -644,7 +650,7 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
           </div>
         </div>
         <NavLinks
-          navItems={navItems}
+          navItems={sidebarItems}
           pathname={pathname}
           roleColor={roleColor}
           roleLabel={roleLabel}
