@@ -45,6 +45,9 @@ export function TopBar({
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const containerRef = useRef<HTMLDivElement>(null);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+  // isDraggingRef is the source-of-truth for event-handler guards (avoids stale-closure bugs).
+  // isDragging (state) is derived from it solely for render-time style decisions.
+  const isDraggingRef = useRef(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -94,6 +97,7 @@ export function TopBar({
 
   // ── Drag / swipe handlers ─────────────────────────────────────────────
   const handleStart = (clientX: number) => {
+    isDraggingRef.current = true;
     setIsDragging(true);
     startX.current = clientX;
     currentX.current = clientX;
@@ -101,7 +105,7 @@ export function TopBar({
   };
 
   const handleMove = (clientX: number) => {
-    if (!isDragging) return;
+    if (!isDraggingRef.current) return;
     currentX.current = clientX;
     const diff = clientX - startX.current;
     // Rubber-band at boundaries
@@ -123,7 +127,8 @@ export function TopBar({
   };
 
   const handleEnd = () => {
-    if (!isDragging) return;
+    if (!isDraggingRef.current) return;
+    isDraggingRef.current = false;
     setIsDragging(false);
     const diff = currentX.current - startX.current;
     const threshold = 45;
