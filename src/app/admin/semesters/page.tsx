@@ -492,14 +492,6 @@ export default function SemestersPage() {
     <div>
       {/* ── Page header ── */}
       <div className="page-header">
-        <div>
-          <h1 className="page-title">Semesters</h1>
-          <p className="page-subtitle">
-            {loading ? "Loading…" : semesters.length === 0
-              ? "No semesters yet"
-              : `${semesters.length} semester${semesters.length === 1 ? "" : "s"}${activeCount > 0 ? " · 1 active" : ""}${upcomingCount > 0 ? ` · ${upcomingCount} upcoming` : ""}`}
-          </p>
-        </div>
         <button className="btn btn-primary" onClick={openAdd} disabled={loading || years.length === 0}>
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
             <path d="M7 1v12M1 7h12" />
