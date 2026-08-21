@@ -143,12 +143,6 @@ export default function FacultiesPage() {
   return (
     <div>
       <div className="page-header">
-        <div>
-          <h1 className="page-title">Faculties</h1>
-          <p className="page-subtitle">
-            {loading ? "Loading…" : faculties.length === 0 ? "No faculties yet — add the first one" : `${faculties.length} ${faculties.length === 1 ? "faculty" : "faculties"}`}
-          </p>
-        </div>
         <button className="btn btn-primary" onClick={openAdd} disabled={loading}>
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M7 1v12M1 7h12" /></svg>
           Add Faculty
