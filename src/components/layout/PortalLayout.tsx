@@ -398,7 +398,7 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
       const state = swipeState.current;
       const isOpen = drawerRef.current?.classList.contains(styles.drawerOpen) ||
                      drawerRef.current?.style.transform === "translateX(0px)";
-      const currentlyOpen = isOpen || document.body.style.overflow === "hidden";
+      const currentlyOpen = isOpen;
 
       // Only initiate from left edge when closed, or anywhere on drawer when open
       if (!currentlyOpen && touch.clientX > EDGE_ZONE) return;
