@@ -19,6 +19,7 @@ import {
   History,
   GraduationCap,
   ArrowRightLeft,
+  Activity,
 } from "lucide-react";
 import type { NavItem, NavIcon as NavIconName } from "./PortalLayout";
 import styles from "./BottomNav.module.css";
@@ -53,6 +54,7 @@ function NavIcon({ name, active }: { name: NavIconName; active: boolean }) {
     case "check":       return <CheckCircle2 {...p} />;
     case "bell":        return <Bell {...p} />;
     case "star":        return <Star {...p} />;
+    case "monitor":     return <Activity {...p} />;
     default:            return null;
   }
 }
