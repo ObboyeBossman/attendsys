@@ -17,29 +17,9 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
     icon: "users",
   },
   {
-    label: "Institution",
-    href: "/admin/institution",
-    icon: "institution",
-  },
-  {
-    label: "Academic Years",
-    href: "/admin/academic-years",
-    icon: "academic",
-  },
-  {
-    label: "Semesters",
-    href: "/admin/semesters",
-    icon: "semesters",
-  },
-  {
-    label: "Groups",
-    href: "/admin/groups",
-    icon: "groups",
-  },
-  {
-    label: "Courses",
-    href: "/admin/courses",
-    icon: "courses",
+    label: "Management",
+    href: "/admin/management",
+    icon: "management",
   },
   {
     label: "Audit Log",

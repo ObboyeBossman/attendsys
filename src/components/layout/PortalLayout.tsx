@@ -33,6 +33,7 @@ import {
   LogOut,
   ArrowRightLeft,
   Activity,
+  LayoutGrid,
 } from "lucide-react";
 
 export type NavIcon =
@@ -56,7 +57,8 @@ export type NavIcon =
   | "calendar"
   | "star"
   | "history"
-  | "monitor";
+  | "monitor"
+  | "management";
 
 function Icon({ name, size = 18 }: { name: NavIcon; size?: number }) {
   const iconProps = { size, strokeWidth: 1.75 };
@@ -101,6 +103,8 @@ function Icon({ name, size = 18 }: { name: NavIcon; size?: number }) {
       return <Star {...iconProps} />;
     case "monitor":
       return <Activity {...iconProps} />;
+    case "management":
+      return <LayoutGrid {...iconProps} />;
     default:
       return null;
   }
