@@ -1,3 +1,6 @@
+@import "tailwindcss";
+@import "../styles/tokens.css";
+
 /* ============================================================
    Attendsys — Global Design System
    Fonts are loaded via <link> tags in src/app/layout.tsx
