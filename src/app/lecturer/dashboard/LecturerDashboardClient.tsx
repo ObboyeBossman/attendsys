@@ -1042,38 +1042,76 @@ function CalendarView({ d }: { d: DashboardData }) {
 
 /* ── Main export ─────────────────────────────────────────── */
 export function LecturerDashboardClient({ data }: { data: DashboardData }) {
-  // Signature move: smooth slide transition between Today / Calendar panels
-  // The active panel slides in from the direction of travel (right→today if going left, left→calendar if going right)
-  const [activeTab, setActiveTab] = useState<"today" | "calendar">("today");
-  const [animDir, setAnimDir] = useState<"left" | "right">("right");
-  const [isAnimating, setIsAnimating] = useState(false);
-  const prevTab = useRef<"today" | "calendar">("today");
+  const tabs = ["today", "calendar"] as const;
+  type Tab = typeof tabs[number];
 
+  const [activeTab, setActiveTab] = useState<Tab>("today");
+  const activeIndex = tabs.indexOf(activeTab);
+
+  // Drag state — driven by TopBar topbar-drag-progress events
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const reelRef = useRef<HTMLDivElement>(null);
+  const containerWidthRef = useRef(0);
+
+  useEffect(() => {
+    if (reelRef.current) containerWidthRef.current = reelRef.current.offsetWidth;
+    const onResize = () => {
+      if (reelRef.current) containerWidthRef.current = reelRef.current.offsetWidth;
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  // Tab switch from TopBar
   useEffect(() => {
     function onTabChange(e: Event) {
       const detail = (e as CustomEvent<{ tabId: string }>).detail;
       const rawTab = detail.tabId;
-      const newTab: "today" | "calendar" = (rawTab === "oversight" || rawTab === "calendar") ? "calendar" : "today";
-      if (newTab === activeTab) return;
-
-      // Determine slide direction
-      const dir = newTab === "calendar" ? "left" : "right";
-      setAnimDir(dir);
-      setIsAnimating(true);
-      prevTab.current = activeTab;
-
-      // Defer tab switch to allow exit animation frame
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setActiveTab(newTab);
-          setTimeout(() => setIsAnimating(false), 280);
-        });
-      });
+      const newTab: Tab = (rawTab === "oversight" || rawTab === "calendar") ? "calendar" : "today";
+      setActiveTab(newTab);
+      setDragOffset(0);
+      setIsDragging(false);
     }
-
     window.addEventListener("topbar-tab-change", onTabChange);
     return () => window.removeEventListener("topbar-tab-change", onTabChange);
-  }, [activeTab]);
+  }, []);
+
+  // Real-time drag follow from TopBar
+  useEffect(() => {
+    function onDragProgress(e: Event) {
+      const detail = (e as CustomEvent<{ dragOffset: number; containerWidth: number; activeIndex: number }>).detail;
+      const diff = detail.dragOffset;
+      const dragging = diff !== 0;
+      setIsDragging(dragging);
+      if (!dragging) { setDragOffset(0); return; }
+
+      const topbarW = detail.containerWidth || 1;
+      const reelW = containerWidthRef.current || topbarW;
+      const scaledOffset = (diff / topbarW) * reelW;
+      const curIdx = detail.activeIndex;
+
+      if ((curIdx === 0 && scaledOffset > 0) || (curIdx === tabs.length - 1 && scaledOffset < 0)) {
+        setDragOffset(scaledOffset * 0.15);
+      } else {
+        setDragOffset(scaledOffset);
+      }
+    }
+    window.addEventListener("topbar-drag-progress", onDragProgress);
+    return () => window.removeEventListener("topbar-drag-progress", onDragProgress);
+  }, [tabs.length]);
+
+  const translateX = `calc(${-activeIndex * 50}% + ${dragOffset / 2}px)`;
+  const w = containerWidthRef.current || 1;
+  const dragFraction = dragOffset / w;
+  const pageProgress = activeIndex - dragFraction;
+
+  const panelStyle = (index: number): React.CSSProperties => ({
+    opacity: Math.max(0.25, 1 - Math.abs(pageProgress - index) * 0.75),
+    transform: `scale(${1 - Math.abs(pageProgress - index) * 0.03})`,
+    transition: isDragging ? "none" : "opacity 380ms ease, transform 380ms ease",
+    pointerEvents: activeIndex === index ? "auto" : "none",
+  });
 
   return (
     <>
@@ -1099,49 +1137,33 @@ export function LecturerDashboardClient({ data }: { data: DashboardData }) {
         )}
       </div>
 
-      {/* Tab panels with slide animation */}
-      <div
-        style={{
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
+      {/* ── Drag-synced content reel ──────────────────────────────── */}
+      <div ref={reelRef} style={{ overflow: "hidden", position: "relative" }}>
         <div
-          className={`dashboard-panel-wrap ${isAnimating ? "is-animating" : ""}`}
-          data-dir={animDir}
-          data-tab={activeTab}
+          style={{
+            display: "flex",
+            width: "200%",
+            transform: `translateX(${translateX})`,
+            transition: isDragging ? "none" : "transform 400ms cubic-bezier(0.16, 1, 0.3, 1)",
+            willChange: "transform",
+          }}
         >
-          {activeTab === "today" ? (
+          {/* TODAY panel */}
+          <div style={{ width: "50%", paddingRight: "var(--space-2)", ...panelStyle(0) }}>
             <TodayView d={data} />
-          ) : (
+          </div>
+
+          {/* CALENDAR panel */}
+          <div style={{ width: "50%", paddingLeft: "var(--space-2)", ...panelStyle(1) }}>
             <CalendarView d={data} />
-          )}
+          </div>
         </div>
       </div>
 
       <style>{`
-        /* ── Panel slide animation — signature interaction ── */
-        @keyframes slide-in-right {
-          from { opacity: 0; transform: translateX(32px); }
-          to   { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes slide-in-left {
-          from { opacity: 0; transform: translateX(-32px); }
-          to   { opacity: 1; transform: translateX(0); }
-        }
         @keyframes live-pulse {
           0%, 100% { box-shadow: 0 0 0 3px rgba(34,197,94,.25); }
           50%       { box-shadow: 0 0 0 6px rgba(34,197,94,.05); }
-        }
-
-        .dashboard-panel-wrap[data-tab="today"].is-animating {
-          animation: slide-in-right 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
-        }
-        .dashboard-panel-wrap[data-tab="calendar"].is-animating {
-          animation: slide-in-left 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .dashboard-panel-wrap { animation: none !important; }
         }
 
         /* ── Row hover ── */
@@ -1156,6 +1178,10 @@ export function LecturerDashboardClient({ data }: { data: DashboardData }) {
           .dashboard-disputes-btn { display: none; }
           .dashboard-disputes-mobile { display: flex !important; }
           .recent-session-row { padding-left: var(--space-2) !important; padding-right: var(--space-2) !important; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .cal-session-row { transition: none !important; }
         }
       `}</style>
     </>
