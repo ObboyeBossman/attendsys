@@ -30,10 +30,6 @@ export default async function StudentFeedbackPage() {
           </svg>
           Student Feedback
         </div>
-        <h1 className={styles.heroTitle}>Your voice matters</h1>
-        <p className={styles.heroDesc}>
-          Share your experience, recommend improvements, or flag issues. Every submission is reviewed to make the system better for you and your peers.
-        </p>
       </div>
 
       {/* ── Tabbed content ──────────────────────────────────── */}
