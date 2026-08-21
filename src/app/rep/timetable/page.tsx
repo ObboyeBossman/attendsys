@@ -106,14 +106,7 @@ export default async function TimetablePage() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">Timetable</h1>
-          <p className="page-subtitle">
-            {groupName}{semesterName ? ` · ${semesterName}` : ""}
-          </p>
-        </div>
-      </div>
+
 
       {entries.length === 0 ? (
         <div className="card" style={{ textAlign: "center", padding: "var(--space-12) var(--space-6)" }}>
