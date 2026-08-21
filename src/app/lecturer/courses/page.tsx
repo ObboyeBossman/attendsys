@@ -105,16 +105,7 @@ export default async function LecturerCoursesPage() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">My Courses</h1>
-          <p className="page-subtitle">
-            {semesterName
-              ? `Courses assigned to you · ${semesterName}`
-              : "Courses assigned to you"}
-          </p>
-        </div>
-      </div>
+
 
       {!semesterName && (
         <div
