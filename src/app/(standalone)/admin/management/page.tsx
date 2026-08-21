@@ -2,10 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import {
   Building2,
+  Building,
+  BookOpen,
+  Award,
+  Layers,
   GraduationCap,
   CalendarDays,
   Users,
-  BookOpen,
+  Library,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -13,21 +17,35 @@ export const metadata: Metadata = {
 };
 
 const MANAGEMENT_SECTIONS = [
-  { title: "Institution",    subtitle: "Structure", href: "/admin/institution",    icon: Building2    },
-  { title: "Academic Years", subtitle: "Academic",  href: "/admin/academic-years", icon: GraduationCap },
-  { title: "Semesters",      subtitle: "Academic",  href: "/admin/semesters",      icon: CalendarDays },
-  { title: "Groups",         subtitle: "Students",  href: "/admin/groups",         icon: Users        },
-  { title: "Courses",        subtitle: "Academic",  href: "/admin/courses",        icon: BookOpen     },
+  // Institution structure — directly promoted from the old hub
+  { title: "Faculties",           subtitle: "Structure",  href: "/admin/institution/faculties",          icon: Building2,     tier: "structure" },
+  { title: "Departments",         subtitle: "Structure",  href: "/admin/institution/departments",        icon: Building,      tier: "structure" },
+  { title: "Programmes",          subtitle: "Academic",   href: "/admin/institution/programmes",         icon: Library,       tier: "academic"  },
+  { title: "Qualification Types", subtitle: "Academic",   href: "/admin/institution/qualification-types",icon: Award,         tier: "academic"  },
+  { title: "Levels",              subtitle: "Academic",   href: "/admin/institution/levels",             icon: Layers,        tier: "academic"  },
+  // Previously top-level management items
+  { title: "Academic Years",      subtitle: "Academic",   href: "/admin/academic-years",                 icon: GraduationCap, tier: "academic"  },
+  { title: "Semesters",           subtitle: "Academic",   href: "/admin/semesters",                      icon: CalendarDays,  tier: "academic"  },
+  { title: "Groups",              subtitle: "Students",   href: "/admin/groups",                         icon: Users,         tier: "students"  },
+  { title: "Courses",             subtitle: "Academic",   href: "/admin/courses",                        icon: BookOpen,      tier: "academic"  },
 ] as const;
+
+const TIER_ICON_BG: Record<string, string> = {
+  structure: "#F0F0F5",
+  academic:  "#EEF2FF",
+  students:  "#F0FDF4",
+};
 
 export default function ManagementPage() {
   return (
     <div style={{ maxWidth: "800px", margin: "0 auto", paddingBottom: "2rem" }}>
       <div
         style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "0.75rem" }}
+        className="mgmt-grid"
       >
         {MANAGEMENT_SECTIONS.map((section, index) => {
           const IconComponent = section.icon;
+          const iconBg = TIER_ICON_BG[section.tier];
           return (
             <Link
               key={section.href}
@@ -44,7 +62,7 @@ export default function ManagementPage() {
                 textDecoration: "none",
                 color: "inherit",
                 transition: "all 180ms cubic-bezier(0.22, 1, 0.36, 1)",
-                animationDelay: `${index * 40}ms`,
+                animationDelay: `${index * 35}ms`,
               }}
             >
               <div
@@ -53,11 +71,11 @@ export default function ManagementPage() {
                   width: "48px",
                   height: "48px",
                   borderRadius: "14px",
-                  background: "#0A0A0A",
+                  background: iconBg,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: "#ffffff",
+                  color: "#111827",
                   marginBottom: "0.875rem",
                 }}
               >
@@ -66,7 +84,14 @@ export default function ManagementPage() {
 
               <span
                 className="mgmt-title"
-                style={{ fontSize: "0.9375rem", fontWeight: 700, color: "#111827", letterSpacing: "-0.015em", display: "block", marginBottom: "0.25rem" }}
+                style={{
+                  fontSize: "0.9375rem",
+                  fontWeight: 700,
+                  color: "#111827",
+                  letterSpacing: "-0.015em",
+                  display: "block",
+                  marginBottom: "0.25rem",
+                }}
               >
                 {section.title}
               </span>
@@ -91,6 +116,7 @@ export default function ManagementPage() {
           .mgmt-card:hover { transform: none; }
         }
         @media (max-width: 480px) {
+          .mgmt-grid { grid-template-columns: repeat(2, 1fr) !important; }
           .mgmt-card { padding: 1rem !important; }
           .mgmt-card:hover { transform: none; }
           .mgmt-icon { width: 40px !important; height: 40px !important; border-radius: 11px !important; margin-bottom: 0.75rem !important; }
