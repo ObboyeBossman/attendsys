@@ -45,24 +45,6 @@ const USER_SECTIONS = [
 export default function UsersIndexPage() {
   return (
     <div style={{ maxWidth: "1000px", margin: "0 auto", paddingBottom: "2rem" }}>
-      {/* Page Header */}
-      <div style={{ marginBottom: "2rem" }}>
-        <h1
-          style={{
-            fontSize: "1.75rem",
-            fontWeight: 700,
-            color: "#111827",
-            letterSpacing: "-0.02em",
-            marginBottom: "0.5rem",
-          }}
-        >
-          User Management
-        </h1>
-        <p style={{ fontSize: "0.9375rem", color: "#64748B", lineHeight: 1.5 }}>
-          Select a user role category below to view accounts, manage profiles, assign permissions, and control access.
-        </p>
-      </div>
-
       {/* Sub-Button Cards Grid */}
       <div
         style={{
