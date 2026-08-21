@@ -180,12 +180,6 @@ export default function DepartmentsPage() {
   return (
     <div>
       <div className="page-header">
-        <div>
-          <h1 className="page-title">Departments</h1>
-          <p className="page-subtitle">
-            {loading ? "Loading…" : depts.length === 0 ? "No departments yet" : `${depts.length} department${depts.length === 1 ? "" : "s"} across ${faculties.filter((f) => depts.some((d) => d.faculty_id === f.id)).length} ${faculties.length === 1 ? "faculty" : "faculties"}`}
-          </p>
-        </div>
         <button className="btn btn-primary" onClick={openAdd} disabled={loading || faculties.length === 0}>
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M7 1v12M1 7h12" /></svg>
           Add Department
