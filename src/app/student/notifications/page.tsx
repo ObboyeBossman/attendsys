@@ -18,12 +18,7 @@ export default async function NotificationsPage() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">Notifications</h1>
-          <p className="page-subtitle">Updates and alerts about your classes.</p>
-        </div>
-      </div>
+
 
       <NotificationsList initialNotifications={(notifications ?? []) as any} />
     </div>
