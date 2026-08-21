@@ -10,15 +10,14 @@ import {
 
 export const metadata: Metadata = {
   title: "Management | Admin",
-  description: "Configure institution setup, academic years, semesters, groups, and courses.",
 };
 
 const MANAGEMENT_SECTIONS = [
-  { title: "Institution",     subtitle: "Structure",     href: "/admin/institution",    icon: Building2   },
-  { title: "Academic Years",  subtitle: "Academic",      href: "/admin/academic-years", icon: GraduationCap },
-  { title: "Semesters",       subtitle: "Academic",      href: "/admin/semesters",      icon: CalendarDays },
-  { title: "Groups",          subtitle: "Students",      href: "/admin/groups",         icon: Users        },
-  { title: "Courses",         subtitle: "Academic",      href: "/admin/courses",        icon: BookOpen     },
+  { title: "Institution",    subtitle: "Structure", href: "/admin/institution",    icon: Building2    },
+  { title: "Academic Years", subtitle: "Academic",  href: "/admin/academic-years", icon: GraduationCap },
+  { title: "Semesters",      subtitle: "Academic",  href: "/admin/semesters",      icon: CalendarDays },
+  { title: "Groups",         subtitle: "Students",  href: "/admin/groups",         icon: Users        },
+  { title: "Courses",        subtitle: "Academic",  href: "/admin/courses",        icon: BookOpen     },
 ] as const;
 
 export default function ManagementPage() {
@@ -34,7 +33,6 @@ export default function ManagementPage() {
       </div>
 
       <div
-        className="mgmt-grid"
         style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "0.75rem" }}
       >
         {MANAGEMENT_SECTIONS.map((section, index) => {
@@ -58,7 +56,6 @@ export default function ManagementPage() {
                 animationDelay: `${index * 40}ms`,
               }}
             >
-              {/* Dark pill icon */}
               <div
                 className="mgmt-icon"
                 style={{
@@ -76,7 +73,6 @@ export default function ManagementPage() {
                 <IconComponent size={22} strokeWidth={1.75} />
               </div>
 
-              {/* Title */}
               <span
                 className="mgmt-title"
                 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "#111827", letterSpacing: "-0.015em", display: "block", marginBottom: "0.25rem" }}
@@ -84,7 +80,6 @@ export default function ManagementPage() {
                 {section.title}
               </span>
 
-              {/* Subtitle */}
               <span style={{ fontSize: "0.8125rem", color: "#64748B" }}>
                 {section.subtitle}
               </span>
@@ -94,17 +89,12 @@ export default function ManagementPage() {
       </div>
 
       <style>{`
-        .mgmt-card {
-          animation: mgmt-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
-        }
+        .mgmt-card { animation: mgmt-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both; }
         @keyframes mgmt-in {
           from { opacity: 0; transform: translateY(8px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        .mgmt-card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 24px rgba(0,0,0,0.07);
-        }
+        .mgmt-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.07); }
         @media (prefers-reduced-motion: reduce) {
           .mgmt-card { animation: none; }
           .mgmt-card:hover { transform: none; }

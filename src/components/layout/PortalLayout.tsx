@@ -181,7 +181,8 @@ interface NavLinksProps {
 
 function NavLinks({ navItems, pathname, roleColor, roleLabel, role, switchTo, closeDrawer, onSignOut, onSwitchPortal, userInitial, userName }: NavLinksProps) {
   const router = useRouter();
-  const settingsHref = navItems.find((item) => item.icon === "settings" || item.icon === "user")?.href || `/${role}/profile`;
+  const settingsHref = navItems.find((item) => item.icon === "settings" || item.icon === "user")?.href
+    || (role === "super_admin" ? "/admin/settings" : `/${role}/profile`);
 
   return (
     <>
