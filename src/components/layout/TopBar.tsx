@@ -46,6 +46,12 @@ export function TopBar({
   const containerRef = useRef<HTMLDivElement>(null);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
   const [isDragging, setIsDragging] = useState(false);
+  // Ref mirror of isDragging for synchronous reads inside event handlers.
+  // React state updates are async — reading isDragging directly in handleMove/
+  // handleEnd would always see the stale pre-drag value (false), causing the
+  // drag to abort on the very first move event. The ref is set in lock-step
+  // with the state setter so handlers always get the current value.
+  const isDraggingRef = useRef(false);
   const [dragOffset, setDragOffset] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const startX = useRef(0);
@@ -94,6 +100,7 @@ export function TopBar({
 
   // ── Drag / swipe handlers ─────────────────────────────────────────────
   const handleStart = (clientX: number) => {
+    isDraggingRef.current = true;
     setIsDragging(true);
     startX.current = clientX;
     currentX.current = clientX;
@@ -101,7 +108,7 @@ export function TopBar({
   };
 
   const handleMove = (clientX: number) => {
-    if (!isDragging) return;
+    if (!isDraggingRef.current) return;
     currentX.current = clientX;
     const diff = clientX - startX.current;
     // Rubber-band at boundaries
@@ -123,7 +130,8 @@ export function TopBar({
   };
 
   const handleEnd = () => {
-    if (!isDragging) return;
+    if (!isDraggingRef.current) return;
+    isDraggingRef.current = false;
     setIsDragging(false);
     const diff = currentX.current - startX.current;
     const threshold = 45;
@@ -202,9 +210,9 @@ export function TopBar({
           onTouchMove={(e) => handleMove(e.touches[0].clientX)}
           onTouchEnd={handleEnd}
           onMouseDown={(e) => handleStart(e.clientX)}
-          onMouseMove={(e) => { if (isDragging) handleMove(e.clientX); }}
+          onMouseMove={(e) => { if (isDraggingRef.current) handleMove(e.clientX); }}
           onMouseUp={handleEnd}
-          onMouseLeave={() => { if (isDragging) handleEnd(); }}
+          onMouseLeave={() => { if (isDraggingRef.current) handleEnd(); }}
         >
           <div className={styles.tabRow}>
             {tabList.map(({ id, label }) => {
