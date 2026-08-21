@@ -161,14 +161,6 @@ export default async function AuditPage({
 
   return (
     <div>
-      {/* Header */}
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">Audit Log</h1>
-          <p className="page-subtitle">Immutable record of all system events — {total.toLocaleString()} entries</p>
-        </div>
-      </div>
-
       {/* Event list */}
       <div className="card" style={{ padding: 0, overflow: "hidden" }}>
         {events.length === 0 ? (
