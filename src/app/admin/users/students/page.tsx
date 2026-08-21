@@ -250,12 +250,6 @@ export default async function StudentsPage({
     <div>
       {/* Page header */}
       <div className="page-header">
-        <div>
-          <h1 className="page-title">Students</h1>
-          <p className="page-subtitle">
-            View, filter, and manage student accounts across the system
-          </p>
-        </div>
         <div className="alert alert-info" style={{ fontSize: "var(--text-xs)", padding: "var(--space-2) var(--space-3)" }}>
           <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" style={{ flexShrink: 0 }}>
             <circle cx="8" cy="8" r="7" />
