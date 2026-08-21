@@ -61,12 +61,7 @@ export default async function AttendanceHistoryPage() {
 
   return (
     <div className={styles.page}>
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">Attendance History</h1>
-          <p className="page-subtitle">A complete log of your class check-ins.</p>
-        </div>
-      </div>
+
 
       {Object.keys(groupedBySemester).length === 0 ? (
         <div className="card text-center py-12">
