@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { usePageSwipe } from "@/hooks/usePageSwipe";
 
 /* ── helpers ─────────────────────────────────────────────── */
 function elapsed(startedAt: string) {
@@ -1054,6 +1055,20 @@ export function LecturerDashboardClient({ data }: { data: DashboardData }) {
   const reelRef = useRef<HTMLDivElement>(null);
   const containerWidthRef = useRef(0);
 
+  // Page-body swipe handler — dispatches the same topbar events so the
+  // TopBar indicator and content reel follow in real time.
+  const { containerRef: swipeRef } = usePageSwipe({
+    activeIndex,
+    tabCount: tabs.length,
+    tabIds: tabs,
+    onTabChange: (tabId) => {
+      const newTab: Tab = (tabId === "oversight" || tabId === "calendar") ? "calendar" : "today";
+      setActiveTab(newTab);
+      setDragOffset(0);
+      setIsDragging(false);
+    },
+  });
+
   useEffect(() => {
     if (reelRef.current) containerWidthRef.current = reelRef.current.offsetWidth;
     const onResize = () => {
@@ -1131,7 +1146,14 @@ export function LecturerDashboardClient({ data }: { data: DashboardData }) {
       )}
 
       {/* ── Drag-synced content reel ──────────────────────────────── */}
-      <div ref={reelRef} style={{ overflow: "hidden", position: "relative" }}>
+      {/* swipeRef adds page-body swipe; reelRef measures width for translation */}
+      <div
+        ref={(el) => {
+          (reelRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+          (swipeRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+        }}
+        style={{ overflow: "hidden", position: "relative", touchAction: "pan-y" }}
+      >
         <div
           style={{
             display: "flex",
