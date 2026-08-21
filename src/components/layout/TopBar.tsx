@@ -82,6 +82,28 @@ export function TopBar({
     return () => window.removeEventListener("resize", measureIndicator);
   }, [measureIndicator]);
 
+  // ── Sync internal tab state when page-body swipe fires topbar-tab-change ──
+  // The page content reel (usePageSwipe) dispatches this same event so the
+  // TopBar indicator follows. But the TopBar also needs to update its OWN
+  // active-tab state so the tab button labels switch too — without this the
+  // indicator slides but the "Live" label stays highlighted after swiping.
+  useEffect(() => {
+    if (controlledActiveTab !== undefined) return; // skip if fully controlled
+    function onExternalTabChange(e: Event) {
+      const tabId = (e as CustomEvent<{ tabId: string }>).detail?.tabId as TopBarTabId | undefined;
+      if (!tabId) return;
+      // Only update if the tab is in our list and isn't already active
+      const exists = tabList.some((t) => t.id === tabId);
+      if (exists) {
+        setInternalActiveTab(tabId);
+      }
+    }
+    window.addEventListener("topbar-tab-change", onExternalTabChange);
+    return () => window.removeEventListener("topbar-tab-change", onExternalTabChange);
+  // tabList is derived from tabs prop — stable reference is fine here
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [controlledActiveTab, tabs]);
+
   // ── Tab switching ─────────────────────────────────────────────────────
   const handleTabClick = (tabId: TopBarTabId) => {
     if (controlledActiveTab === undefined) {
