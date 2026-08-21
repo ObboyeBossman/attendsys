@@ -313,16 +313,6 @@ export default function CoursesPage() {
 
   return (
     <div>
-      {/* Header */}
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">Courses</h1>
-          <p className="page-subtitle">
-            {loading ? "Loading…" : `${visible.length} of ${courses.length} courses`}
-          </p>
-        </div>
-      </div>
-
       {/* Filters row */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-3)", marginBottom: "var(--space-5)", alignItems: "center" }}>
         <div style={{ position: "relative", flex: "1 1 200px", maxWidth: 300 }}>
