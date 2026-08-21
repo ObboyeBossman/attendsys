@@ -123,6 +123,7 @@ export default function ManagementPage() {
               >
                 {/* Dark pill icon — the signature detail */}
                 <div
+                  className="management-card-icon"
                   style={{
                     width: "52px",
                     height: "52px",
@@ -185,6 +186,7 @@ export default function ManagementPage() {
 
               {/* Footer CTA */}
               <div
+                className="management-card-footer"
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -224,7 +226,12 @@ export default function ManagementPage() {
         }
         @media (max-width: 480px) {
           .management-card:hover { transform: none; }
-          .management-grid { grid-template-columns: 1fr !important; }
+          .management-card { padding: 1rem !important; }
+          .management-card h2 { font-size: 0.875rem !important; }
+          .management-card p { font-size: 0.75rem !important; }
+          .management-card-icon { width: 40px !important; height: 40px !important; border-radius: 10px !important; }
+          .management-card-icon svg { width: 18px !important; height: 18px !important; }
+          .management-card-footer { font-size: 0.75rem !important; margin-top: 0.75rem !important; padding-top: 0.625rem !important; }
         }
       `}</style>
     </div>
