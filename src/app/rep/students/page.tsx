@@ -118,10 +118,6 @@ export default async function RepStudentsPage({
     <div>
       {/* Page header */}
       <div className="page-header">
-        <div>
-          <h1 className="page-title">Student Roster</h1>
-          <p className="page-subtitle">All students enrolled in your group</p>
-        </div>
         <Link href="/rep/students/add" className="btn btn-primary">
           <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <circle cx="8" cy="7" r="4" />
