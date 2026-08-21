@@ -18,17 +18,6 @@ export default async function AdminFeedbackPage() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">Feedback &amp; Support</h1>
-          <p className="page-subtitle">
-            {totalItems === 0
-              ? "No submissions yet."
-              : `${feedbackItems.length} feedback · ${supportItems.length} support request${supportItems.length !== 1 ? "s" : ""}${totalUnread > 0 ? ` · ${totalUnread} unread` : " · all read"}`}
-          </p>
-        </div>
-      </div>
-
       <FeedbackPageClient
         feedbackItems={feedbackItems}
         supportItems={supportItems}
