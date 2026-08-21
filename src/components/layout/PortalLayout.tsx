@@ -5,7 +5,6 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import styles from "./PortalLayout.module.css";
 import { PageShimmer } from "./PageTransition";
-import { NoticeBanner } from "./NoticeBanner";
 import { BrandLogo, BrandText } from "@/components/brand";
 import { Button } from "@/components/ui";
 import { BottomNav } from "./BottomNav";
@@ -651,9 +650,6 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
 
       {/* ── Main content ─────────────────────────────────────────── */}
       <main className={styles.main}>
-        <div className={styles.noticeBannerBar}>
-          <NoticeBanner />
-        </div>
         <div className={styles.content} style={{ position: "relative" }}>
           <PageShimmer />
           {children}
