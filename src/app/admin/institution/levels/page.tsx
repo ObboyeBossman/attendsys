@@ -400,16 +400,6 @@ export default function LevelsPage() {
     <div>
       {/* ── Page header ── */}
       <div className="page-header">
-        <div>
-          <h1 className="page-title">Levels</h1>
-          <p className="page-subtitle">
-            {loading
-              ? "Loading…"
-              : levels.length === 0
-                ? "No levels yet"
-                : `${levels.length} level${levels.length === 1 ? "" : "s"} across ${qualTypes.filter((q) => levels.some((l) => l.qualification_type_id === q.id)).length} qualification type${qualTypes.length === 1 ? "" : "s"}`}
-          </p>
-        </div>
         <button className="btn btn-primary" onClick={openAdd} disabled={loading || qualTypes.length === 0}>
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
             <path d="M7 1v12M1 7h12" />
