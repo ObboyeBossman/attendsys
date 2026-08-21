@@ -169,12 +169,6 @@ export default async function LecturerDisputesPage() {
   return (
     <div>
       <div className="page-header">
-        <div>
-          <h1 className="page-title">Disputes</h1>
-          <p className="page-subtitle">
-            Attendance disputes raised for your sessions
-          </p>
-        </div>
         {pendingCount > 0 && (
           <div style={{
             display: "inline-flex", alignItems: "center", gap: "var(--space-2)",
