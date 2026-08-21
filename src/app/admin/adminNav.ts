@@ -17,6 +17,11 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
     icon: "users",
   },
   {
+    label: "Management",
+    href: "/admin/management",
+    icon: "management",
+  },
+  {
     label: "Audit Log",
     href: "/admin/audit",
     icon: "audit",
