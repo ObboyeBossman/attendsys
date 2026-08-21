@@ -32,6 +32,7 @@ import {
   ChevronsRight,
   LogOut,
   ArrowRightLeft,
+  Activity,
 } from "lucide-react";
 
 export type NavIcon =
@@ -54,7 +55,8 @@ export type NavIcon =
   | "bell"
   | "calendar"
   | "star"
-  | "history";
+  | "history"
+  | "monitor";
 
 function Icon({ name, size = 18 }: { name: NavIcon; size?: number }) {
   const iconProps = { size, strokeWidth: 1.75 };
@@ -97,6 +99,8 @@ function Icon({ name, size = 18 }: { name: NavIcon; size?: number }) {
       return <Calendar {...iconProps} />;
     case "star":
       return <Star {...iconProps} />;
+    case "monitor":
+      return <Activity {...iconProps} />;
     default:
       return null;
   }
