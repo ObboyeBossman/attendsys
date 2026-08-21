@@ -2,10 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import {
   Building2,
+  Building,
+  BookOpen,
+  Award,
+  Layers,
   GraduationCap,
   CalendarDays,
   Users,
-  BookOpen,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -13,11 +16,15 @@ export const metadata: Metadata = {
 };
 
 const MANAGEMENT_SECTIONS = [
-  { title: "Institution",    subtitle: "Structure", href: "/admin/institution",    icon: Building2    },
-  { title: "Academic Years", subtitle: "Academic",  href: "/admin/academic-years", icon: GraduationCap },
-  { title: "Semesters",      subtitle: "Academic",  href: "/admin/semesters",      icon: CalendarDays },
-  { title: "Groups",         subtitle: "Students",  href: "/admin/groups",         icon: Users        },
-  { title: "Courses",        subtitle: "Academic",  href: "/admin/courses",        icon: BookOpen     },
+  { title: "Faculties",           subtitle: "Structure", href: "/admin/institution/faculties",          icon: Building2   },
+  { title: "Departments",         subtitle: "Structure", href: "/admin/institution/departments",        icon: Building    },
+  { title: "Programmes",          subtitle: "Academic",  href: "/admin/institution/programmes",         icon: BookOpen    },
+  { title: "Qualification Types", subtitle: "Academic",  href: "/admin/institution/qualification-types",icon: Award       },
+  { title: "Levels",              subtitle: "Academic",  href: "/admin/institution/levels",             icon: Layers      },
+  { title: "Academic Years",      subtitle: "Academic",  href: "/admin/academic-years",                 icon: GraduationCap },
+  { title: "Semesters",           subtitle: "Academic",  href: "/admin/semesters",                      icon: CalendarDays },
+  { title: "Groups",              subtitle: "Students",  href: "/admin/groups",                         icon: Users       },
+  { title: "Courses",             subtitle: "Academic",  href: "/admin/courses",                        icon: BookOpen    },
 ] as const;
 
 export default function ManagementPage() {
