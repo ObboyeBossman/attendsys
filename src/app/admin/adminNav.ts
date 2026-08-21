@@ -7,6 +7,11 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
     icon: "dashboard",
   },
   {
+    label: "Monitor",
+    href: "/admin/monitor",
+    icon: "monitor",
+  },
+  {
     label: "Institution",
     href: "/admin/institution",
     icon: "institution",
