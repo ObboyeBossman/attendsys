@@ -108,12 +108,6 @@ export default async function RepCoursesPage() {
   return (
     <div>
       <div className="page-header">
-        <div>
-          <h1 className="page-title">Courses</h1>
-          <p className="page-subtitle">
-            {groupName}{semesterName ? ` · ${semesterName}` : ""}
-          </p>
-        </div>
         {semesterId && (
           <AddCourseClient groupId={groupId} semesterId={semesterId} />
         )}
