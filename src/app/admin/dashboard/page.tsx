@@ -24,8 +24,19 @@ type AuditEvent = {
   actor_id: string | null;
 };
 
+type StaleSemester = {
+  id: string;
+  name: string;
+  start_date: string;
+};
+
 async function getDashboardData() {
   const supabase = await createSupabaseServerClient();
+
+  // Threshold: 4 hours ago in ISO format — for long-running session alerts
+  const fourHoursAgo = new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString();
+  // Today's date string for stale semester detection
+  const today = new Date().toISOString().slice(0, 10);
 
   const [
     semesterRes,
@@ -35,8 +46,10 @@ async function getDashboardData() {
     disputesRes,
     liveSessionsRes,
     auditRes,
+    longSessionsRes,
+    staleSemestersRes,
   ] = await Promise.all([
-    // Active semester name
+    // Active semester
     supabase
       .from("app_semesters")
       .select("id, name, academic_year_id, academic_years(name)")
@@ -92,6 +105,22 @@ async function getDashboardData() {
       .select("id, action, table_name, created_at, actor_id")
       .order("created_at", { ascending: false })
       .limit(8),
+
+    // Alert: sessions still open after 4 hours
+    supabase
+      .from("class_sessions")
+      .select("id, started_at, courses(name, code)")
+      .is("ended_at", null)
+      .lte("started_at", fourHoursAgo)
+      .limit(5),
+
+    // Alert: semesters whose start_date has passed but status is still 'inactive'
+    supabase
+      .from("app_semesters")
+      .select("id, name, start_date")
+      .eq("status", "inactive")
+      .lte("start_date", today)
+      .limit(5),
   ]);
 
   // Derive active semester label
@@ -114,11 +143,12 @@ async function getDashboardData() {
     pendingDisputes: disputesRes.count ?? 0,
     liveSessions: (liveSessionsRes.data ?? []) as LiveSession[],
     auditEvents: (auditRes.data ?? []) as AuditEvent[],
+    longRunningSessions: (longSessionsRes.data ?? []) as LiveSession[],
+    staleSemesters: (staleSemestersRes.data ?? []) as StaleSemester[],
   };
 }
 
 export default async function AdminDashboard() {
   const data = await getDashboardData();
-
   return <AdminDashboardClient data={data} />;
 }
