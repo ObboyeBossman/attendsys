@@ -198,32 +198,6 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
 
   return (
     <div style={{ position: "relative" }}>
-      {/* Page header */}
-      <div style={{ marginBottom: "var(--space-6)" }}>
-        <h1
-          style={{
-            fontFamily: "var(--font-heading)",
-            fontSize: "var(--text-2xl)",
-            fontWeight: 700,
-            color: "var(--color-text-primary)",
-            letterSpacing: "var(--tracking-tight)",
-            margin: 0,
-          }}
-        >
-          Dashboard
-        </h1>
-        <p
-          style={{
-            fontFamily: "var(--font-body)",
-            fontSize: "var(--text-sm)",
-            color: "var(--color-text-secondary)",
-            marginTop: "var(--space-1)",
-          }}
-        >
-          System overview and live monitoring
-        </p>
-      </div>
-
       {/* ── Drag-synced content reel ────────────────────────────────────── */}
       <div
         ref={reelRef}
