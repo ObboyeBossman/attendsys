@@ -1052,7 +1052,8 @@ export function LecturerDashboardClient({ data }: { data: DashboardData }) {
   useEffect(() => {
     function onTabChange(e: Event) {
       const detail = (e as CustomEvent<{ tabId: string }>).detail;
-      const newTab = detail.tabId as "today" | "calendar";
+      const rawTab = detail.tabId;
+      const newTab: "today" | "calendar" = (rawTab === "oversight" || rawTab === "calendar") ? "calendar" : "today";
       if (newTab === activeTab) return;
 
       // Determine slide direction
