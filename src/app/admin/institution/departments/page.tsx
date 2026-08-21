@@ -231,7 +231,7 @@ export default function DepartmentsPage() {
         </div>
       ) : depts.length === 0 ? (
         <div className="card" style={{ textAlign: "center", padding: "var(--space-16) var(--space-8)" }}>
-          <div style={{ width: 64, height: 64, borderRadius: "var(--radius-xl)", background: "rgba(168,85,247,0.08)", border: "1px solid rgba(168,85,247,0.2)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto var(--space-5)", color: "#a855f7" }}>
+          <div style={{ width: 64, height: 64, borderRadius: "var(--radius-xl)", background: "var(--color-purple-subtle)", border: "1px solid var(--color-purple-border)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto var(--space-5)", color: "var(--color-purple)" }}>
             <DeptIcon />
           </div>
           <h3 style={{ fontWeight: 700, fontSize: "var(--text-lg)", marginBottom: "var(--space-2)" }}>No departments yet</h3>
@@ -252,7 +252,7 @@ export default function DepartmentsPage() {
               <div key={facId}>
                 {/* Faculty group header */}
                 <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", marginBottom: "var(--space-3)" }}>
-                  <div style={{ width: 28, height: 28, borderRadius: "var(--radius-md)", flexShrink: 0, background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <div style={{ width: 28, height: 28, borderRadius: "var(--radius-md)", flexShrink: 0, background: "var(--color-brand-blue-subtle)", border: "1px solid var(--color-brand-blue-border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--color-secondary)" strokeWidth="2" strokeLinecap="round"><path d="M3 21h18M3 21V7l9-5 9 5v14M9 21V13h6v8" /></svg>
                   </div>
                   <span style={{ fontSize: "var(--text-xs)", fontWeight: 700, color: "var(--color-text-2)", textTransform: "uppercase", letterSpacing: "0.06em" }}>{fac?.name ?? "Unknown Faculty"}</span>
@@ -342,7 +342,7 @@ export default function DepartmentsPage() {
 
       {deleteTarget && (
         <Modal title="Remove Department" onClose={closeModals}>
-          <div style={{ padding: "var(--space-4)", background: "var(--color-danger-bg)", border: "1px solid rgba(239,68,68,0.25)", borderRadius: "var(--radius-lg)", marginBottom: "var(--space-5)", display: "flex", gap: "var(--space-3)", alignItems: "flex-start" }}>
+          <div style={{ padding: "var(--space-4)", background: "var(--color-danger-bg)", border: "1px solid var(--color-danger-border)", borderRadius: "var(--radius-lg)", marginBottom: "var(--space-5)", display: "flex", gap: "var(--space-3)", alignItems: "flex-start" }}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--color-danger)" strokeWidth="1.75" strokeLinecap="round" style={{ flexShrink: 0, marginTop: 1 }}><path d="M8 2L1 14h14L8 2zM8 6v4M8 11.5v.5" /></svg>
             <p style={{ fontSize: "var(--text-sm)", color: "var(--color-danger)", lineHeight: 1.6, margin: 0 }}>This will permanently remove <strong>{deleteTarget.name}</strong>. This cannot be undone.</p>
           </div>

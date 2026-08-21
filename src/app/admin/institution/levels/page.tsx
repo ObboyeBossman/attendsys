@@ -308,7 +308,7 @@ export default function LevelsPage() {
       <div style={{
         display: "flex", gap: "var(--space-3)", alignItems: "flex-start",
         padding: "var(--space-3) var(--space-4)",
-        background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.18)",
+        background: "var(--color-success-subtle)", border: "1px solid var(--color-success-border)",
         borderRadius: "var(--radius-md)", marginBottom: "var(--space-5)",
         fontSize: "var(--text-xs)", color: "var(--color-text-2)", lineHeight: 1.6,
       }}>
@@ -470,7 +470,7 @@ export default function LevelsPage() {
         <div className="card" style={{ textAlign: "center", padding: "var(--space-16) var(--space-8)" }}>
           <div style={{
             width: 64, height: 64, borderRadius: "var(--radius-xl)",
-            background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)",
+            background: "var(--color-success-subtle)", border: "1px solid var(--color-success-border)",
             display: "flex", alignItems: "center", justifyContent: "center",
             margin: "0 auto var(--space-5)", color: "var(--color-success)",
           }}>
@@ -505,7 +505,7 @@ export default function LevelsPage() {
                   <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", marginBottom: "var(--space-3)" }}>
                     <div style={{
                       width: 28, height: 28, borderRadius: "var(--radius-md)", flexShrink: 0,
-                      background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)",
+                      background: "var(--color-success-subtle)", border: "1px solid var(--color-success-border)",
                       display: "flex", alignItems: "center", justifyContent: "center",
                     }}>
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" strokeWidth="2" strokeLinecap="round">
@@ -525,7 +525,7 @@ export default function LevelsPage() {
                         fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700,
                         letterSpacing: "0.06em", padding: "2px 7px",
                         borderRadius: "var(--radius-sm)",
-                        background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)",
+                        background: "var(--color-warning-subtle)", border: "1px solid var(--color-warning-border)",
                         color: "var(--color-warning)", flexShrink: 0,
                       }}>
                         {qual.code}
@@ -674,7 +674,7 @@ export default function LevelsPage() {
             <span style={{
               fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700,
               padding: "1px 6px", borderRadius: "var(--radius-sm)",
-              background: "rgba(245,158,11,0.08)", color: "var(--color-warning)",
+              background: "var(--color-warning-subtle)", color: "var(--color-warning)",
             }}>{editTarget.qual_code}</span>
           </div>
           {formBody(true)}
@@ -690,7 +690,7 @@ export default function LevelsPage() {
         <Modal title="Remove Level" onClose={closeModals}>
           <div style={{
             padding: "var(--space-4)",
-            background: "var(--color-danger-bg)", border: "1px solid rgba(239,68,68,0.25)",
+            background: "var(--color-danger-bg)", border: "1px solid var(--color-danger-border)",
             borderRadius: "var(--radius-lg)", marginBottom: "var(--space-5)",
             display: "flex", gap: "var(--space-3)", alignItems: "flex-start",
           }}>
