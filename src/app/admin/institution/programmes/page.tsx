@@ -275,7 +275,7 @@ export default function ProgrammesPage() {
         </div>
       ) : programmes.length === 0 ? (
         <div className="card" style={{ textAlign: "center", padding: "var(--space-16) var(--space-8)" }}>
-          <div style={{ width: 64, height: 64, borderRadius: "var(--radius-xl)", background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto var(--space-5)", color: "var(--color-success)" }}>
+          <div style={{ width: 64, height: 64, borderRadius: "var(--radius-xl)", background: "var(--color-success-subtle)", border: "1px solid var(--color-success-border)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto var(--space-5)", color: "var(--color-success)" }}>
             <ProgIcon />
           </div>
           <h3 style={{ fontWeight: 700, fontSize: "var(--text-lg)", marginBottom: "var(--space-2)" }}>No programmes yet</h3>
@@ -293,7 +293,7 @@ export default function ProgrammesPage() {
             return (
               <div key={key}>
                 <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", marginBottom: "var(--space-3)" }}>
-                  <div style={{ width: 28, height: 28, borderRadius: "var(--radius-md)", flexShrink: 0, background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <div style={{ width: 28, height: 28, borderRadius: "var(--radius-md)", flexShrink: 0, background: "var(--color-success-subtle)", border: "1px solid var(--color-success-border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" strokeWidth="2" strokeLinecap="round"><rect x="2" y="7" width="20" height="14" rx="1.5" /><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" /></svg>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
@@ -392,7 +392,7 @@ export default function ProgrammesPage() {
 
       {deleteTarget && (
         <Modal title="Remove Programme" onClose={closeModals}>
-          <div style={{ padding: "var(--space-4)", background: "var(--color-danger-bg)", border: "1px solid rgba(239,68,68,0.25)", borderRadius: "var(--radius-lg)", marginBottom: "var(--space-5)", display: "flex", gap: "var(--space-3)", alignItems: "flex-start" }}>
+          <div style={{ padding: "var(--space-4)", background: "var(--color-danger-bg)", border: "1px solid var(--color-danger-border)", borderRadius: "var(--radius-lg)", marginBottom: "var(--space-5)", display: "flex", gap: "var(--space-3)", alignItems: "flex-start" }}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--color-danger)" strokeWidth="1.75" strokeLinecap="round" style={{ flexShrink: 0, marginTop: 1 }}><path d="M8 2L1 14h14L8 2zM8 6v4M8 11.5v.5" /></svg>
             <p style={{ fontSize: "var(--text-sm)", color: "var(--color-danger)", lineHeight: 1.6, margin: 0 }}>
               This will permanently remove <strong>{deleteTarget.name}</strong> (<span style={{ fontFamily: "var(--font-mono)" }}>{deleteTarget.code}</span>). This cannot be undone.

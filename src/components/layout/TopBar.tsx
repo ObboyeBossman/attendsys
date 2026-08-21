@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Menu } from "lucide-react";
 import styles from "./TopBar.module.css";
 
-export type TopBarTabId = "today" | "calendar" | string;
+export type TopBarTabId = "live" | "oversight" | "today" | "calendar" | string;
 
 export interface TopBarTab {
   id: TopBarTabId;
@@ -22,8 +22,8 @@ export interface TopBarProps {
 }
 
 const DEFAULT_TABS: TopBarTab[] = [
-  { id: "today", label: "Today" },
-  { id: "calendar", label: "Calendar" },
+  { id: "live", label: "Live" },
+  { id: "oversight", label: "Oversight" },
 ];
 
 export function TopBar({
@@ -36,7 +36,7 @@ export function TopBar({
   title = "Dashboard",
 }: TopBarProps) {
   const [internalActiveTab, setInternalActiveTab] = useState<TopBarTabId>(
-    tabs[0]?.id || "today"
+    tabs[0]?.id || "live"
   );
   const activeTab =
     controlledActiveTab !== undefined ? controlledActiveTab : internalActiveTab;

@@ -418,7 +418,7 @@ export default function QualificationTypesPage() {
         <div className="card" style={{ textAlign: "center", padding: "var(--space-16) var(--space-8)" }}>
           <div style={{
             width: 64, height: 64, borderRadius: "var(--radius-xl)",
-            background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)",
+            background: "var(--color-warning-subtle)", border: "1px solid var(--color-warning-border)",
             display: "flex", alignItems: "center", justifyContent: "center",
             margin: "0 auto var(--space-5)", color: "var(--color-warning)",
           }}>
@@ -449,7 +449,7 @@ export default function QualificationTypesPage() {
                   <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", marginBottom: "var(--space-3)" }}>
                     <div style={{
                       width: 28, height: 28, borderRadius: "var(--radius-md)", flexShrink: 0,
-                      background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)",
+                      background: "var(--color-warning-subtle)", border: "1px solid var(--color-warning-border)",
                       display: "flex", alignItems: "center", justifyContent: "center",
                     }}>
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--color-warning)" strokeWidth="2" strokeLinecap="round">
@@ -469,7 +469,7 @@ export default function QualificationTypesPage() {
                         fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700,
                         letterSpacing: "0.06em", padding: "2px 7px",
                         borderRadius: "var(--radius-sm)",
-                        background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.2)",
+                        background: "var(--color-brand-blue-subtle)", border: "1px solid var(--color-brand-blue-border)",
                         color: "var(--color-secondary)", flexShrink: 0,
                       }}>
                         {prog.code}
@@ -608,7 +608,7 @@ export default function QualificationTypesPage() {
             <span style={{
               fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700,
               padding: "1px 6px", borderRadius: "var(--radius-sm)",
-              background: "rgba(59,130,246,0.1)", color: "var(--color-secondary)",
+              background: "var(--color-brand-blue-subtle)", color: "var(--color-secondary)",
             }}>{editTarget.prog_code}</span>
           </div>
           {formBody(true)}
@@ -624,7 +624,7 @@ export default function QualificationTypesPage() {
         <Modal title="Remove Qualification Type" onClose={closeModals}>
           <div style={{
             padding: "var(--space-4)",
-            background: "var(--color-danger-bg)", border: "1px solid rgba(239,68,68,0.25)",
+            background: "var(--color-danger-bg)", border: "1px solid var(--color-danger-border)",
             borderRadius: "var(--radius-lg)", marginBottom: "var(--space-5)",
             display: "flex", gap: "var(--space-3)", alignItems: "flex-start",
           }}>

@@ -1,49 +1,64 @@
 /* ==========================================================================
-   attendsys Design System Tokens — Single Source of Truth
+   Attendsys Design System Tokens — Single Source of Truth
    Derived from doc/08_design_system.md & .agents/AGENTS.md
    ========================================================================== */
 
 :root {
   /* --- Text Colours --- */
   --color-text-primary: #111827;
-  --color-text-secondary: #6B7280;
-  --color-text-meta: #9CA3AF;
+  --color-text-secondary: #475569;
+  --color-text-meta: #64748B;
   --color-text-inverse: #FFFFFF;
-  --color-text-disabled: #D1D5DB;
+  --color-text-disabled: #94A3B8;
+
+  /* Legacy alias mappings for existing UI */
+  --color-text: #111827;
+  --color-text-2: #475569;
+  --color-text-3: #64748B;
 
   /* --- Brand Colours --- */
   --color-brand: #1A42C2;
   --color-brand-hover: #1435A0;
   --color-brand-subtle: #EEF2FF;
 
+  /* Legacy primary alias */
+  --color-primary: #111827;
+  --color-primary-rgb: 17, 24, 39;
+  --color-primary-dark: #0A0A0A;
+
   /* --- Surface Colours --- */
   --color-canvas: #FAFAFA;
   --color-surface: #FFFFFF;
-  --color-sunken: #F3F4F6;
+  --color-sunken: #F5F5F7;
+  --color-bg: #FAFAFA;
+  --color-bg-secondary: #F5F5F7;
+  --color-surface-2: #F5F5F7;
+  --color-surface-3: #EBECEF;
 
   /* --- Border Colours --- */
-  --color-border: #E5E7EB;
-  --color-border-strong: #D1D5DB;
+  --color-border: rgba(0, 0, 0, 0.05);
+  --color-border-strong: rgba(0, 0, 0, 0.12);
+  --color-border-hover: rgba(0, 0, 0, 0.1);
 
   /* --- Semantic Status Colours --- */
   --color-success: #16A34A;
-  --color-success-subtle: #F0FDF4;
+  --color-success-subtle: rgba(22, 163, 74, 0.10);
   --color-warning: #D97706;
-  --color-warning-subtle: #FFFBEB;
-  --color-danger: #DC2626;
-  --color-danger-subtle: #FEF2F2;
-  --color-info: #2563EB;
-  --color-info-subtle: #EFF6FF;
+  --color-warning-subtle: rgba(217, 119, 6, 0.10);
+  --color-danger: #E53935;
+  --color-danger-subtle: #FDECEA;
+  --color-info: #111827;
+  --color-info-subtle: #F1F5F9;
 
   /* --- Attendance Specific Colours --- */
   --color-attendance-present: #16A34A;
-  --color-attendance-present-subtle: #F0FDF4;
-  --color-attendance-absent: #DC2626;
-  --color-attendance-absent-subtle: #FEF2F2;
+  --color-attendance-present-subtle: rgba(22, 163, 74, 0.10);
+  --color-attendance-absent: #E53935;
+  --color-attendance-absent-subtle: #FDECEA;
   --color-attendance-late: #D97706;
-  --color-attendance-late-subtle: #FFFBEB;
-  --color-attendance-excused: #6B7280;
-  --color-attendance-excused-subtle: #F3F4F6;
+  --color-attendance-late-subtle: rgba(217, 119, 6, 0.10);
+  --color-attendance-excused: #64748B;
+  --color-attendance-excused-subtle: #F1F5F9;
 
   /* --- Call-to-Action (CTA) Colours --- */
   --color-cta: #0A0A0A;
@@ -74,16 +89,16 @@
 
   /* --- Typography: Line Heights --- */
   --leading-none: 1;
-  --leading-tight: 1.25;
-  --leading-snug: 1.375;
-  --leading-normal: 1.5;
+  --leading-tight: 1.2;
+  --leading-snug: 1.25;
+  --leading-normal: 1.55;
   --leading-relaxed: 1.625;
   --leading-loose: 2;
 
   /* --- Typography: Letter Spacing --- */
   --tracking-tight: -0.02em;
-  --tracking-normal: 0em;
-  --tracking-wide: 0.05em;
+  --tracking-normal: -0.015em;
+  --tracking-wide: 0.08em;
 
   /* --- Spacing Scale (Base-8 System) --- */
   --space-1: 0.25rem;  /* 4px */
@@ -101,8 +116,8 @@
   --radius-sm: 0.25rem;  /* 4px */
   --radius-md: 0.5rem;   /* 8px */
   --radius-lg: 0.75rem;  /* 12px */
-  --radius-xl: 1rem;     /* 16px */
-  --radius-2xl: 1.25rem; /* 20px */
+  --radius-xl: 1.25rem;  /* 20px - squircle */
+  --radius-2xl: 1.5rem;  /* 24px */
   --radius-full: 9999px;
 
   /* --- Elevation & Shadows --- */
@@ -116,7 +131,7 @@
   --duration-base: 200ms;
   --duration-slow: 300ms;
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
 
   /* --- Z-Index Scale --- */
