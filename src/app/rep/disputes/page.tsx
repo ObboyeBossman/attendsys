@@ -154,12 +154,6 @@ export default async function RepDisputesPage() {
     <div>
       {/* Header */}
       <div className="page-header">
-        <div>
-          <h1 className="page-title">Disputes</h1>
-          <p className="page-subtitle">
-            Pending attendance disputes from your group
-          </p>
-        </div>
         {disputes.length > 0 && (
           <div style={{
             display: "inline-flex", alignItems: "center", gap: "var(--space-2)",
