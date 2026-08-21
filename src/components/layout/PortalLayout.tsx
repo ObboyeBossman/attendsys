@@ -612,7 +612,13 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
         onProfilePress={openSignOut}
         userInitial={userInitial}
         title={pageTitle}
-        tabs={pathname.endsWith("/dashboard") ? undefined : []}
+        tabs={
+          pathname.endsWith("/dashboard") && role === "super_admin"
+            ? [{ id: "live", label: "Live" }, { id: "oversight", label: "Oversight" }]
+            : pathname.endsWith("/dashboard") && role === "lecturer"
+            ? [{ id: "today", label: "Today" }, { id: "calendar", label: "Calendar" }]
+            : []
+        }
       />
 
       {/* ── Mobile drawer overlay ─────────────────────────────────── */}
