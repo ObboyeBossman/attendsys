@@ -40,8 +40,8 @@ export default function StandaloneLayout({ children }: { children: React.ReactNo
           onClick={() => router.back()}
           aria-label="Go back"
           style={{
-            width: "36px",
-            height: "36px",
+            width: "44px",
+            height: "44px",
             borderRadius: "50%",
             background: "#EFEFEF",
             border: "none",
@@ -53,16 +53,16 @@ export default function StandaloneLayout({ children }: { children: React.ReactNo
             flexShrink: 0,
           }}
         >
-          <X size={18} strokeWidth={2} />
+          <X size={22} strokeWidth={2} />
         </button>
 
         {title && (
           <span
             style={{
-              fontSize: "0.9375rem",
-              fontWeight: 600,
+              fontSize: "1.125rem",
+              fontWeight: 700,
               color: "#111827",
-              letterSpacing: "-0.01em",
+              letterSpacing: "-0.02em",
             }}
           >
             {title}
