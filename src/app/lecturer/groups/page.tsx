@@ -114,14 +114,7 @@ export default async function LecturerGroupsPage() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">Groups</h1>
-          <p className="page-subtitle">
-            Student groups you teach through your assigned courses
-          </p>
-        </div>
-      </div>
+
 
       {/* Empty state */}
       {groups.length === 0 && (
