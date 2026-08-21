@@ -172,12 +172,6 @@ export default async function LecturerSessionsPage() {
   return (
     <div>
       <div className="page-header">
-        <div>
-          <h1 className="page-title">Sessions</h1>
-          <p className="page-subtitle">
-            All attendance sessions across your courses
-          </p>
-        </div>
         {liveCount > 0 && (
           <div
             style={{
