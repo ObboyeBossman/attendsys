@@ -150,14 +150,6 @@ export default async function HistoryPage() {
   return (
     <div>
       <div className="page-header" style={{ marginBottom: "var(--space-6)" }}>
-        <div>
-          <h1 className="page-title">Past Courses</h1>
-          <p className="page-subtitle">
-            {courses.length > 0
-              ? `${courses.length} course${courses.length === 1 ? "" : "s"} from previous semesters`
-              : "Courses you have previously taught"}
-          </p>
-        </div>
       </div>
 
       {courses.length === 0 && (
