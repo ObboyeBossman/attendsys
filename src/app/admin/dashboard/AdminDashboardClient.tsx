@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Activity, History, Clock } from "lucide-react";
 import { DashboardStats } from "./DashboardStats";
+import { DaySummaryBanner } from "./DaySummaryBanner";
 import { AlertSheet } from "./AlertSheet";
 import { usePageSwipe } from "@/hooks/usePageSwipe";
 import { setDashboardAlertStore } from "@/components/layout/PortalLayout";
@@ -271,6 +272,12 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
             style={panelStyle(0)}
           >
             <div className={styles.panelStack}>
+
+              {/* Day summary banner */}
+              <DaySummaryBanner
+                sessionsToday={data.sessionsToday}
+                liveSessions={data.liveSessions}
+              />
 
               {/* Live Sessions Card */}
               <div className={styles.card}>
