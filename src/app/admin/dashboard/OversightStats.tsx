@@ -18,6 +18,7 @@ interface OversightStatsProps {
   activeLecturers: number;
   sessionsToday: number;
   pendingDisputes: number;
+  onDisputesPress?: () => void;
 }
 
 /* ── Stat card ──────────────────────────────────────────────────────────── */
@@ -28,15 +29,17 @@ function StatCard({
   value,
   sub,
   danger,
+  onClick,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string;
   sub: string;
   danger?: boolean;
+  onClick?: () => void;
 }) {
-  return (
-    <div className={`${styles.card} ${danger ? styles.cardDanger : ""}`}>
+  const inner = (
+    <>
       <div className={styles.cardTop}>
         <span className={`${styles.icon} ${danger ? styles.iconDanger : ""}`}>
           {icon}
@@ -45,6 +48,24 @@ function StatCard({
       </div>
       <span className={styles.value}>{value}</span>
       <span className={styles.sub}>{sub}</span>
+    </>
+  );
+
+  if (onClick) {
+    return (
+      <button
+        className={`${styles.card} ${danger ? styles.cardDanger : ""} ${styles.cardTappable}`}
+        onClick={onClick}
+        aria-label={`${label}: ${value}. Tap to view details.`}
+      >
+        {inner}
+      </button>
+    );
+  }
+
+  return (
+    <div className={`${styles.card} ${danger ? styles.cardDanger : ""}`}>
+      {inner}
     </div>
   );
 }
@@ -57,6 +78,7 @@ export function OversightStats({
   activeLecturers,
   sessionsToday,
   pendingDisputes,
+  onDisputesPress,
 }: OversightStatsProps) {
   const hasSemester = semesterLabel !== "None";
   const hasDisputes = pendingDisputes > 0;
@@ -95,8 +117,9 @@ export function OversightStats({
         icon={<AlertTriangle size={18} strokeWidth={1.75} />}
         label="Pending Disputes"
         value={pendingDisputes.toLocaleString()}
-        sub={hasDisputes ? "Require review" : "All clear"}
+        sub={hasDisputes ? "Tap to review" : "All clear"}
         danger={hasDisputes}
+        onClick={hasDisputes ? onDisputesPress : undefined}
       />
     </div>
   );
