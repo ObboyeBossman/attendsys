@@ -10,33 +10,9 @@
   position: relative;
 }
 
-/* ── Reel (swipe container) ─────────────────────────────────────────────── */
+/* ── Page stack (single scrollable column) ──────────────────────────────── */
 
-.reelViewport {
-  overflow: hidden;
-  position: relative;
-  touch-action: pan-y;
-}
-
-.reelTrack {
-  display: flex;
-  width: 200%;
-  will-change: transform;
-}
-
-.panel {
-  width: 50%;
-}
-
-.panelLeft {
-  padding-right: var(--space-2);
-}
-
-.panelRight {
-  padding-left: var(--space-2);
-}
-
-.panelStack {
+.pageStack {
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
