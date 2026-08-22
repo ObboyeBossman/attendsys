@@ -257,6 +257,56 @@ Every committed file should be pushed to the feature branch — never leave unpu
 
 ---
 
+## Agent Memory — Notion Session Log
+
+The project maintains a persistent memory document in Notion that survives across sessions. Every agent **must** read it at session start and write to it actively during work.
+
+**Notion page:** https://app.notion.com/p/3c498408449f812f8be4dcdc942a3627
+
+### Session Start — Required Steps (in order)
+
+1. Open the Agent Memory page in Notion (URL above).
+2. Read every section: Current Task, Status, Active Branch, What Was Just Done, What Remains, Backlog.
+3. If Status is `in-progress` or there is an Active Branch — resume that work immediately without asking for a recap.
+4. If the user says **"Continue"** — this means: read the memory doc, understand exactly where you left off, and proceed. No further explanation from the user is needed.
+5. Only after reading the memory doc do you proceed to clone/pull the repo, read `AGENTS.md`, and read `CLAUDE.md`.
+
+### During Work — Write Actively
+
+Update the Notion memory page **proactively** as you work. Do not wait until the end of the session. Write to it at each of these milestones:
+
+| Milestone | What to update |
+|---|---|
+| Feature branch created | Active Branch, Status → `in-progress` |
+| Each file committed and pushed | Append row to Session Log, update "What Was Just Done" |
+| Build passes | Note in Session Log |
+| Branch merged to main | Status → `idle`, Active Branch → `main`, clear "What Remains" |
+| Task completed | Move task out of Backlog, update Current Task to next item |
+| Session ending | Write end-of-session summary row in Session Log, update "What Remains" with exact next steps |
+
+### Memory Page Structure
+
+The memory page contains these sections — keep them accurate at all times:
+
+- **Current Task** — one sentence describing what is being worked on right now
+- **Status** — one of: `in-progress` / `ready-to-start` / `blocked` / `ready-to-merge` / `idle`
+- **Active Branch** — current feature branch name, or `main` if none
+- **What Was Just Done** — last 3–5 completed actions, most recent first
+- **What Remains** — ordered steps still needed to finish the current task
+- **Backlog** — future tasks in priority order
+- **Project Context** — stable reference info (repo, stack, rules) — do not modify unless something changes
+- **Session Log** — append-only timestamped history of every action taken; never delete rows
+
+### Rules
+
+- **Never skip reading the memory doc** at session start. It is as mandatory as reading `AGENTS.md` and `CLAUDE.md`.
+- **Never skip writing** to the memory doc during work. Silent sessions that produce no memory updates are a violation.
+- Write to Notion **before** moving to the next file or task — the same discipline as commit-and-push.
+- If the Notion connection is unavailable, note this in your opening message and proceed — but write double-detailed summaries in the chat so the user can manually update the doc.
+- The Session Log is append-only. Never edit or delete past rows.
+
+---
+
 ## Relationship to AGENTS.md
 
 | Concern | Source of truth |
@@ -267,5 +317,6 @@ Every committed file should be pushed to the feature branch — never leave unpu
 | Git identity, branching, security | `CLAUDE.md` (this file) |
 | Build validation & push rules | `CLAUDE.md` (this file) |
 | Communication & session workflow | `CLAUDE.md` (this file) |
+| Persistent session memory | Notion — Agent Memory page (URL in this file) |
 
 When there is any conflict, `AGENTS.md` wins on design decisions; `CLAUDE.md` wins on workflow and process decisions.
