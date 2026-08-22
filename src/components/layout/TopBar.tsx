@@ -183,9 +183,7 @@ export function TopBar({
     const targetIndex = dragRatio < 0 ? activeIndex + 1 : activeIndex - 1;
 
     if (targetIndex >= 0 && targetIndex < tabList.length) {
-      // eslint-disable-next-line react-hooks/refs
       const curEl = tabRefs.current[tabList[activeIndex].id];
-      // eslint-disable-next-line react-hooks/refs
       const tgtEl = tabRefs.current[tabList[targetIndex].id];
 
       /* eslint-disable react-hooks/refs */
