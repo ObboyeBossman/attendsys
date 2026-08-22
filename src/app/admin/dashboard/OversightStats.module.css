@@ -30,6 +30,20 @@
   transition: border-color 150ms var(--ease-out), box-shadow 150ms var(--ease-out);
 }
 
+.cardTappable {
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 150ms var(--ease-out), background 150ms var(--ease-out), transform 120ms var(--ease-out);
+}
+
+.cardTappable:hover {
+  border-color: var(--color-danger);
+}
+
+.cardTappable:active {
+  transform: scale(0.98);
+}
+
 .cardDanger {
   border-color: rgba(229, 57, 53, 0.2);
   background: var(--color-danger-subtle);
