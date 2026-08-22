@@ -1,0 +1,158 @@
+/* ==========================================================================
+   AlertBar — persistent sticky strip just below the app bar
+   Monochrome-first: severity is communicated through typography weight
+   and icon choice only — never through colour.
+   All values reference design tokens from globals.css.
+   ========================================================================== */
+
+/* ── Bar shell ───────────────────────────────────────────────────────────── */
+
+.bar {
+  position: sticky;
+  /* Sits directly below the app bar; z-index below TopBar (100) */
+  top: 56px;
+  z-index: 90;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  width: 100%;
+  padding: var(--space-2) var(--space-5);
+  min-height: 36px;
+
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+
+  /* Reset button styles when rendered as <button> */
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-radius: 0;
+  cursor: default;
+  text-align: left;
+  font-family: var(--font-body);
+}
+
+/* ── Clickable state (alerts present) ───────────────────────────────────── */
+
+.barClickable {
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.barClickable:hover {
+  background: var(--color-surface-2);
+}
+
+.barClickable:active {
+  background: var(--color-surface-3);
+}
+
+/* ── Severity modifiers — typography weight only, no colour ─────────────── */
+
+/* Critical: heaviest weight, tightest tracking — demands attention */
+.bar--critical .labelCount {
+  font-weight: 700;
+}
+
+.bar--critical .severityChip {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* Warning: medium-heavy — noticeable but not alarming */
+.bar--warning .labelCount {
+  font-weight: 600;
+}
+
+.bar--warning .severityChip {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Info: standard emphasis */
+.bar--info .labelCount {
+  font-weight: 500;
+}
+
+.bar--info .severityChip {
+  font-weight: 500;
+}
+
+/* ── Inner layout ────────────────────────────────────────────────────────── */
+
+.inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Icons ───────────────────────────────────────────────────────────────── */
+
+.iconHealthy {
+  color: var(--color-text-3);
+  flex-shrink: 0;
+}
+
+.iconAlert {
+  color: var(--color-text);
+  flex-shrink: 0;
+}
+
+/* ── Labels — healthy state ──────────────────────────────────────────────── */
+
+.labelHealthy {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  color: var(--color-text-3);
+  letter-spacing: 0.01em;
+}
+
+/* ── Labels — alert state ────────────────────────────────────────────────── */
+
+.labelAlert {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-2);
+  white-space: nowrap;
+}
+
+.labelCount {
+  /* weight set by severity modifier */
+  color: var(--color-text);
+}
+
+/* ── Severity chip ───────────────────────────────────────────────────────── */
+
+.severityChip {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  /* weight set by severity modifier */
+  color: var(--color-text);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: 0 var(--space-2);
+  /* Signature detail: the chip text tracks the top — pill label with tight ascender */
+  line-height: 1.8;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── Chevron ─────────────────────────────────────────────────────────────── */
+
+.chevron {
+  color: var(--color-text-3);
+  flex-shrink: 0;
+  margin-left: var(--space-1);
+  transition: transform 120ms ease;
+}
+
+.barClickable:hover .chevron {
+  transform: translateX(2px);
+}
