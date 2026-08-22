@@ -125,8 +125,7 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
 
   // Stable ref callback that attaches the same DOM node to both reelRef (for
   // width measurement) and swipeRef (for touch/mouse event listeners in usePageSwipe).
-  // useCallback ensures this is created once so React doesn't detach/reattach on every render.
-  // eslint-disable-next-line react-hooks/immutability
+  /* eslint-disable react-hooks/immutability */
   const setReelNode = useCallback(
     (el: HTMLDivElement | null) => {
       (reelRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
@@ -134,6 +133,7 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
     },
     [swipeRef]
   );
+  /* eslint-enable react-hooks/immutability */
 
   useEffect(() => {
     if (reelRef.current) {
