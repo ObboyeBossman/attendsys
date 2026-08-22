@@ -1,15 +1,14 @@
 /* ==========================================================================
-   AlertBar — persistent sticky strip just below the app bar
-   Monochrome-first: severity is communicated through typography weight
-   and icon choice only — never through colour.
-   All values reference design tokens from globals.css.
+   AlertBar — persistent fixed strip just below the app bar
+   Slate saturation scale: background darkens with alert severity/count.
+   Text and icon colours invert as background darkens to maintain contrast.
+   All values reference design tokens from globals.css where possible.
    ========================================================================== */
 
 /* ── Bar shell ───────────────────────────────────────────────────────────── */
 
 .bar {
-  /* Positioning is handled by the fixed .noticeBannerBar shell in PortalLayout.
-     The bar itself is a plain block — no sticky/fixed needed here. */
+  /* Positioning handled by .noticeBannerBar shell in PortalLayout */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -18,8 +17,9 @@
   padding: var(--space-2) var(--space-5);
   min-height: 36px;
 
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
+  /* Default: healthy / canvas — nearly invisible */
+  background: #FAFAFA;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 
   /* Reset button styles when rendered as <button> */
   border-top: none;
@@ -29,26 +29,62 @@
   cursor: default;
   text-align: left;
   font-family: var(--font-body);
+
+  transition: background 200ms ease, border-color 200ms ease;
+}
+
+/* ── Severity: Info — slate-50 ───────────────────────────────────────────── */
+
+.bar--info {
+  background: #F8FAFC;  /* slate-50 */
+  border-bottom-color: rgba(100, 116, 139, 0.12);
+}
+
+/* ── Severity: Warning — slate-100 ──────────────────────────────────────── */
+
+.bar--warning {
+  background: #F1F5F9;  /* slate-100 */
+  border-bottom-color: rgba(100, 116, 139, 0.18);
+}
+
+/* ── Severity: Critical — scales with data-intensity ─────────────────────
+   intensity 1 (1–2 critical): slate-200
+   intensity 2 (3–5 critical): slate-400
+   intensity 3 (6+ critical):  slate-700  ← near-charcoal, text inverts
+   ─────────────────────────────────────────────────────────────────────── */
+
+.bar--critical[data-intensity="1"] {
+  background: #E2E8F0;  /* slate-200 */
+  border-bottom-color: rgba(100, 116, 139, 0.22);
+}
+
+.bar--critical[data-intensity="2"] {
+  background: #94A3B8;  /* slate-400 */
+  border-bottom-color: rgba(51, 65, 85, 0.30);
+}
+
+.bar--critical[data-intensity="3"] {
+  background: #334155;  /* slate-700 */
+  border-bottom-color: rgba(15, 23, 42, 0.40);
 }
 
 /* ── Clickable state (alerts present) ───────────────────────────────────── */
 
 .barClickable {
   cursor: pointer;
-  transition: background 120ms ease;
+  transition: background 120ms ease, border-color 120ms ease;
 }
 
 .barClickable:hover {
-  background: var(--color-surface-2);
+  filter: brightness(0.96);
 }
 
 .barClickable:active {
-  background: var(--color-surface-3);
+  filter: brightness(0.92);
 }
 
-/* ── Severity modifiers — typography weight only, no colour ─────────────── */
+/* ── Severity modifiers — typography weight only ─────────────────────────── */
 
-/* Critical: heaviest weight, tightest tracking — demands attention */
 .bar--critical .labelCount {
   font-weight: 700;
 }
@@ -58,7 +94,6 @@
   letter-spacing: 0.04em;
 }
 
-/* Warning: medium-heavy — noticeable but not alarming */
 .bar--warning .labelCount {
   font-weight: 600;
 }
@@ -68,7 +103,6 @@
   letter-spacing: 0.02em;
 }
 
-/* Info: standard emphasis */
 .bar--info .labelCount {
   font-weight: 500;
 }
@@ -99,6 +133,11 @@
   flex-shrink: 0;
 }
 
+/* On dark backgrounds (intensity 3) icons go light */
+.bar--critical[data-intensity="3"] .iconAlert {
+  color: rgba(255, 255, 255, 0.90);
+}
+
 /* ── Labels — healthy state ──────────────────────────────────────────────── */
 
 .labelHealthy {
@@ -123,6 +162,18 @@
   color: var(--color-text);
 }
 
+/* Medium dark bg: darken text slightly for contrast */
+.bar--critical[data-intensity="2"] .labelAlert,
+.bar--critical[data-intensity="2"] .labelCount {
+  color: #1E293B;  /* slate-800 */
+}
+
+/* Dark bg: go full white */
+.bar--critical[data-intensity="3"] .labelAlert,
+.bar--critical[data-intensity="3"] .labelCount {
+  color: rgba(255, 255, 255, 0.95);
+}
+
 /* ── Severity chip ───────────────────────────────────────────────────────── */
 
 .severityChip {
@@ -135,10 +186,24 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
   padding: 0 var(--space-2);
-  /* Signature detail: the chip text tracks the top — pill label with tight ascender */
   line-height: 1.8;
   text-transform: uppercase;
   letter-spacing: 0.06em;
+  transition: background 200ms ease, border-color 200ms ease, color 200ms ease;
+}
+
+/* Medium: darken chip slightly */
+.bar--critical[data-intensity="2"] .severityChip {
+  color: #0F172A;           /* slate-900 */
+  background: rgba(255, 255, 255, 0.40);
+  border-color: rgba(15, 23, 42, 0.20);
+}
+
+/* Dark: invert chip to white-on-transparent */
+.bar--critical[data-intensity="3"] .severityChip {
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 /* ── Chevron ─────────────────────────────────────────────────────────────── */
@@ -147,9 +212,18 @@
   color: var(--color-text-3);
   flex-shrink: 0;
   margin-left: var(--space-1);
-  transition: transform 120ms ease;
+  transition: transform 120ms ease, color 200ms ease;
 }
 
 .barClickable:hover .chevron {
   transform: translateX(2px);
+}
+
+/* Medium + dark: chevron goes slate/white */
+.bar--critical[data-intensity="2"] .chevron {
+  color: #475569;  /* slate-600 */
+}
+
+.bar--critical[data-intensity="3"] .chevron {
+  color: rgba(255, 255, 255, 0.70);
 }
