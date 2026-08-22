@@ -1,7 +1,7 @@
 /* ==========================================================================
    AlertBar — persistent fixed strip just below the app bar
-   Pure monochrome luminance scale: white → black.
-   Text and icons invert to white once the background crosses the midpoint.
+   All colours reference tokens from tokens.css — no hardcoded values.
+   To retheme or introduce dark mode, update the token block only.
    ========================================================================== */
 
 /* ── Bar shell ───────────────────────────────────────────────────────────── */
@@ -15,9 +15,8 @@
   padding: var(--space-2) var(--space-5);
   min-height: 36px;
 
-  /* Healthy default: pure white */
-  background: #FFFFFF;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  background: var(--color-alert-healthy-bg);
+  border-bottom: 1px solid var(--color-border);
 
   border-top: none;
   border-left: none;
@@ -33,36 +32,32 @@
 /* ── Severity: Info ──────────────────────────────────────────────────────── */
 
 .bar--info {
-  background: #F0F0F0;
-  border-bottom-color: rgba(0, 0, 0, 0.10);
+  background: var(--color-alert-info-bg);
+  border-bottom-color: var(--color-alert-info-border);
 }
 
 /* ── Severity: Warning ───────────────────────────────────────────────────── */
 
 .bar--warning {
-  background: #C0C0C0;
-  border-bottom-color: rgba(0, 0, 0, 0.15);
+  background: var(--color-alert-warning-bg);
+  border-bottom-color: var(--color-alert-warning-border);
 }
 
-/* ── Severity: Critical — scales with data-intensity ─────────────────────
-   intensity 1 (1–2):  #808080  mid-dark  — text stays dark
-   intensity 2 (3–5):  #404040  dark      — text inverts to white
-   intensity 3 (6+):   #0A0A0A  near-black — full white inversion
-   ─────────────────────────────────────────────────────────────────────── */
+/* ── Severity: Critical — scales with data-intensity ────────────────────── */
 
 .bar--critical[data-intensity="1"] {
-  background: #808080;
-  border-bottom-color: rgba(0, 0, 0, 0.20);
+  background: var(--color-alert-critical-1-bg);
+  border-bottom-color: var(--color-alert-critical-1-border);
 }
 
 .bar--critical[data-intensity="2"] {
-  background: #404040;
-  border-bottom-color: rgba(0, 0, 0, 0.30);
+  background: var(--color-alert-critical-2-bg);
+  border-bottom-color: var(--color-alert-critical-2-border);
 }
 
 .bar--critical[data-intensity="3"] {
-  background: #0A0A0A;
-  border-bottom-color: rgba(0, 0, 0, 0.50);
+  background: var(--color-alert-critical-3-bg);
+  border-bottom-color: var(--color-alert-critical-3-border);
 }
 
 /* ── Clickable state ─────────────────────────────────────────────────────── */
@@ -72,24 +67,19 @@
   transition: background 120ms ease, border-color 120ms ease;
 }
 
-.barClickable:hover {
-  filter: brightness(0.93);
-}
-
-.barClickable:active {
-  filter: brightness(0.86);
-}
+.barClickable:hover  { filter: brightness(0.93); }
+.barClickable:active { filter: brightness(0.86); }
 
 /* ── Severity weight modifiers ───────────────────────────────────────────── */
 
-.bar--critical .labelCount { font-weight: 700; }
+.bar--critical .labelCount  { font-weight: 700; }
 .bar--critical .severityChip { font-weight: 700; letter-spacing: 0.04em; }
 
-.bar--warning .labelCount { font-weight: 600; }
-.bar--warning .severityChip { font-weight: 600; letter-spacing: 0.02em; }
+.bar--warning .labelCount   { font-weight: 600; }
+.bar--warning .severityChip  { font-weight: 600; letter-spacing: 0.02em; }
 
-.bar--info .labelCount { font-weight: 500; }
-.bar--info .severityChip { font-weight: 500; }
+.bar--info .labelCount      { font-weight: 500; }
+.bar--info .severityChip     { font-weight: 500; }
 
 /* ── Inner layout ────────────────────────────────────────────────────────── */
 
@@ -104,7 +94,7 @@
 /* ── Icons ───────────────────────────────────────────────────────────────── */
 
 .iconHealthy {
-  color: var(--color-text-3);
+  color: var(--color-alert-healthy-text);
   flex-shrink: 0;
 }
 
@@ -113,12 +103,11 @@
   flex-shrink: 0;
 }
 
-/* Invert on dark backgrounds (warning crosses midpoint, all critical) */
 .bar--warning .iconAlert,
 .bar--critical[data-intensity="1"] .iconAlert,
 .bar--critical[data-intensity="2"] .iconAlert,
 .bar--critical[data-intensity="3"] .iconAlert {
-  color: rgba(255, 255, 255, 0.90);
+  color: var(--color-alert-warning-text);
 }
 
 /* ── Labels — healthy ────────────────────────────────────────────────────── */
@@ -127,7 +116,7 @@
   font-family: var(--font-body);
   font-size: var(--text-xs);
   font-weight: 400;
-  color: var(--color-text-3);
+  color: var(--color-alert-healthy-text);
   letter-spacing: 0.01em;
 }
 
@@ -144,16 +133,24 @@
   color: var(--color-text);
 }
 
-/* Invert on dark backgrounds */
 .bar--warning .labelAlert,
-.bar--warning .labelCount,
+.bar--warning .labelCount {
+  color: var(--color-alert-warning-text);
+}
+
 .bar--critical[data-intensity="1"] .labelAlert,
-.bar--critical[data-intensity="1"] .labelCount,
+.bar--critical[data-intensity="1"] .labelCount {
+  color: var(--color-alert-critical-1-text);
+}
+
 .bar--critical[data-intensity="2"] .labelAlert,
-.bar--critical[data-intensity="2"] .labelCount,
+.bar--critical[data-intensity="2"] .labelCount {
+  color: var(--color-alert-critical-2-text);
+}
+
 .bar--critical[data-intensity="3"] .labelAlert,
 .bar--critical[data-intensity="3"] .labelCount {
-  color: rgba(255, 255, 255, 0.95);
+  color: var(--color-alert-critical-3-text);
 }
 
 /* ── Severity chip ───────────────────────────────────────────────────────── */
@@ -173,14 +170,13 @@
   transition: background 250ms ease, border-color 250ms ease, color 250ms ease;
 }
 
-/* Invert chip on dark backgrounds */
 .bar--warning .severityChip,
 .bar--critical[data-intensity="1"] .severityChip,
 .bar--critical[data-intensity="2"] .severityChip,
 .bar--critical[data-intensity="3"] .severityChip {
-  color: rgba(255, 255, 255, 0.95);
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--color-alert-chip-dark-text);
+  background: var(--color-alert-chip-dark-bg);
+  border-color: var(--color-alert-chip-dark-border);
 }
 
 /* ── Chevron ─────────────────────────────────────────────────────────────── */
@@ -196,10 +192,9 @@
   transform: translateX(2px);
 }
 
-/* Invert chevron on dark backgrounds */
 .bar--warning .chevron,
 .bar--critical[data-intensity="1"] .chevron,
 .bar--critical[data-intensity="2"] .chevron,
 .bar--critical[data-intensity="3"] .chevron {
-  color: rgba(255, 255, 255, 0.70);
+  color: var(--color-alert-chip-dark-border);
 }
