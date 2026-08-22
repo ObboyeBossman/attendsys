@@ -1,14 +1,12 @@
 /* ==========================================================================
    AlertBar — persistent fixed strip just below the app bar
-   Slate saturation scale: background darkens with alert severity/count.
-   Text and icon colours invert as background darkens to maintain contrast.
-   All values reference design tokens from globals.css where possible.
+   Pure monochrome luminance scale: white → black.
+   Text and icons invert to white once the background crosses the midpoint.
    ========================================================================== */
 
 /* ── Bar shell ───────────────────────────────────────────────────────────── */
 
 .bar {
-  /* Positioning handled by .noticeBannerBar shell in PortalLayout */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -17,11 +15,10 @@
   padding: var(--space-2) var(--space-5);
   min-height: 36px;
 
-  /* Default: healthy / canvas — nearly invisible */
-  background: #FAFAFA;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  /* Healthy default: pure white */
+  background: #FFFFFF;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
 
-  /* Reset button styles when rendered as <button> */
   border-top: none;
   border-left: none;
   border-right: none;
@@ -30,45 +27,45 @@
   text-align: left;
   font-family: var(--font-body);
 
-  transition: background 200ms ease, border-color 200ms ease;
+  transition: background 250ms ease, border-color 250ms ease;
 }
 
-/* ── Severity: Info — slate-50 ───────────────────────────────────────────── */
+/* ── Severity: Info ──────────────────────────────────────────────────────── */
 
 .bar--info {
-  background: #F8FAFC;  /* slate-50 */
-  border-bottom-color: rgba(100, 116, 139, 0.12);
+  background: #F0F0F0;
+  border-bottom-color: rgba(0, 0, 0, 0.10);
 }
 
-/* ── Severity: Warning — slate-100 ──────────────────────────────────────── */
+/* ── Severity: Warning ───────────────────────────────────────────────────── */
 
 .bar--warning {
-  background: #F1F5F9;  /* slate-100 */
-  border-bottom-color: rgba(100, 116, 139, 0.18);
+  background: #C0C0C0;
+  border-bottom-color: rgba(0, 0, 0, 0.15);
 }
 
 /* ── Severity: Critical — scales with data-intensity ─────────────────────
-   intensity 1 (1–2 critical): slate-200
-   intensity 2 (3–5 critical): slate-400
-   intensity 3 (6+ critical):  slate-700  ← near-charcoal, text inverts
+   intensity 1 (1–2):  #808080  mid-dark  — text stays dark
+   intensity 2 (3–5):  #404040  dark      — text inverts to white
+   intensity 3 (6+):   #0A0A0A  near-black — full white inversion
    ─────────────────────────────────────────────────────────────────────── */
 
 .bar--critical[data-intensity="1"] {
-  background: #E2E8F0;  /* slate-200 */
-  border-bottom-color: rgba(100, 116, 139, 0.22);
+  background: #808080;
+  border-bottom-color: rgba(0, 0, 0, 0.20);
 }
 
 .bar--critical[data-intensity="2"] {
-  background: #94A3B8;  /* slate-400 */
-  border-bottom-color: rgba(51, 65, 85, 0.30);
+  background: #404040;
+  border-bottom-color: rgba(0, 0, 0, 0.30);
 }
 
 .bar--critical[data-intensity="3"] {
-  background: #334155;  /* slate-700 */
-  border-bottom-color: rgba(15, 23, 42, 0.40);
+  background: #0A0A0A;
+  border-bottom-color: rgba(0, 0, 0, 0.50);
 }
 
-/* ── Clickable state (alerts present) ───────────────────────────────────── */
+/* ── Clickable state ─────────────────────────────────────────────────────── */
 
 .barClickable {
   cursor: pointer;
@@ -76,40 +73,23 @@
 }
 
 .barClickable:hover {
-  filter: brightness(0.96);
+  filter: brightness(0.93);
 }
 
 .barClickable:active {
-  filter: brightness(0.92);
+  filter: brightness(0.86);
 }
 
-/* ── Severity modifiers — typography weight only ─────────────────────────── */
+/* ── Severity weight modifiers ───────────────────────────────────────────── */
 
-.bar--critical .labelCount {
-  font-weight: 700;
-}
+.bar--critical .labelCount { font-weight: 700; }
+.bar--critical .severityChip { font-weight: 700; letter-spacing: 0.04em; }
 
-.bar--critical .severityChip {
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
+.bar--warning .labelCount { font-weight: 600; }
+.bar--warning .severityChip { font-weight: 600; letter-spacing: 0.02em; }
 
-.bar--warning .labelCount {
-  font-weight: 600;
-}
-
-.bar--warning .severityChip {
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-
-.bar--info .labelCount {
-  font-weight: 500;
-}
-
-.bar--info .severityChip {
-  font-weight: 500;
-}
+.bar--info .labelCount { font-weight: 500; }
+.bar--info .severityChip { font-weight: 500; }
 
 /* ── Inner layout ────────────────────────────────────────────────────────── */
 
@@ -133,12 +113,15 @@
   flex-shrink: 0;
 }
 
-/* On dark backgrounds (intensity 3) icons go light */
+/* Invert on dark backgrounds (warning crosses midpoint, all critical) */
+.bar--warning .iconAlert,
+.bar--critical[data-intensity="1"] .iconAlert,
+.bar--critical[data-intensity="2"] .iconAlert,
 .bar--critical[data-intensity="3"] .iconAlert {
   color: rgba(255, 255, 255, 0.90);
 }
 
-/* ── Labels — healthy state ──────────────────────────────────────────────── */
+/* ── Labels — healthy ────────────────────────────────────────────────────── */
 
 .labelHealthy {
   font-family: var(--font-body);
@@ -148,7 +131,7 @@
   letter-spacing: 0.01em;
 }
 
-/* ── Labels — alert state ────────────────────────────────────────────────── */
+/* ── Labels — alert ──────────────────────────────────────────────────────── */
 
 .labelAlert {
   font-family: var(--font-body);
@@ -158,17 +141,16 @@
 }
 
 .labelCount {
-  /* weight set by severity modifier */
   color: var(--color-text);
 }
 
-/* Medium dark bg: darken text slightly for contrast */
+/* Invert on dark backgrounds */
+.bar--warning .labelAlert,
+.bar--warning .labelCount,
+.bar--critical[data-intensity="1"] .labelAlert,
+.bar--critical[data-intensity="1"] .labelCount,
 .bar--critical[data-intensity="2"] .labelAlert,
-.bar--critical[data-intensity="2"] .labelCount {
-  color: #1E293B;  /* slate-800 */
-}
-
-/* Dark bg: go full white */
+.bar--critical[data-intensity="2"] .labelCount,
 .bar--critical[data-intensity="3"] .labelAlert,
 .bar--critical[data-intensity="3"] .labelCount {
   color: rgba(255, 255, 255, 0.95);
@@ -180,7 +162,6 @@
   display: inline-block;
   font-family: var(--font-body);
   font-size: var(--text-xs);
-  /* weight set by severity modifier */
   color: var(--color-text);
   background: var(--color-surface-2);
   border: 1px solid var(--color-border);
@@ -189,17 +170,13 @@
   line-height: 1.8;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  transition: background 200ms ease, border-color 200ms ease, color 200ms ease;
+  transition: background 250ms ease, border-color 250ms ease, color 250ms ease;
 }
 
-/* Medium: darken chip slightly */
-.bar--critical[data-intensity="2"] .severityChip {
-  color: #0F172A;           /* slate-900 */
-  background: rgba(255, 255, 255, 0.40);
-  border-color: rgba(15, 23, 42, 0.20);
-}
-
-/* Dark: invert chip to white-on-transparent */
+/* Invert chip on dark backgrounds */
+.bar--warning .severityChip,
+.bar--critical[data-intensity="1"] .severityChip,
+.bar--critical[data-intensity="2"] .severityChip,
 .bar--critical[data-intensity="3"] .severityChip {
   color: rgba(255, 255, 255, 0.95);
   background: rgba(255, 255, 255, 0.15);
@@ -212,18 +189,17 @@
   color: var(--color-text-3);
   flex-shrink: 0;
   margin-left: var(--space-1);
-  transition: transform 120ms ease, color 200ms ease;
+  transition: transform 120ms ease, color 250ms ease;
 }
 
 .barClickable:hover .chevron {
   transform: translateX(2px);
 }
 
-/* Medium + dark: chevron goes slate/white */
-.bar--critical[data-intensity="2"] .chevron {
-  color: #475569;  /* slate-600 */
-}
-
+/* Invert chevron on dark backgrounds */
+.bar--warning .chevron,
+.bar--critical[data-intensity="1"] .chevron,
+.bar--critical[data-intensity="2"] .chevron,
 .bar--critical[data-intensity="3"] .chevron {
   color: rgba(255, 255, 255, 0.70);
 }
