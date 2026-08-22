@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Activity, History, Clock } from "lucide-react";
 import { DashboardStats } from "./DashboardStats";
 import { usePageSwipe } from "@/hooks/usePageSwipe";
@@ -123,6 +123,18 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
     },
   });
 
+  // Stable ref callback that attaches the same DOM node to both reelRef (for
+  // width measurement) and swipeRef (for touch/mouse event listeners in usePageSwipe).
+  // useCallback ensures this is created once so React doesn't detach/reattach on every render.
+  const setReelNode = useCallback(
+    (el: HTMLDivElement | null) => {
+      (reelRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+      // eslint-disable-next-line react-hooks/immutability
+      (swipeRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+    },
+    [swipeRef]
+  );
+
   useEffect(() => {
     if (reelRef.current) {
       containerWidthRef.current = reelRef.current.offsetWidth;
@@ -186,6 +198,7 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
 
   const translateX = `calc(${-activeIndex * 50}% + ${dragOffset / 2}px)`;
 
+  // eslint-disable-next-line react-hooks/refs
   const w = containerWidthRef.current || 1;
   const dragFraction = dragOffset / w;
   const pageProgress = activeIndex - dragFraction;
@@ -237,10 +250,7 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
   return (
     <div className={styles.root}>
       <div
-        ref={(el) => {
-          (reelRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
-          (swipeRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
-        }}
+        ref={setReelNode}
         className={styles.reelViewport}
       >
         <div
