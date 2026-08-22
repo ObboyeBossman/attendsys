@@ -261,15 +261,21 @@ Every committed file should be pushed to the feature branch — never leave unpu
 
 The project maintains a persistent memory document in Notion that survives across sessions. Every agent **must** read it at session start and write to it actively during work.
 
-**Notion page:** https://app.notion.com/p/3c498408449f812f8be4dcdc942a3627
+### 🔴 Memory Page — Direct Access
+
+**Page title:** 🤖 Agent Memory
+**Direct URL:** https://app.notion.com/p/3c498408449f812f8be4dcdc942a3627
+**Location in Notion:** Team HQ → Projects → AttendSys → 🤖 Agent Memory
+
+This is the **only** memory page. It lives inside the AttendSys project in the Team HQ teamspace. Do not create new pages or look elsewhere.
 
 ### Session Start — Required Steps (in order)
 
-1. Open the Agent Memory page in Notion (URL above).
-2. Read every section: Current Task, Status, Active Branch, What Was Just Done, What Remains, Backlog.
-3. If Status is `in-progress` or there is an Active Branch — resume that work immediately without asking for a recap.
-4. If the user says **"Continue"** — this means: read the memory doc, understand exactly where you left off, and proceed. No further explanation from the user is needed.
-5. Only after reading the memory doc do you proceed to clone/pull the repo, read `AGENTS.md`, and read `CLAUDE.md`.
+1. **Fetch the Agent Memory page** at the URL above using the Notion MCP tool.
+2. **Read every section without skipping:** Current Task, Status, Active Branch, What Was Just Done, What Remains, Backlog.
+3. **If Status is `in-progress` or there is an Active Branch** — resume that work immediately. Do not ask for a recap. Do not wait for instructions.
+4. **If the user says "Continue"** — fetch memory, understand exactly where you left off, and proceed. No further explanation from the user is needed or expected.
+5. Only after reading the memory page do you clone/pull the repo, read `AGENTS.md`, and read `CLAUDE.md`.
 
 ### During Work — Write Actively
 
