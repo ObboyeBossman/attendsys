@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Activity, History, Clock } from "lucide-react";
 import { DashboardStats } from "./DashboardStats";
+import { AlertSheet } from "./AlertSheet";
 import { usePageSwipe } from "@/hooks/usePageSwipe";
 import { setDashboardAlertStore } from "@/components/layout/PortalLayout";
 import styles from "./dashboard.module.css";
@@ -81,9 +82,14 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
   const [activeTab, setActiveTab] = useState<Tab>("live");
   const activeIndex = tabs.indexOf(activeTab);
 
-  // alertSheetOpen wired to AlertSheet in task 2.1.03
   const [alertSheetOpen, setAlertSheetOpen] = useState(false);
-  void alertSheetOpen; // consumed by AlertSheet (2.1.03)
+
+  // Listen for alert bar tap dispatched from PortalLayout's fixed AlertBar
+  useEffect(() => {
+    const onAlertOpen = () => setAlertSheetOpen(true);
+    window.addEventListener("dashboard-alert-open", onAlertOpen);
+    return () => window.removeEventListener("dashboard-alert-open", onAlertOpen);
+  }, []);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const containerWidthRef = useRef(0);
@@ -236,6 +242,13 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
 
   return (
     <div className={styles.root}>
+      <AlertSheet
+        open={alertSheetOpen}
+        onClose={() => setAlertSheetOpen(false)}
+        longRunningSessions={data.longRunningSessions}
+        staleSemesters={data.staleSemesters}
+        pendingDisputeCount={data.pendingDisputes}
+      />
       <div
         ref={(el) => {
           (reelRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
