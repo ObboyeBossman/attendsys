@@ -62,6 +62,18 @@ type RawLongSession = {
   courses: { name: string; code: string } | null;
 };
 
+export type DisputeItem = {
+  id: string;
+  reason: string;
+  raised_at: string;
+  studentName: string;
+  indexNumber: string;
+  courseName: string;
+  courseCode: string;
+  sessionDate: string;
+  currentStatus: "present" | "late" | "absent" | null;
+};
+
 /* ── Data fetching ────────────────────────────────────────────────────────── */
 
 async function getDashboardData() {
@@ -159,6 +171,72 @@ async function getDashboardData() {
       .lte("start_date", today)
       .limit(5),
   ]);
+
+  /* ── Pending disputes list ───────────────────────────────────────────────── */
+  type RawDispute = { id: string; attendance_id: string; reason: string; raised_at: string };
+  const { data: rawDisputes } = await supabase
+    .from("attendance_disputes")
+    .select("id, attendance_id, reason, raised_at")
+    .eq("status", "pending")
+    .order("raised_at", { ascending: false })
+    .limit(20);
+
+  const pendingDisputesList: DisputeItem[] = [];
+
+  if (rawDisputes && (rawDisputes as RawDispute[]).length > 0) {
+    const dRows = rawDisputes as RawDispute[];
+    const attIds = dRows.map((d) => d.attendance_id);
+
+    type AttRow = { id: string; student_id: string; status: "present" | "late" | "absent"; session_id: string };
+    const { data: attRows } = await supabase
+      .from("attendance")
+      .select("id, student_id, status, session_id")
+      .in("id", attIds);
+
+    const attMap: Record<string, AttRow> = {};
+    for (const a of (attRows ?? []) as AttRow[]) attMap[a.id] = a;
+
+    const studentIds = [...new Set((attRows ?? [] as AttRow[]).map((a: AttRow) => a.student_id))];
+    const sessionIdsForDisputes = [...new Set((attRows ?? [] as AttRow[]).map((a: AttRow) => a.session_id))];
+
+    const [studentsRes2, sessionsRes2] = await Promise.all([
+      studentIds.length
+        ? supabase.from("students").select("id, name, index_number").in("id", studentIds)
+        : Promise.resolve({ data: [] }),
+      sessionIdsForDisputes.length
+        ? supabase.from("class_sessions").select("id, started_at, courses(name, code)").in("id", sessionIdsForDisputes)
+        : Promise.resolve({ data: [] }),
+    ]);
+
+    const studentMap2: Record<string, { name: string; index_number: string }> = {};
+    for (const s of (studentsRes2.data ?? []) as { id: string; name: string; index_number: string }[]) {
+      studentMap2[s.id] = s;
+    }
+
+    type SessionCourse = { id: string; started_at: string; courses: { name: string; code: string } | null };
+    const sessionMap2: Record<string, SessionCourse> = {};
+    for (const s of (sessionsRes2.data ?? []) as unknown as SessionCourse[]) {
+      sessionMap2[s.id] = s;
+    }
+
+    for (const d of dRows) {
+      const att = attMap[d.attendance_id];
+      if (!att) continue;
+      const student = studentMap2[att.student_id];
+      const session = sessionMap2[att.session_id];
+      pendingDisputesList.push({
+        id: d.id,
+        reason: d.reason,
+        raised_at: d.raised_at,
+        studentName: student?.name ?? "Unknown",
+        indexNumber: student?.index_number ?? "—",
+        courseName: session?.courses?.name ?? "Unknown Course",
+        courseCode: session?.courses?.code ?? "",
+        sessionDate: session?.started_at ?? d.raised_at,
+        currentStatus: att.status,
+      });
+    }
+  }
 
   // Cast live sessions using the established split-query / unknown-cast pattern
   const rawLiveSessions = (liveSessionsRes.data ?? []) as unknown as RawLiveSession[];
@@ -343,6 +421,7 @@ async function getDashboardData() {
     activeLecturers: lecturersRes.count ?? 0,
     sessionsToday: sessionsRes.count ?? 0,
     pendingDisputes: disputesRes.count ?? 0,
+    pendingDisputesList,
     liveSessions,
     auditEvents,
     longRunningSessions: (longSessionsRes.data ?? []) as unknown as RawLongSession[],
