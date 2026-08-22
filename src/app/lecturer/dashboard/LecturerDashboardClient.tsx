@@ -1071,7 +1071,7 @@ export function LecturerDashboardClient({ data }: { data: DashboardData }) {
 
   // Stable ref callback that attaches the same DOM node to both reelRef (for
   // width measurement) and swipeRef (for touch/mouse event listeners in usePageSwipe).
-  // eslint-disable-next-line react-hooks/immutability
+  /* eslint-disable react-hooks/immutability */
   const setReelNode = useCallback(
     (el: HTMLDivElement | null) => {
       (reelRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
@@ -1079,6 +1079,7 @@ export function LecturerDashboardClient({ data }: { data: DashboardData }) {
     },
     [swipeRef]
   );
+  /* eslint-enable react-hooks/immutability */
 
   useEffect(() => {
     if (reelRef.current) containerWidthRef.current = reelRef.current.offsetWidth;
