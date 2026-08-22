@@ -9,6 +9,8 @@ import { BrandLogo, BrandText } from "@/components/brand";
 import { Button } from "@/components/ui";
 import { BottomNav } from "./BottomNav";
 import { TopBar } from "./TopBar";
+import { AlertBar } from "@/app/admin/dashboard/AlertBar";
+import type { AlertBarProps } from "@/app/admin/dashboard/AlertBar";
 import { useFullscreenLoader } from "./FullscreenLoader";
 import { clearClientStorage } from "@/lib/clear-client-storage";
 
@@ -322,6 +324,45 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [userInitial, setUserInitial] = useState(ROLE_INITIALS[role]);
   const [userName, setUserName] = useState<string>("");
+
+  // ── Dashboard alert bar state ─────────────────────────────────────────
+  // AdminDashboardClient dispatches "dashboard-alerts" with counts; we render
+  // AlertBar in the fixed shell here so it never scrolls with page content.
+  type AlertCounts = Pick<AlertBarProps, "longRunningCount" | "staleSemesterCount" | "pendingDisputeCount">;
+  const [alertCounts, setAlertCounts] = useState<AlertCounts | null>(null);
+  const mainRef = useRef<HTMLElement>(null);
+  const bannerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onDashboardAlerts(e: Event) {
+      const detail = (e as CustomEvent<AlertCounts>).detail;
+      const hasAny =
+        detail.longRunningCount > 0 ||
+        detail.staleSemesterCount > 0 ||
+        detail.pendingDisputeCount > 0;
+      setAlertCounts(hasAny ? detail : null);
+    }
+    window.addEventListener("dashboard-alerts", onDashboardAlerts);
+    return () => window.removeEventListener("dashboard-alerts", onDashboardAlerts);
+  }, []);
+
+  // Update --banner-h on .main whenever the alert bar mounts/unmounts or resizes
+  useEffect(() => {
+    const main = mainRef.current;
+    const banner = bannerRef.current;
+    if (!main) return;
+    if (!banner || !alertCounts) {
+      main.style.setProperty("--banner-h", "0px");
+      return;
+    }
+    const update = () => {
+      main.style.setProperty("--banner-h", `${banner.offsetHeight}px`);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(banner);
+    return () => ro.disconnect();
+  }, [alertCounts]);
 
   const handleSwitchPortal = useCallback(
     (target: SwitchTarget) => {
@@ -669,8 +710,21 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
         />
       </aside>
 
+      {/* ── Alert bar — fixed below TopBar, never scrolls ─────────── */}
+      {alertCounts && (
+        <div ref={bannerRef} className={styles.noticeBannerBar}>
+          <AlertBar
+            {...alertCounts}
+            onOpen={() => {
+              // AlertSheet wired in task 2.1.03 — dispatch event for dashboard to handle
+              window.dispatchEvent(new CustomEvent("dashboard-alert-open"));
+            }}
+          />
+        </div>
+      )}
+
       {/* ── Main content ─────────────────────────────────────────── */}
-      <main className={styles.main}>
+      <main ref={mainRef} className={styles.main}>
         <div className={styles.content} style={{ position: "relative" }}>
           <PageShimmer />
           {children}
