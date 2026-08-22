@@ -66,47 +66,13 @@
   max-height: 85dvh;
 }
 
-/* ── Drag Handle Zone ──────────────────────────────────────────────────── */
-.handleZone {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 28px;
-  padding-top: var(--space-2, 0.5rem);
-  padding-bottom: var(--space-1, 0.25rem);
-  cursor: grab;
-  touch-action: none;
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-.handleZone:active {
-  cursor: grabbing;
-}
-
-.handlePill {
-  width: 36px;
-  height: 4px;
-  border-radius: var(--radius-full, 9999px);
-  background-color: rgba(0, 0, 0, 0.15);
-  transition: background-color var(--duration-fast, 150ms) var(--ease-standard),
-              width var(--duration-fast, 150ms) var(--ease-standard);
-}
-
-.handleZone:hover .handlePill,
-.handleZone:active .handlePill {
-  background-color: rgba(0, 0, 0, 0.3);
-  width: 44px;
-}
-
 /* ── Header ────────────────────────────────────────────────────────────── */
 .header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-4, 1rem);
-  padding: 0 var(--space-5, 1.25rem) var(--space-3, 0.75rem);
+  padding: var(--space-5, 1.25rem) var(--space-5, 1.25rem) var(--space-3, 0.75rem);
 }
 
 .headerText {
@@ -139,15 +105,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  min-height: 36px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   padding: 0;
   border: none;
   border-radius: var(--radius-full, 9999px);
   background: var(--color-sunken, #F5F5F7);
-  color: var(--color-text-secondary, #475569);
+  color: var(--color-text-primary, #111827);
   cursor: pointer;
   transition: background-color var(--duration-fast, 150ms) var(--ease-standard),
               color var(--duration-fast, 150ms) var(--ease-standard),
@@ -156,7 +122,7 @@
 
 .closeBtn:hover {
   background-color: rgba(0, 0, 0, 0.08);
-  color: var(--color-text-primary, #111827);
+  color: var(--color-brand, #1A42C2);
 }
 
 .closeBtn:active {
