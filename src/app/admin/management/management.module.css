@@ -1,6 +1,7 @@
 /* ==========================================================================
    Admin Management Hub — CSS Module
-   Flat grid of destination cards for all management sections.
+   Three-cluster layout: Structure / Academic / People.
+   Clusters separated by larger gap than intra-cluster card gap.
    All values reference design tokens. Zero hardcoded hex or px.
    ========================================================================== */
 
@@ -36,7 +37,20 @@
   margin: 0;
 }
 
-/* ── Grid ───────────────────────────────────────────────────────────────── */
+/* ── Cluster stack ──────────────────────────────────────────────────────── */
+
+.clusters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.cluster {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Grid within each cluster ───────────────────────────────────────────── */
 
 .grid {
   display: grid;
@@ -84,18 +98,37 @@
   transform: scale(0.98);
 }
 
-/* ── Card icon container ────────────────────────────────────────────────── */
+/* ── Icon container — accent per cluster via data-cluster ───────────────── */
 
 .iconWrap {
   width: 44px;
   height: 44px;
   border-radius: var(--radius-md);
-  background: var(--color-text-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-surface);
   flex-shrink: 0;
+  /* Default: black fill */
+  background: var(--color-text-primary);
+  color: var(--color-surface);
+}
+
+/* Structure cluster — brand primary */
+.iconWrap[data-cluster="structure"] {
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
+/* Academic cluster — neutral dark */
+.iconWrap[data-cluster="academic"] {
+  background: var(--color-text-primary);
+  color: var(--color-surface);
+}
+
+/* People cluster — success green */
+.iconWrap[data-cluster="people"] {
+  background: var(--color-success);
+  color: #ffffff;
 }
 
 /* ── Card text ──────────────────────────────────────────────────────────── */
