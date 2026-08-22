@@ -21,3 +21,7 @@ export { Card, CardHeader, CardDivider, StatCard } from "./Card";
 
 // Status Badge
 export { Badge } from "./Badge";
+
+// BottomSheet primitive
+export { BottomSheet } from "./BottomSheet";
+export type { BottomSheetProps } from "./BottomSheet";
