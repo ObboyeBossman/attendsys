@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { Activity, History, Clock } from "lucide-react";
-import { DashboardStats } from "./DashboardStats";
+import { OversightStats } from "./OversightStats";
 import { DaySummaryBanner } from "./DaySummaryBanner";
 import { SessionDetailSheet, type SessionDetail } from "./SessionDetailSheet";
 import { AlertSheet } from "./AlertSheet";
@@ -206,42 +206,6 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
     pointerEvents: activeIndex === index ? "auto" : "none",
   });
 
-  const stats = [
-    {
-      label: "Active Semester",
-      value: data.semesterLabel === "None" ? "—" : data.semesterLabel,
-      accent: "var(--color-primary)",
-      sub: data.semesterLabel === "None" ? "No active semester" : "Current semester",
-    },
-    {
-      label: "Active Students",
-      value: data.activeStudents.toLocaleString(),
-      accent: "var(--color-success)",
-      sub: "Enrolled & active",
-    },
-    {
-      label: "Active Lecturers",
-      value: data.activeLecturers.toLocaleString(),
-      accent: "var(--color-primary)",
-      sub: "Assigned to courses",
-    },
-    {
-      label: "Sessions Today",
-      value: data.sessionsToday.toLocaleString(),
-      accent: "var(--color-warning)",
-      sub: new Date().toLocaleDateString("en-GH", {
-        weekday: "long",
-        day: "numeric",
-        month: "short",
-      }),
-    },
-    {
-      label: "Pending Disputes",
-      value: data.pendingDisputes.toLocaleString(),
-      accent: "var(--color-danger)",
-      sub: "System-wide",
-    },
-  ];
 
   return (
     <div className={styles.root}>
@@ -399,7 +363,13 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
           >
             <div className={styles.panelStack}>
               {/* System health stat cards */}
-              <DashboardStats stats={stats} />
+              <OversightStats
+                semesterLabel={data.semesterLabel}
+                activeStudents={data.activeStudents}
+                activeLecturers={data.activeLecturers}
+                sessionsToday={data.sessionsToday}
+                pendingDisputes={data.pendingDisputes}
+              />
 
               {/* Recent Audit Events */}
               <div className={styles.card}>
