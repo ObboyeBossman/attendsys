@@ -1,0 +1,216 @@
+/* ==========================================================================
+   BottomSheet Primitive Styles — AttendSys Design System
+   ========================================================================== */
+
+/* ── Backdrop ──────────────────────────────────────────────────────────── */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal, 50);
+  background-color: rgba(17, 24, 39, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--duration-slow, 300ms) var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)),
+              visibility var(--duration-slow, 300ms) var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.backdropOpen {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* ── Sheet Container ───────────────────────────────────────────────────── */
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: calc(var(--z-modal, 50) + 1);
+  display: flex;
+  flex-direction: column;
+  max-height: 90dvh;
+  width: 100%;
+  background-color: var(--color-surface, #ffffff);
+  border-top-left-radius: var(--radius-xl, 1.25rem);
+  border-top-right-radius: var(--radius-xl, 1.25rem);
+  box-shadow: var(--shadow-modal, 0 8px 32px rgba(0, 0, 0, 0.12));
+  transform: translateY(100%);
+  transition: transform var(--duration-slow, 300ms) var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1));
+  will-change: transform;
+  outline: none;
+  border-top: 1px solid var(--color-border, rgba(0, 0, 0, 0.05));
+}
+
+.sheetOpen {
+  transform: translateY(0);
+}
+
+/* Size Variants */
+.sizeSm {
+  max-height: 40dvh;
+}
+
+.sizeMd {
+  max-height: 65dvh;
+}
+
+.sizeLg {
+  max-height: 90dvh;
+}
+
+.sizeAuto {
+  max-height: 85dvh;
+}
+
+/* ── Drag Handle Zone ──────────────────────────────────────────────────── */
+.handleZone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 28px;
+  padding-top: var(--space-2, 0.5rem);
+  padding-bottom: var(--space-1, 0.25rem);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.handleZone:active {
+  cursor: grabbing;
+}
+
+.handlePill {
+  width: 36px;
+  height: 4px;
+  border-radius: var(--radius-full, 9999px);
+  background-color: rgba(0, 0, 0, 0.15);
+  transition: background-color var(--duration-fast, 150ms) var(--ease-standard),
+              width var(--duration-fast, 150ms) var(--ease-standard);
+}
+
+.handleZone:hover .handlePill,
+.handleZone:active .handlePill {
+  background-color: rgba(0, 0, 0, 0.3);
+  width: 44px;
+}
+
+/* ── Header ────────────────────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4, 1rem);
+  padding: 0 var(--space-5, 1.25rem) var(--space-3, 0.75rem);
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-family: var(--font-heading, 'Plus Jakarta Sans', sans-serif);
+  font-size: var(--text-lg, 1.125rem);
+  font-weight: var(--font-bold, 700);
+  color: var(--color-text-primary, #111827);
+  letter-spacing: var(--tracking-tight, -0.02em);
+  line-height: var(--leading-tight, 1.2);
+  margin: 0;
+}
+
+.description {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--color-text-meta, #64748B);
+  line-height: var(--leading-normal, 1.55);
+  margin: 0;
+}
+
+.closeBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full, 9999px);
+  background: var(--color-sunken, #F5F5F7);
+  color: var(--color-text-secondary, #475569);
+  cursor: pointer;
+  transition: background-color var(--duration-fast, 150ms) var(--ease-standard),
+              color var(--duration-fast, 150ms) var(--ease-standard),
+              transform var(--duration-fast, 150ms) var(--ease-standard);
+}
+
+.closeBtn:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+  color: var(--color-text-primary, #111827);
+}
+
+.closeBtn:active {
+  transform: scale(0.94);
+}
+
+.closeBtn:focus-visible {
+  outline: 2px solid var(--color-brand, #1A42C2);
+  outline-offset: 2px;
+}
+
+/* ── Content Body ──────────────────────────────────────────────────────── */
+.body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-2, 0.5rem) var(--space-5, 1.25rem) var(--space-5, 1.25rem);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+/* ── Footer ────────────────────────────────────────────────────────────── */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-3, 0.75rem) var(--space-5, 1.25rem) var(--space-5, 1.25rem);
+  border-top: 1px solid var(--color-border, rgba(0, 0, 0, 0.05));
+  background-color: var(--color-surface, #ffffff);
+}
+
+/* ── Responsive Tablet/Desktop Centered Modal Option ───────────────────── */
+@media (min-width: 768px) {
+  .sheetDesktopModal {
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    top: 50%;
+    transform: translate(-50%, -45%) scale(0.96);
+    width: 100%;
+    max-width: 540px;
+    border-radius: var(--radius-xl, 1.25rem);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform var(--duration-slow, 300ms) var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)),
+                opacity var(--duration-slow, 300ms) var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)),
+                visibility var(--duration-slow, 300ms) var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1));
+  }
+
+  .sheetDesktopModal.sheetOpen {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+}
