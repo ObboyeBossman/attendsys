@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Activity, History, Clock } from "lucide-react";
 import { DashboardStats } from "./DashboardStats";
-import { AlertBar } from "./AlertBar";
 import { usePageSwipe } from "@/hooks/usePageSwipe";
 import styles from "./dashboard.module.css";
 
@@ -88,6 +87,28 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
   const [isDragging, setIsDragging] = useState(false);
   const containerWidthRef = useRef(0);
   const reelRef = useRef<HTMLDivElement>(null);
+
+  // Dispatch alert counts to PortalLayout so it renders the AlertBar in the fixed shell.
+  // Fires on mount and whenever the underlying data changes. Cleanup dispatches zero
+  // counts so the bar disappears when navigating away from the dashboard.
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent("dashboard-alerts", {
+        detail: {
+          longRunningCount: data.longRunningSessions.length,
+          staleSemesterCount: data.staleSemesters.length,
+          pendingDisputeCount: data.pendingDisputes,
+        },
+      })
+    );
+    return () => {
+      window.dispatchEvent(
+        new CustomEvent("dashboard-alerts", {
+          detail: { longRunningCount: 0, staleSemesterCount: 0, pendingDisputeCount: 0 },
+        })
+      );
+    };
+  }, [data.longRunningSessions.length, data.staleSemesters.length, data.pendingDisputes]);
 
   const { containerRef: swipeRef } = usePageSwipe({
     activeIndex,
@@ -215,12 +236,6 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
 
   return (
     <div className={styles.root}>
-      <AlertBar
-        longRunningCount={data.longRunningSessions.length}
-        staleSemesterCount={data.staleSemesters.length}
-        pendingDisputeCount={data.pendingDisputes}
-        onOpen={() => setAlertSheetOpen(true)}
-      />
       <div
         ref={(el) => {
           (reelRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
