@@ -693,9 +693,7 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
         userInitial={userInitial}
         title={pageTitle}
         tabs={
-          pathname.endsWith("/dashboard") && role === "super_admin"
-            ? [{ id: "live", label: "Live" }, { id: "oversight", label: "Oversight" }]
-            : pathname.endsWith("/dashboard") && role === "lecturer"
+          pathname.endsWith("/dashboard") && role === "lecturer"
             ? [{ id: "today", label: "Today" }, { id: "calendar", label: "Calendar" }]
             : []
         }
