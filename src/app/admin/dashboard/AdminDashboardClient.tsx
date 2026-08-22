@@ -12,9 +12,16 @@ type LiveSession = {
   id: string;
   started_at: string;
   venue: string | null;
+  created_by: string | null;
+  check_in_count: number;
+  group_size: number;
+  opened_by_name: string | null;
+  opened_by_role: "lecturer" | "rep" | null;
   courses: {
     name: string;
     code: string;
+    group_id: string;
+    lecturer_id: string | null;
     groups: { group_name: string } | null;
   } | null;
 };
@@ -25,12 +32,19 @@ type AuditEvent = {
   table_name: string | null;
   created_at: string;
   actor_id: string | null;
+  actor_name: string | null;
 };
 
 type StaleSemester = {
   id: string;
   name: string;
   start_date: string;
+};
+
+type LongRunningSession = {
+  id: string;
+  started_at: string;
+  courses: { name: string; code: string } | null;
 };
 
 interface AdminDashboardClientProps {
@@ -42,7 +56,7 @@ interface AdminDashboardClientProps {
     pendingDisputes: number;
     liveSessions: LiveSession[];
     auditEvents: AuditEvent[];
-    longRunningSessions: LiveSession[];
+    longRunningSessions: LongRunningSession[];
     staleSemesters: StaleSemester[];
   };
 }
