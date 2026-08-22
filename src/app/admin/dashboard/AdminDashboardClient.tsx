@@ -6,7 +6,9 @@ import { OversightStats } from "./OversightStats";
 import { DaySummaryBanner } from "./DaySummaryBanner";
 import { SessionDetailSheet, type SessionDetail } from "./SessionDetailSheet";
 import { AlertSheet } from "./AlertSheet";
+import { DisputeSheet } from "./DisputeSheet";
 import { setDashboardAlertStore } from "@/components/layout/PortalLayout";
+import type { DisputeItem } from "./page";
 import styles from "./dashboard.module.css";
 
 /* ── Types ─────────────────────────────────────────────────────────────── */
@@ -57,6 +59,7 @@ interface AdminDashboardClientProps {
     activeLecturers: number;
     sessionsToday: number;
     pendingDisputes: number;
+    pendingDisputesList: DisputeItem[];
     liveSessions: LiveSession[];
     auditEvents: AuditEvent[];
     longRunningSessions: LongRunningSession[];
@@ -78,6 +81,7 @@ function elapsed(isoString: string): string {
 
 export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
   const [alertSheetOpen, setAlertSheetOpen] = useState(false);
+  const [disputeSheetOpen, setDisputeSheetOpen] = useState(false);
   const [selectedSession, setSelectedSession] = useState<SessionDetail | null>(null);
 
   // Listen for alert bar tap dispatched from PortalLayout's fixed AlertBar
@@ -114,6 +118,11 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
         longRunningSessions={data.longRunningSessions}
         staleSemesters={data.staleSemesters}
         pendingDisputeCount={data.pendingDisputes}
+      />
+      <DisputeSheet
+        open={disputeSheetOpen}
+        onClose={() => setDisputeSheetOpen(false)}
+        disputes={data.pendingDisputesList}
       />
 
       <div className={styles.pageStack}>
@@ -239,6 +248,7 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
           activeLecturers={data.activeLecturers}
           sessionsToday={data.sessionsToday}
           pendingDisputes={data.pendingDisputes}
+          onDisputesPress={() => setDisputeSheetOpen(true)}
         />
 
         {/* ── Recent Audit Events ───────────────────────────────────────── */}
