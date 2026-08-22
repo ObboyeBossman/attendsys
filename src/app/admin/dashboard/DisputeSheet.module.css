@@ -1,0 +1,331 @@
+/* ==========================================================================
+   DisputeSheet — Admin Dashboard
+   Bottom sheet listing pending disputes; tap to expand detail inline.
+   All values reference design tokens. Zero hardcoded hex or px.
+   ========================================================================== */
+
+/* ── Backdrop ───────────────────────────────────────────────────────────── */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms var(--ease-out);
+}
+
+.backdropOpen {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ── Sheet ──────────────────────────────────────────────────────────────── */
+
+.sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 201;
+  background: var(--color-surface);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  max-height: 82dvh;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.12);
+}
+
+.sheetOpen {
+  transform: translateY(0);
+}
+
+/* ── Handle ─────────────────────────────────────────────────────────────── */
+
+.handle {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  padding: var(--space-3) 0 var(--space-2);
+}
+
+.handleBar {
+  width: 36px;
+  height: 4px;
+  border-radius: var(--radius-full, 9999px);
+  background: var(--color-border);
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+
+.header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-6) var(--space-4);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.badge {
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  background: var(--color-danger-subtle);
+  color: var(--color-danger);
+  border-radius: var(--radius-full, 9999px);
+  padding: 3px 10px;
+}
+
+.closeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full, 9999px);
+  background: var(--color-sunken);
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: background 150ms var(--ease-out);
+}
+
+.closeBtn:hover {
+  background: var(--color-surface-3);
+}
+
+/* ── Scrollable body ────────────────────────────────────────────────────── */
+
+.body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 var(--space-6) var(--space-6);
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Empty state ────────────────────────────────────────────────────────── */
+
+.emptyState {
+  padding: var(--space-10) var(--space-4);
+  text-align: center;
+}
+
+.emptyIcon {
+  display: block;
+  margin: 0 auto var(--space-3);
+  color: var(--color-text-meta);
+}
+
+.emptyTitle {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.emptySub {
+  font-size: var(--text-xs);
+  color: var(--color-text-meta);
+  margin-top: var(--space-1);
+}
+
+/* ── Dispute list ───────────────────────────────────────────────────────── */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ── Dispute card (collapsed) ───────────────────────────────────────────── */
+
+.disputeCard {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: border-color 150ms var(--ease-out);
+}
+
+.disputeCardOpen {
+  border-color: var(--color-danger);
+}
+
+.cardSummary {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 120ms var(--ease-out);
+}
+
+.cardSummary:hover {
+  background: var(--color-sunken);
+}
+
+.cardSummary:active {
+  background: var(--color-surface-3);
+}
+
+.summaryLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+/* Signature detail: accent line whose height encodes urgency — same pattern as AlertSheet */
+.accentLine {
+  width: 3px;
+  border-radius: var(--radius-full, 9999px);
+  background: var(--color-danger);
+  flex-shrink: 0;
+  align-self: stretch;
+  min-height: 36px;
+}
+
+.summaryMeta {
+  min-width: 0;
+}
+
+.summaryStudent {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.summaryIndex {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-meta);
+  font-variant-numeric: tabular-nums;
+}
+
+.summaryCourse {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.summaryRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+
+.timeAgo {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-meta);
+  font-variant-numeric: tabular-nums;
+}
+
+.chevron {
+  color: var(--color-text-meta);
+  transition: transform 200ms var(--ease-out);
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* ── Detail panel (expanded) ────────────────────────────────────────────── */
+
+.detail {
+  border-top: 1px solid var(--color-border);
+  background: var(--color-sunken);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.detailLabel {
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: var(--color-text-meta);
+  flex-shrink: 0;
+}
+
+.detailValue {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-primary);
+  text-align: right;
+}
+
+.reasonText {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  text-align: right;
+}
+
+.statusChip {
+  display: inline-block;
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  border-radius: var(--radius-full, 9999px);
+  padding: 2px 10px;
+  text-transform: capitalize;
+}
+
+.statusPresent {
+  background: var(--color-success-subtle);
+  color: var(--color-success);
+}
+
+.statusLate {
+  background: rgba(217, 119, 6, 0.1);
+  color: var(--color-warning);
+}
+
+.statusAbsent {
+  background: var(--color-danger-subtle);
+  color: var(--color-danger);
+}
+
+.detailDivider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 0;
+}
