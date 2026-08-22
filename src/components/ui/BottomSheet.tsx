@@ -7,7 +7,7 @@ import styles from "./BottomSheet.module.css";
 export interface BottomSheetProps {
   /** Controls visibility of the sheet */
   open: boolean;
-  /** Callback invoked when the sheet should close */
+  /** Callback invoked when the close button is clicked */
   onClose: () => void;
   /** Sheet header title */
   title?: React.ReactNode;
@@ -21,12 +21,10 @@ export interface BottomSheetProps {
   size?: "sm" | "md" | "lg" | "auto";
   /** Adaptively render as a centered floating modal on tablet/desktop viewports (default: true) */
   desktopAsModal?: boolean;
-  /** Allow closing by clicking the backdrop overlay (default: true) */
+  /** Allow closing by clicking the backdrop overlay (default: false — close button is primary close control) */
   closeOnBackdropClick?: boolean;
   /** Allow closing by pressing Escape key (default: true) */
   closeOnEscape?: boolean;
-  /** Show top touch-drag handle indicator (default: true) */
-  showHandle?: boolean;
   /** Custom wrapper class for the sheet dialog */
   className?: string;
   /** Custom class for the body scroll content area */
@@ -42,15 +40,12 @@ export function BottomSheet({
   footer,
   size = "auto",
   desktopAsModal = true,
-  closeOnBackdropClick = true,
+  closeOnBackdropClick = false,
   closeOnEscape = true,
-  showHandle = true,
   className = "",
   bodyClassName = "",
 }: BottomSheetProps) {
   const sheetRef = useRef<HTMLDivElement>(null);
-  const dragStartY = useRef<number | null>(null);
-  const dragCurrentY = useRef<number>(0);
 
   // Lock body scrolling while open
   useEffect(() => {
@@ -75,38 +70,6 @@ export function BottomSheet({
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [open, closeOnEscape, onClose]);
-
-  // Touch drag gestures for mobile swipe down
-  const onTouchStart = useCallback((e: React.TouchEvent) => {
-    dragStartY.current = e.touches[0].clientY;
-    dragCurrentY.current = 0;
-    if (sheetRef.current) {
-      sheetRef.current.style.transition = "none";
-    }
-  }, []);
-
-  const onTouchMove = useCallback((e: React.TouchEvent) => {
-    if (dragStartY.current === null) return;
-    const delta = e.touches[0].clientY - dragStartY.current;
-    if (delta < 0) return; // Prevent pulling up beyond max-height
-    dragCurrentY.current = delta;
-    if (sheetRef.current) {
-      sheetRef.current.style.transform = `translateY(${delta}px)`;
-    }
-  }, []);
-
-  const onTouchEnd = useCallback(() => {
-    if (sheetRef.current) {
-      sheetRef.current.style.transition = "";
-      sheetRef.current.style.transform = "";
-    }
-    // If dragged down past threshold (80px), trigger close
-    if (dragCurrentY.current > 80) {
-      onClose();
-    }
-    dragStartY.current = null;
-    dragCurrentY.current = 0;
-  }, [onClose]);
 
   const handleBackdropClick = useCallback(() => {
     if (closeOnBackdropClick) {
@@ -143,7 +106,7 @@ export function BottomSheet({
 
   return (
     <>
-      {/* Dimmed Backdrop Overlay */}
+      {/* Backdrop Overlay */}
       <div
         className={backdropClasses}
         aria-hidden="true"
@@ -160,44 +123,29 @@ export function BottomSheet({
         className={sheetClasses}
         tabIndex={-1}
       >
-        {/* Top Drag Handle Zone */}
-        {showHandle && (
-          <div
-            className={styles.handleZone}
-            onTouchStart={onTouchStart}
-            onTouchMove={onTouchMove}
-            onTouchEnd={onTouchEnd}
-            aria-hidden="true"
+        {/* Header with Title & Large Close Button */}
+        <div className={styles.header}>
+          <div className={styles.headerText}>
+            {title && (
+              <h2 id={titleId} className={styles.title}>
+                {title}
+              </h2>
+            )}
+            {description && (
+              <p id={descriptionId} className={styles.description}>
+                {description}
+              </p>
+            )}
+          </div>
+          <button
+            type="button"
+            className={styles.closeBtn}
+            onClick={onClose}
+            aria-label="Close sheet"
           >
-            <div className={styles.handlePill} />
-          </div>
-        )}
-
-        {/* Optional Header */}
-        {(title || description) && (
-          <div className={styles.header}>
-            <div className={styles.headerText}>
-              {title && (
-                <h2 id={titleId} className={styles.title}>
-                  {title}
-                </h2>
-              )}
-              {description && (
-                <p id={descriptionId} className={styles.description}>
-                  {description}
-                </p>
-              )}
-            </div>
-            <button
-              type="button"
-              className={styles.closeBtn}
-              onClick={onClose}
-              aria-label="Close sheet"
-            >
-              <X size={18} strokeWidth={1.75} aria-hidden="true" />
-            </button>
-          </div>
-        )}
+            <X size={22} strokeWidth={1.75} aria-hidden="true" />
+          </button>
+        </div>
 
         {/* Body Content Area */}
         <div className={`${styles.body} ${bodyClassName}`}>{children}</div>
