@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Activity, History, Clock } from "lucide-react";
 import { DashboardStats } from "./DashboardStats";
 import { usePageSwipe } from "@/hooks/usePageSwipe";
+import { setDashboardAlertStore } from "@/components/layout/PortalLayout";
 import styles from "./dashboard.module.css";
 
 /* ── Types ─────────────────────────────────────────────────────────────── */
@@ -88,20 +89,19 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
   const containerWidthRef = useRef(0);
   const reelRef = useRef<HTMLDivElement>(null);
 
-  // Dispatch alert counts to PortalLayout so it renders the AlertBar in the fixed shell.
-  // Fires on mount and whenever the underlying data changes. Cleanup dispatches zero
-  // counts so the bar disappears when navigating away from the dashboard.
+  // Sync alert counts to PortalLayout's fixed AlertBar shell.
+  // Write to the module-level store first (read by PortalLayout's useState
+  // initialiser to avoid a race), then dispatch the event for subsequent updates.
   useEffect(() => {
-    window.dispatchEvent(
-      new CustomEvent("dashboard-alerts", {
-        detail: {
-          longRunningCount: data.longRunningSessions.length,
-          staleSemesterCount: data.staleSemesters.length,
-          pendingDisputeCount: data.pendingDisputes,
-        },
-      })
-    );
+    const counts = {
+      longRunningCount: data.longRunningSessions.length,
+      staleSemesterCount: data.staleSemesters.length,
+      pendingDisputeCount: data.pendingDisputes,
+    };
+    setDashboardAlertStore(counts);
+    window.dispatchEvent(new CustomEvent("dashboard-alerts", { detail: counts }));
     return () => {
+      setDashboardAlertStore(null);
       window.dispatchEvent(
         new CustomEvent("dashboard-alerts", {
           detail: { longRunningCount: 0, staleSemesterCount: 0, pendingDisputeCount: 0 },
