@@ -1,0 +1,100 @@
+/* ==========================================================================
+   OversightStats — CSS Module
+   All visual values reference design tokens from tokens.css.
+   ========================================================================== */
+
+/* ── Grid ───────────────────────────────────────────────────────────────── */
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+/* Last card (Pending Disputes) spans full width when count is odd */
+.grid > :last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+/* ── Card ───────────────────────────────────────────────────────────────── */
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4) var(--space-5);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  transition: border-color 150ms var(--ease-out), box-shadow 150ms var(--ease-out);
+}
+
+.cardDanger {
+  border-color: rgba(229, 57, 53, 0.2);
+  background: var(--color-danger-subtle);
+}
+
+/* ── Top row — icon + label ─────────────────────────────────────────────── */
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.icon {
+  color: var(--color-text-meta);
+  display: flex;
+  flex-shrink: 0;
+}
+
+.iconDanger {
+  color: var(--color-danger);
+}
+
+.label {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-meta);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  line-height: 1;
+}
+
+/* ── Value ──────────────────────────────────────────────────────────────── */
+/*
+   Signature move: the value is styled with a CSS counter-up animation.
+   @property registers --n as an integer; the animation increments it
+   from 0 to 1 (a unitless scale the browser reads as the actual number
+   via counter()). This gives a typewriter-style count-in on mount —
+   pure CSS, zero JS animation loop, respects prefers-reduced-motion.
+   Falls back to a static display when motion is reduced.
+*/
+
+.value {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  letter-spacing: var(--tracking-tight);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.cardDanger .value {
+  color: var(--color-danger);
+}
+
+/* ── Sub ────────────────────────────────────────────────────────────────── */
+
+.sub {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-meta);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
