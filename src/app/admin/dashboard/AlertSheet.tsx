@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useCallback, useState } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import { AlertCircle, AlertTriangle, Info, ArrowRight, X } from "lucide-react";
 import styles from "./AlertSheet.module.css";
 
@@ -36,10 +36,6 @@ export interface AlertSheetProps {
   disputeThreshold?: number;
 }
 
-/* ── Snap heights ────────────────────────────────────────────────────────── */
-
-type SnapState = "half" | "full";
-
 /* ── Helpers ────────────────────────────────────────────────────────────── */
 
 function formatElapsed(isoString: string): string {
@@ -57,6 +53,7 @@ function buildAlerts(
 ): AlertItem[] {
   const alerts: AlertItem[] = [];
 
+  // Critical — long-running sessions (one alert per session)
   for (const session of longRunningSessions) {
     const courseName = session.courses?.name ?? "Unknown course";
     const courseCode = session.courses?.code ? ` (${session.courses.code})` : "";
@@ -70,6 +67,7 @@ function buildAlerts(
     });
   }
 
+  // Warning — stale semesters (one alert per semester)
   for (const sem of staleSemesters) {
     const startDate = new Date(sem.start_date).toLocaleDateString("en-GH", {
       day: "numeric",
@@ -86,6 +84,7 @@ function buildAlerts(
     });
   }
 
+  // Info — pending disputes above threshold
   if (pendingDisputeCount > disputeThreshold) {
     alerts.push({
       id: "pending-disputes",
@@ -125,12 +124,8 @@ export function AlertSheet({
   disputeThreshold = 5,
 }: AlertSheetProps) {
   const sheetRef = useRef<HTMLDivElement>(null);
-  const [snapState, setSnapState] = useState<SnapState>("half");
-
-  // Track drag only when it starts on the handle zone
   const dragStartY = useRef<number | null>(null);
-  const dragCurrentDelta = useRef<number>(0);
-  const isDraggingHandle = useRef<boolean>(false);
+  const dragCurrentY = useRef<number>(0);
 
   const alerts = buildAlerts(
     longRunningSessions,
@@ -139,111 +134,64 @@ export function AlertSheet({
     disputeThreshold
   ).sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]);
 
-  // Reset to half-height every time the sheet opens
-  useEffect(() => {
-    if (open) {
-      setSnapState("half");
-    }
-  }, [open]);
-
   // Prevent body scroll when sheet is open
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [open]);
 
-  // Keyboard: Escape closes
+  // Keyboard: close on Escape
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  /* ── Drag: handle zone only ───────────────────────────────────────────── */
-
-  const onHandleTouchStart = useCallback((e: React.TouchEvent) => {
-    isDraggingHandle.current = true;
+  // Touch: swipe-down to close
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
     dragStartY.current = e.touches[0].clientY;
-    dragCurrentDelta.current = 0;
-    if (sheetRef.current) sheetRef.current.style.transition = "none";
-  }, []);
-
-  const onHandleMouseDown = useCallback((e: React.MouseEvent) => {
-    isDraggingHandle.current = true;
-    dragStartY.current = e.clientY;
-    dragCurrentDelta.current = 0;
-    if (sheetRef.current) sheetRef.current.style.transition = "none";
-
-    const onMouseMove = (mv: MouseEvent) => {
-      if (dragStartY.current === null) return;
-      const delta = mv.clientY - dragStartY.current;
-      dragCurrentDelta.current = delta;
-      if (sheetRef.current) {
-        // Allow upward drag (negative delta) to feel natural, clamp downward
-        const clampedDelta = Math.max(-window.innerHeight, delta);
-        sheetRef.current.style.transform = `translateY(${clampedDelta}px)`;
-      }
-    };
-
-    const onMouseUp = () => {
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
-      commitDrag();
-    };
-
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", onMouseUp);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const onHandleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (!isDraggingHandle.current || dragStartY.current === null) return;
-    const delta = e.touches[0].clientY - dragStartY.current;
-    dragCurrentDelta.current = delta;
+    dragCurrentY.current = 0;
     if (sheetRef.current) {
-      const clampedDelta = Math.max(-window.innerHeight, delta);
-      sheetRef.current.style.transform = `translateY(${clampedDelta}px)`;
+      sheetRef.current.style.transition = "none";
     }
   }, []);
 
-  const commitDrag = useCallback(() => {
+  const onTouchMove = useCallback((e: React.TouchEvent) => {
+    if (dragStartY.current === null) return;
+    const delta = e.touches[0].clientY - dragStartY.current;
+    if (delta < 0) return; // no upward overscroll
+    dragCurrentY.current = delta;
+    if (sheetRef.current) {
+      sheetRef.current.style.transform = `translateY(${delta}px)`;
+    }
+  }, []);
+
+  const onTouchEnd = useCallback(() => {
     if (sheetRef.current) {
       sheetRef.current.style.transition = "";
       sheetRef.current.style.transform = "";
     }
-
-    const delta = dragCurrentDelta.current;
-
-    if (snapState === "half") {
-      if (delta < -60) {
-        // Dragged up significantly → expand to full
-        setSnapState("full");
-      } else if (delta > 80) {
-        // Dragged down → close
-        onClose();
-      }
-      // Small movement → snap back to half (no change)
-    } else {
-      // snapState === "full"
-      if (delta > 80) {
-        // Dragged down from full → collapse to half
-        setSnapState("half");
-      }
-      // Dragged up → already full, stay at full
+    if (dragCurrentY.current > 80) {
+      onClose();
     }
-
     dragStartY.current = null;
-    dragCurrentDelta.current = 0;
-    isDraggingHandle.current = false;
-  }, [snapState, onClose]);
-
-  const onHandleTouchEnd = useCallback(() => {
-    commitDrag();
-  }, [commitDrag]);
+    dragCurrentY.current = 0;
+  }, [onClose]);
 
   const handleActionClick = useCallback(
     (href: string) => {
       onClose();
+      // Navigate — use window.location for full navigation to keep things simple
+      // (avoids importing useRouter in a non-page component)
       window.location.href = href;
     },
     [onClose]
@@ -251,10 +199,11 @@ export function AlertSheet({
 
   return (
     <>
-      {/* Backdrop — visual only, does NOT close the sheet */}
+      {/* Backdrop */}
       <div
         className={`${styles.backdrop} ${open ? styles.backdropVisible : ""}`}
         aria-hidden="true"
+        onClick={onClose}
       />
 
       {/* Sheet */}
@@ -263,24 +212,13 @@ export function AlertSheet({
         role="dialog"
         aria-modal="true"
         aria-label="System alerts"
-        className={[
-          styles.sheet,
-          open ? styles.sheetOpen : "",
-          snapState === "full" ? styles.sheetFull : styles.sheetHalf,
-        ].join(" ")}
+        className={`${styles.sheet} ${open ? styles.sheetOpen : ""}`}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
       >
-        {/* Drag handle — this is the ONLY surface that initiates a drag */}
-        <div
-          className={styles.handleZone}
-          aria-label="Drag to resize or close"
-          role="separator"
-          onTouchStart={onHandleTouchStart}
-          onTouchMove={onHandleTouchMove}
-          onTouchEnd={onHandleTouchEnd}
-          onMouseDown={onHandleMouseDown}
-        >
-          <span className={styles.handle} aria-hidden="true" />
-        </div>
+        {/* Drag handle */}
+        <div className={styles.handle} aria-hidden="true" />
 
         {/* Header */}
         <div className={styles.header}>
