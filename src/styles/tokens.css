@@ -60,6 +60,39 @@
   --color-attendance-excused: #64748B;
   --color-attendance-excused-subtle: #F1F5F9;
 
+  /* --- Alert Bar Severity Scale (white → black luminance ramp) ---
+     Centralised so dark-mode and theme changes need only touch this block.
+     bg-*    : bar background at each severity level
+     text-*  : foreground colour (dark or inverted white) at each level
+     border-*: bottom border alpha at each level                          */
+  --color-alert-healthy-bg:    #FFFFFF;
+  --color-alert-healthy-text:  var(--color-text-3);
+
+  --color-alert-info-bg:       #F0F0F0;
+  --color-alert-info-text:     var(--color-text);
+  --color-alert-info-border:   rgba(0, 0, 0, 0.10);
+
+  --color-alert-warning-bg:    #C0C0C0;
+  --color-alert-warning-text:  #FFFFFF;
+  --color-alert-warning-border: rgba(0, 0, 0, 0.15);
+
+  --color-alert-critical-1-bg:     #808080;
+  --color-alert-critical-1-text:   #FFFFFF;
+  --color-alert-critical-1-border: rgba(0, 0, 0, 0.20);
+
+  --color-alert-critical-2-bg:     #404040;
+  --color-alert-critical-2-text:   #FFFFFF;
+  --color-alert-critical-2-border: rgba(0, 0, 0, 0.30);
+
+  --color-alert-critical-3-bg:     #0A0A0A;
+  --color-alert-critical-3-text:   #FFFFFF;
+  --color-alert-critical-3-border: rgba(0, 0, 0, 0.50);
+
+  /* Shared inverted chip style for dark alert backgrounds */
+  --color-alert-chip-dark-text:    rgba(255, 255, 255, 0.95);
+  --color-alert-chip-dark-bg:      rgba(255, 255, 255, 0.15);
+  --color-alert-chip-dark-border:  rgba(255, 255, 255, 0.25);
+
   /* --- Call-to-Action (CTA) Colours --- */
   --color-cta: #0A0A0A;
   --color-cta-text: #FFFFFF;
