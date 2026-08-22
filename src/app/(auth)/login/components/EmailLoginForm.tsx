@@ -59,6 +59,7 @@ export function EmailLoginForm({
   useEffect(() => {
     if (!email) return;
     const remaining = getRemainingCooldown(email);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (remaining > 0) startCooldownTimer(remaining);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -67,8 +68,10 @@ export function EmailLoginForm({
     if (!email) return;
     const remaining = getRemainingCooldown(email);
     if (remaining > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       startCooldownTimer(remaining);
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCooldown(0);
     }
   }, [email, startCooldownTimer]);
