@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Activity, History, Clock, AlertTriangle, CalendarClock } from "lucide-react";
+import { Activity, History, Clock } from "lucide-react";
 import { DashboardStats } from "./DashboardStats";
+import { AlertBar } from "./AlertBar";
 import { usePageSwipe } from "@/hooks/usePageSwipe";
 import styles from "./dashboard.module.css";
 
@@ -80,12 +81,13 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
   const [activeTab, setActiveTab] = useState<Tab>("live");
   const activeIndex = tabs.indexOf(activeTab);
 
+  // alertSheetOpen wired to AlertSheet in task 2.1.03
+  const [alertSheetOpen, setAlertSheetOpen] = useState(false);
+  void alertSheetOpen; // consumed by AlertSheet (2.1.03)
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const containerWidthRef = useRef(0);
   const reelRef = useRef<HTMLDivElement>(null);
-
-  const totalAlerts = data.longRunningSessions.length + data.staleSemesters.length;
 
   const { containerRef: swipeRef } = usePageSwipe({
     activeIndex,
@@ -213,6 +215,12 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
 
   return (
     <div className={styles.root}>
+      <AlertBar
+        longRunningCount={data.longRunningSessions.length}
+        staleSemesterCount={data.staleSemesters.length}
+        pendingDisputeCount={data.pendingDisputes}
+        onOpen={() => setAlertSheetOpen(true)}
+      />
       <div
         ref={(el) => {
           (reelRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
@@ -235,69 +243,6 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
             style={panelStyle(0)}
           >
             <div className={styles.panelStack}>
-
-              {/* System Alerts */}
-              {totalAlerts > 0 && (
-                <div className={styles.alertsCard}>
-                  <div className={styles.alertsHeader}>
-                    <AlertTriangle
-                      size={18}
-                      strokeWidth={1.75}
-                      className={styles.alertIcon}
-                    />
-                    <h2 className={styles.alertsTitle}>
-                      System Alerts
-                      <span className={styles.alertsBadge}>{totalAlerts}</span>
-                    </h2>
-                  </div>
-
-                  <div className={styles.alertList}>
-                    {data.longRunningSessions.map((session) => {
-                      const course = session.courses as { name: string; code: string } | null;
-                      return (
-                        <div key={session.id} className={styles.alertRow}>
-                          <Clock size={16} strokeWidth={1.75} className={styles.alertIcon} />
-                          <div className={styles.alertBody}>
-                            <div className={styles.alertTitle}>
-                              {course?.name ?? "Session"}
-                              {course?.code && (
-                                <span className={styles.alertCodeChip}> ({course.code})</span>
-                              )}
-                            </div>
-                            <div className={styles.alertSub}>
-                              Running for{" "}
-                              <strong className={styles.alertHighlight}>
-                                {elapsed(session.started_at)}
-                              </strong>
-                              {" "}— may have been left open accidentally
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-
-                    {data.staleSemesters.map((sem) => (
-                      <div key={sem.id} className={styles.alertRow}>
-                        <CalendarClock size={16} strokeWidth={1.75} className={styles.alertIcon} />
-                        <div className={styles.alertBody}>
-                          <div className={styles.alertTitle}>{sem.name}</div>
-                          <div className={styles.alertSub}>
-                            Start date{" "}
-                            <strong className={styles.alertHighlight}>
-                              {new Date(sem.start_date).toLocaleDateString("en-GH", {
-                                day: "numeric",
-                                month: "short",
-                                year: "numeric",
-                              })}
-                            </strong>
-                            {" "}has passed — activate this semester
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               {/* Live Sessions Card */}
               <div className={styles.card}>
