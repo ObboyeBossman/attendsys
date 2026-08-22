@@ -1,26 +1,28 @@
 /* ==========================================================================
    AlertSheet — bottom sheet for priority-ordered system alerts
-   Monochrome throughout — severity communicated via the accent line height
-   (--accent-fill) and typography weight only. No colour used for state.
+   Two snap heights: half (50dvh default) → full (90dvh on drag up).
+   Handle zone is the ONLY surface that initiates a drag or dismisses.
+   Backdrop is visual-only — it does not close the sheet.
+   Signature: accent line height scales by severity (100% / 60% / 35%).
    ========================================================================== */
 
-/* ── Backdrop ────────────────────────────────────────────────────────────── */
+/* ── Backdrop ─────────────────────────────────────────────────────────────── */
 
 .backdrop {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0);
   z-index: calc(var(--z-modal) - 1);
+  /* pointer-events: none always — backdrop click never closes the sheet */
   pointer-events: none;
   transition: background 280ms var(--ease-out);
 }
 
 .backdropVisible {
   background: rgba(0, 0, 0, 0.40);
-  pointer-events: auto;
 }
 
-/* ── Sheet shell ─────────────────────────────────────────────────────────── */
+/* ── Sheet shell ──────────────────────────────────────────────────────────── */
 
 .sheet {
   position: fixed;
@@ -33,43 +35,75 @@
   border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
   box-shadow: var(--shadow-modal);
 
-  /* Max height: 80% of viewport, scrollable inside */
-  max-height: 80dvh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 
   /* Start hidden below the fold */
   transform: translateY(100%);
-  transition: transform 320ms var(--ease-out);
+  transition: transform 320ms var(--ease-out), height 320ms var(--ease-out);
 
   /* Safe area on notched phones */
   padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Snap states — applied via JS */
+.sheetHalf {
+  height: 50dvh;
+}
+
+.sheetFull {
+  height: 90dvh;
 }
 
 .sheetOpen {
   transform: translateY(0);
 }
 
-/* ── Drag handle ─────────────────────────────────────────────────────────── */
+/* ── Handle zone (drag target) ────────────────────────────────────────────── */
+
+/*
+ * The entire grab zone is a tall touch target (44px) so thumbs can land
+ * on it reliably. The visible pill is centred inside it.
+ */
+.handleZone {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none; /* prevent browser scroll hijacking the drag */
+}
+
+.handleZone:active {
+  cursor: grabbing;
+}
 
 .handle {
-  flex-shrink: 0;
   width: 36px;
   height: 4px;
   background: var(--color-surface-3);
   border-radius: var(--radius-full);
-  margin: var(--space-3) auto var(--space-2);
+  transition: background 150ms var(--ease-out), width 150ms var(--ease-out);
 }
 
-/* ── Header ──────────────────────────────────────────────────────────────── */
+.handleZone:hover .handle,
+.handleZone:active .handle {
+  background: var(--color-border-strong);
+  width: 44px;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
 
 .header {
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-2) var(--space-5) var(--space-4);
+  padding: 0 var(--space-5) var(--space-4);
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -124,7 +158,7 @@
 .closeBtn:hover  { background: var(--color-surface-3); color: var(--color-text); }
 .closeBtn:active { background: var(--color-border-strong); }
 
-/* ── Alert list (scrollable) ─────────────────────────────────────────────── */
+/* ── Alert list (scrollable) ──────────────────────────────────────────────── */
 
 .list {
   flex: 1;
@@ -134,12 +168,12 @@
   padding: var(--space-3) 0 var(--space-4);
 }
 
-/* ── Alert row ───────────────────────────────────────────────────────────── */
+/* ── Alert row ────────────────────────────────────────────────────────────── */
 
 /*
  * Signature move: the left accent line scales in height via --accent-fill.
  * Critical = 100% fill (full urgency), Warning = 60%, Info = 35%.
- * This communicates priority through proportion — no colour needed.
+ * Communicates priority through proportion — no colour needed.
  */
 
 .alertRow {
@@ -159,7 +193,6 @@
 .alertRow--warning  { --accent-fill: 60%;  }
 .alertRow--info     { --accent-fill: 35%;  }
 
-/* The accent line itself */
 .accentLine {
   position: absolute;
   left: 0;
@@ -176,7 +209,7 @@
   background: var(--color-text-secondary);
 }
 
-/* ── Alert content ───────────────────────────────────────────────────────── */
+/* ── Alert content ────────────────────────────────────────────────────────── */
 
 .alertContent {
   display: flex;
@@ -187,7 +220,6 @@
   padding-left: var(--space-1);
 }
 
-/* Top row: icon + chip + title */
 .alertTop {
   display: flex;
   align-items: center;
@@ -241,7 +273,6 @@
   color: var(--color-text-secondary);
 }
 
-/* Description */
 .alertDescription {
   font-family: var(--font-body);
   font-size: var(--text-xs);
@@ -251,7 +282,7 @@
   margin: 0;
 }
 
-/* ── Action button ───────────────────────────────────────────────────────── */
+/* ── Action button ────────────────────────────────────────────────────────── */
 
 .actionBtn {
   display: inline-flex;
@@ -279,7 +310,6 @@
 
 .actionBtn:hover {
   gap: var(--space-2);
-  color: var(--color-text);
 }
 
 .actionBtn:active {
@@ -291,11 +321,12 @@
   border-bottom-color: var(--color-text-secondary);
 }
 
-/* ── Reduced motion ──────────────────────────────────────────────────────── */
+/* ── Reduced motion ───────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
   .sheet      { transition: none; }
   .backdrop   { transition: none; }
+  .handle     { transition: none; }
   .actionBtn  { transition: none; }
   .closeBtn   { transition: none; }
 }
