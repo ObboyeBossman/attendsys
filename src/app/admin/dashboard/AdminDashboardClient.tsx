@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Activity, History, Clock } from "lucide-react";
 import { DashboardStats } from "./DashboardStats";
 import { DaySummaryBanner } from "./DaySummaryBanner";
+import { SessionDetailSheet, type SessionDetail } from "./SessionDetailSheet";
 import { AlertSheet } from "./AlertSheet";
 import { usePageSwipe } from "@/hooks/usePageSwipe";
 import { setDashboardAlertStore } from "@/components/layout/PortalLayout";
@@ -84,6 +85,7 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
   const activeIndex = tabs.indexOf(activeTab);
 
   const [alertSheetOpen, setAlertSheetOpen] = useState(false);
+  const [selectedSession, setSelectedSession] = useState<SessionDetail | null>(null);
 
   // Listen for alert bar tap dispatched from PortalLayout's fixed AlertBar
   useEffect(() => {
@@ -317,17 +319,53 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
                         code: string;
                         groups: { group_name: string } | null;
                       } | null;
+                      const ratio = session.group_size > 0
+                        ? Math.min(1, session.check_in_count / session.group_size)
+                        : 0;
+                      const circumference = 2 * Math.PI * 10;
+                      const arcOffset = circumference * (1 - ratio);
                       return (
-                        <div key={session.id} className={styles.sessionRow}>
-                          <div className={styles.sessionRowLeft}>
-                            <div className={styles.sessionIcon}>
-                              <Activity size={18} strokeWidth={1.75} />
+                        <button
+                          key={session.id}
+                          className={styles.sessionTile}
+                          onClick={() => setSelectedSession({
+                            id: session.id,
+                            started_at: session.started_at,
+                            venue: session.venue,
+                            check_in_count: session.check_in_count,
+                            group_size: session.group_size,
+                            opened_by_name: session.opened_by_name,
+                            opened_by_role: session.opened_by_role,
+                            courses: course ? {
+                              name: course.name,
+                              code: course.code,
+                              groups: course.groups,
+                            } : null,
+                          })}
+                          aria-label={`View details for ${course?.name ?? "session"}`}
+                        >
+                          <div className={styles.tileLeft}>
+                            {/* Mini arc — signature detail */}
+                            <div className={styles.tileArcWrap} aria-hidden="true">
+                              <svg width={28} height={28} viewBox="0 0 28 28">
+                                <circle cx={14} cy={14} r={10} fill="none" stroke="var(--color-surface-3)" strokeWidth={3} />
+                                <circle
+                                  cx={14} cy={14} r={10}
+                                  fill="none"
+                                  stroke="var(--color-text-primary)"
+                                  strokeWidth={3}
+                                  strokeLinecap="round"
+                                  strokeDasharray={circumference}
+                                  strokeDashoffset={arcOffset}
+                                  transform="rotate(-90 14 14)"
+                                />
+                              </svg>
                             </div>
                             <div className={styles.sessionMeta}>
                               <div className={styles.sessionName}>
                                 {course?.name ?? "Course Session"}
                                 {course?.code && (
-                                  <span className={styles.sessionCode}>({course.code})</span>
+                                  <span className={styles.sessionCode}> · {course.code}</span>
                                 )}
                               </div>
                               <div className={styles.sessionSub}>
@@ -336,13 +374,16 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
                               </div>
                             </div>
                           </div>
-                          <div className={styles.sessionElapsed}>
-                            <Clock size={14} strokeWidth={1.75} style={{ color: "var(--color-text-meta)" }} />
-                            <span className={styles.elapsedValue}>
-                              {elapsed(session.started_at)}
-                            </span>
+                          <div className={styles.tileRight}>
+                            <div className={styles.sessionElapsed}>
+                              <Clock size={12} strokeWidth={1.75} style={{ color: "var(--color-text-meta)" }} />
+                              <span className={styles.elapsedValue}>{elapsed(session.started_at)}</span>
+                            </div>
+                            <div className={styles.tileCheckins}>
+                              {session.check_in_count}/{session.group_size}
+                            </div>
                           </div>
-                        </div>
+                        </button>
                       );
                     })}
                   </div>
@@ -415,6 +456,11 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
 
         </div>
       </div>
+
+      <SessionDetailSheet
+        session={selectedSession}
+        onClose={() => setSelectedSession(null)}
+      />
     </div>
   );
 }
