@@ -38,6 +38,17 @@ import {
   LayoutGrid,
 } from "lucide-react";
 
+// ── Module-level alert store (race-condition bridge) ─────────────────────────
+// Written by AdminDashboardClient synchronously before it dispatches the custom
+// event. PortalLayout reads this in its useState initialiser so it always has
+// the correct counts even when the event fires before the listener is attached.
+type _AlertCounts = { longRunningCount: number; staleSemesterCount: number; pendingDisputeCount: number };
+let _dashboardAlertStore: _AlertCounts | null = null;
+
+export function setDashboardAlertStore(counts: _AlertCounts | null): void {
+  _dashboardAlertStore = counts;
+}
+
 export type NavIcon =
   | "dashboard"
   | "institution"
@@ -328,12 +339,25 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
   // ── Dashboard alert bar state ─────────────────────────────────────────
   // AdminDashboardClient dispatches "dashboard-alerts" with counts; we render
   // AlertBar in the fixed shell here so it never scrolls with page content.
+  //
+  // Race-condition fix: the dashboard client mounts and fires the event before
+  // PortalLayout's useEffect listener is attached (both run after first render,
+  // but children mount before parents in React). We solve this with a
+  // module-level store: AdminDashboardClient writes to it synchronously, and
+  // PortalLayout reads it when initialising state — so the initial value is
+  // always correct regardless of mount order.
   type AlertCounts = Pick<AlertBarProps, "longRunningCount" | "staleSemesterCount" | "pendingDisputeCount">;
-  const [alertCounts, setAlertCounts] = useState<AlertCounts | null>(null);
+  const [alertCounts, setAlertCounts] = useState<AlertCounts | null>(() => {
+    // Read from module-level store on first render (SSR-safe: store is null on server)
+    return _dashboardAlertStore;
+  });
   const mainRef = useRef<HTMLElement>(null);
   const bannerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Also sync from store immediately in case it was written before this effect ran
+    setAlertCounts(_dashboardAlertStore);
+
     function onDashboardAlerts(e: Event) {
       const detail = (e as CustomEvent<AlertCounts>).detail;
       const hasAny =
