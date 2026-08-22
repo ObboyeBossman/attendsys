@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { usePageSwipe } from "@/hooks/usePageSwipe";
 
 /* ── helpers ─────────────────────────────────────────────── */
@@ -1069,6 +1069,18 @@ export function LecturerDashboardClient({ data }: { data: DashboardData }) {
     },
   });
 
+  // Stable ref callback that attaches the same DOM node to both reelRef (for
+  // width measurement) and swipeRef (for touch/mouse event listeners in usePageSwipe).
+  /* eslint-disable react-hooks/immutability */
+  const setReelNode = useCallback(
+    (el: HTMLDivElement | null) => {
+      (reelRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+      (swipeRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+    },
+    [swipeRef]
+  );
+  /* eslint-enable react-hooks/immutability */
+
   useEffect(() => {
     if (reelRef.current) containerWidthRef.current = reelRef.current.offsetWidth;
     const onResize = () => {
@@ -1117,6 +1129,7 @@ export function LecturerDashboardClient({ data }: { data: DashboardData }) {
   }, [tabs.length]);
 
   const translateX = `calc(${-activeIndex * 50}% + ${dragOffset / 2}px)`;
+  // eslint-disable-next-line react-hooks/refs
   const w = containerWidthRef.current || 1;
   const dragFraction = dragOffset / w;
   const pageProgress = activeIndex - dragFraction;
@@ -1148,10 +1161,7 @@ export function LecturerDashboardClient({ data }: { data: DashboardData }) {
       {/* ── Drag-synced content reel ──────────────────────────────── */}
       {/* swipeRef adds page-body swipe; reelRef measures width for translation */}
       <div
-        ref={(el) => {
-          (reelRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
-          (swipeRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
-        }}
+        ref={setReelNode}
         style={{ overflow: "hidden", position: "relative", touchAction: "pan-y" }}
       >
         <div

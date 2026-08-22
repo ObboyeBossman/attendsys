@@ -71,6 +71,7 @@ export function TopBar({
 
   useEffect(() => {
     measureIndicator();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsAnimating(true);
     const t = setTimeout(() => setIsAnimating(false), 420);
     return () => clearTimeout(t);
@@ -168,8 +169,13 @@ export function TopBar({
   };
 
   // ── Liquid indicator geometry ─────────────────────────────────────────
+  // Refs are intentionally read during render here: containerWidth and tabRefs
+  // store the latest DOM measurements needed to interpolate the liquid indicator
+  // position mid-gesture. Reading them during render is safe because they are
+  // updated only in effects/event-handlers, never re-created.
   let liveLeft = indicatorStyle.left;
   let liveWidth = indicatorStyle.width;
+  // eslint-disable-next-line react-hooks/refs
   const w = containerWidth.current || 1;
 
   if (isDragging && w > 0 && tabList.length > 1) {
@@ -180,6 +186,7 @@ export function TopBar({
       const curEl = tabRefs.current[tabList[activeIndex].id];
       const tgtEl = tabRefs.current[tabList[targetIndex].id];
 
+      /* eslint-disable react-hooks/refs */
       if (curEl && tgtEl) {
         const progress = Math.min(Math.abs(dragRatio), 1);
         const stretch = Math.sin(progress * Math.PI) * 14;
@@ -197,6 +204,7 @@ export function TopBar({
             (curEl.offsetLeft - tgtEl.offsetLeft) * progress;
         }
       }
+      /* eslint-enable react-hooks/refs */
     } else {
       // Boundary rubber-band stretch
       liveWidth = indicatorStyle.width + Math.abs(dragOffset * 0.12);

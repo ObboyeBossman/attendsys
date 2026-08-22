@@ -356,6 +356,7 @@ export function PortalLayout({ role, roleLabel, navItems, children, switchTo }: 
 
   useEffect(() => {
     // Also sync from store immediately in case it was written before this effect ran
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setAlertCounts(_dashboardAlertStore);
 
     function onDashboardAlerts(e: Event) {

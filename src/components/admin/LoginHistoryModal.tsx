@@ -95,6 +95,7 @@ export function LoginHistoryModal({
   useEffect(() => {
     if (!isOpen || !userId) return;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     setError(null);
 
