@@ -8,11 +8,8 @@
 /* ── Bar shell ───────────────────────────────────────────────────────────── */
 
 .bar {
-  position: sticky;
-  /* Sits directly below the app bar; z-index below TopBar (100) */
-  top: 56px;
-  z-index: 90;
-
+  /* Positioning is handled by the fixed .noticeBannerBar shell in PortalLayout.
+     The bar itself is a plain block — no sticky/fixed needed here. */
   display: flex;
   align-items: center;
   justify-content: space-between;
