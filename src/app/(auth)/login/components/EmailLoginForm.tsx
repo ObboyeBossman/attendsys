@@ -71,7 +71,6 @@ export function EmailLoginForm({
       // eslint-disable-next-line react-hooks/set-state-in-effect
       startCooldownTimer(remaining);
     } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCooldown(0);
     }
   }, [email, startCooldownTimer]);
